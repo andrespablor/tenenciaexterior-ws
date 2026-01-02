@@ -115,7 +115,7 @@ function renderPortfolio(portfolio) {
                 </div>
             </td>
             <td>${closeDisplay}</td>
-            <td>${timeDisplay}</td>
+            <td class="cell-time">${timeDisplay}</td>
             <td class="${macdClass}">${macdDisplay}</td>
             <td class="cell-sector">${sector}</td>
             <td class="col-personal">${fmt(p.quantity)}</td>

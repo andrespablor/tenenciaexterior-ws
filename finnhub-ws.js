@@ -270,6 +270,15 @@ function updatePriceUI(symbol, price, dailyChange, direction) {
             changeCell.textContent = `${sign}${dailyChange.toFixed(2)}%`;
             changeCell.className = `cell-change ${dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}`;
         }
+
+        // Actualizar hora de última actualización
+        const timeCell = row.querySelector('.cell-time');
+        if (timeCell) {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
+            const timeStr = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
+            timeCell.textContent = `${dateStr} ${timeStr}`;
+        }
     }
 
     // Actualizar portfolio y resumen si están visibles (debounced)
@@ -301,7 +310,9 @@ function startHeartbeat() {
     }
     wsHeartbeatInterval = setInterval(() => {
         if (wsConnected && finnhubWs?.readyState === WebSocket.OPEN) {
-            console.log('💓 WebSocket heartbeat');
+            // Enviar ping real para mantener conexión viva
+            finnhubWs.send(JSON.stringify({ type: 'ping' }));
+            console.log('💓 WebSocket ping enviado');
         }
     }, WS_CONFIG.heartbeatInterval);
 }
