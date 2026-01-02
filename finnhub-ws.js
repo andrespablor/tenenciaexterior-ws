@@ -89,6 +89,9 @@ function handleWsOpen() {
     wsReconnectAttempts = 0;
     updateConnectionStatus('connected', 'En vivo');
 
+    // Detener REST polling si estaba activo
+    stopRestPolling();
+
     // Iniciar heartbeat
     startHeartbeat();
 
@@ -273,16 +276,19 @@ function updatePriceUI(symbol, price, dailyChange, direction) {
     debounceRender();
 }
 
-// Debounce de render completo a máximo 1x por segundo
-let renderTimeout = null;
+// Debounce de actualización de stats (no re-render completo de tabla)
+let statsUpdateTimeout = null;
 function debounceRender() {
-    if (renderTimeout) return;
-    renderTimeout = setTimeout(() => {
-        renderTimeout = null;
-        if (typeof renderAll === 'function') {
-            renderAll();
+    if (statsUpdateTimeout) return;
+    statsUpdateTimeout = setTimeout(() => {
+        statsUpdateTimeout = null;
+        // Solo actualizar los stats del header, no re-renderizar toda la tabla
+        if (typeof calculatePortfolio === 'function' && typeof updateHeaderStats === 'function') {
+            const portfolio = calculatePortfolio();
+            const summary = typeof calculateSpeciesSummary === 'function' ? calculateSpeciesSummary() : {};
+            updateHeaderStats(portfolio, summary);
         }
-    }, 1000);
+    }, 2000); // Actualizar stats cada 2 segundos máximo
 }
 
 // ========================================
@@ -348,6 +354,40 @@ function updateConnectionStatus(status, message) {
 }
 
 // ========================================
+// Fallback a REST cuando WS falla
+// ========================================
+
+let restPollingInterval = null;
+const REST_POLLING_INTERVAL = 60000; // 60 segundos
+
+function startRestPolling() {
+    if (restPollingInterval) return; // Ya está activo
+
+    console.log('📡 Iniciando fallback a REST polling (60s)');
+    updateConnectionStatus('disconnected', 'REST mode');
+
+    // Hacer refresh inmediato
+    if (typeof refreshAllPrices === 'function') {
+        refreshAllPrices();
+    }
+
+    // Configurar polling
+    restPollingInterval = setInterval(() => {
+        if (typeof refreshAllPrices === 'function') {
+            refreshAllPrices();
+        }
+    }, REST_POLLING_INTERVAL);
+}
+
+function stopRestPolling() {
+    if (restPollingInterval) {
+        clearInterval(restPollingInterval);
+        restPollingInterval = null;
+        console.log('📡 REST polling detenido');
+    }
+}
+
+// ========================================
 // API Pública
 // ========================================
 
@@ -370,5 +410,8 @@ window.unsubscribeSymbol = unsubscribeSymbol;
 window.subscribeToPortfolioAndWatchlist = subscribeToPortfolioAndWatchlist;
 window.isWebSocketConnected = isWebSocketConnected;
 window.getSubscribedSymbols = getSubscribedSymbols;
+window.startRestPolling = startRestPolling;
+window.stopRestPolling = stopRestPolling;
 
 console.log('FinnhubWS: Cargado');
+
