@@ -1,6 +1,6 @@
 // ========================================
 // FINNHUB-WS.JS - WebSocket Manager
-// Precios en tiempo real via Finnhub
+// Precios en tiempo real via Finnhub o Relay Server
 // ========================================
 
 // Estado del WebSocket
@@ -13,7 +13,13 @@ let subscribedSymbols = new Set();
 
 // Configuración
 const WS_CONFIG = {
+    // Relay server (si está configurado, se usa en lugar de conexión directa a Finnhub)
+    // Cambiar esta URL después de deployar en Fly.io
+    relayServer: '', // Ejemplo: 'wss://finnhub-relay.fly.dev'
+
+    // Directo a Finnhub (fallback si no hay relay)
     endpoint: 'wss://ws.finnhub.io',
+
     heartbeatInterval: 30000,      // 30 segundos
     reconnectBaseDelay: 1000,      // 1 segundo inicial
     reconnectMaxDelay: 30000,      // 30 segundos máximo
@@ -29,12 +35,17 @@ const lastPriceUpdate = {};
 // ========================================
 
 function connectFinnhubWebSocket() {
-    const apiKey = appSettings?.finnhubApiKey;
+    // Determinar si usar relay o conexión directa
+    const useRelay = WS_CONFIG.relayServer && WS_CONFIG.relayServer.length > 0;
 
-    if (!apiKey) {
-        console.warn('⚠️ Finnhub API key no configurada. WebSocket deshabilitado.');
-        updateConnectionStatus('disconnected', 'Sin API key');
-        return;
+    if (!useRelay) {
+        // Conexión directa requiere API key
+        const apiKey = appSettings?.finnhubApiKey;
+        if (!apiKey) {
+            console.warn('⚠️ Finnhub API key no configurada. WebSocket deshabilitado.');
+            updateConnectionStatus('disconnected', 'Sin API key');
+            return;
+        }
     }
 
     // Cerrar conexión existente si hay
@@ -42,8 +53,16 @@ function connectFinnhubWebSocket() {
         finnhubWs.close();
     }
 
-    const wsUrl = `${WS_CONFIG.endpoint}?token=${apiKey}`;
-    console.log('🔌 Conectando a Finnhub WebSocket...');
+    // URL de conexión
+    let wsUrl;
+    if (useRelay) {
+        wsUrl = WS_CONFIG.relayServer;
+        console.log('🔌 Conectando a Relay Server...');
+    } else {
+        wsUrl = `${WS_CONFIG.endpoint}?token=${appSettings.finnhubApiKey}`;
+        console.log('🔌 Conectando a Finnhub WebSocket...');
+    }
+
     updateConnectionStatus('connecting', 'Conectando...');
 
     try {
