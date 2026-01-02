@@ -1,0 +1,76 @@
+// Service Worker for Portfolio Tracker PWA
+const CACHE_NAME = 'portfolio-tracker-v1';
+const urlsToCache = [
+    './',
+    './index.html',
+    './app.js',
+    './styles.css',
+    './fetchPriceFinnhub.js'
+];
+
+// Install event - cache resources
+self.addEventListener('install', function (event) {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(function (cache) {
+                console.log('Service Worker: Caching files');
+                return cache.addAll(urlsToCache);
+            })
+    );
+    self.skipWaiting();
+});
+
+// Activate event - clean old caches
+self.addEventListener('activate', function (event) {
+    event.waitUntil(
+        caches.keys().then(function (cacheNames) {
+            return Promise.all(
+                cacheNames.map(function (cacheName) {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Service Worker: Clearing old cache');
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+    return self.clients.claim();
+});
+
+// Fetch event - serve from cache, fallback to network
+self.addEventListener('fetch', function (event) {
+    // Skip cross-origin requests
+    if (!event.request.url.startsWith(self.location.origin)) {
+        return;
+    }
+
+    event.respondWith(
+        caches.match(event.request)
+            .then(function (response) {
+                // Cache hit - return response
+                if (response) {
+                    return response;
+                }
+
+                // Clone request
+                var fetchRequest = event.request.clone();
+
+                return fetch(fetchRequest).then(function (response) {
+                    // Check if valid response
+                    if (!response || response.status !== 200 || response.type !== 'basic') {
+                        return response;
+                    }
+
+                    // Clone response
+                    var responseToCache = response.clone();
+
+                    caches.open(CACHE_NAME)
+                        .then(function (cache) {
+                            cache.put(event.request, responseToCache);
+                        });
+
+                    return response;
+                });
+            })
+    );
+});
