@@ -89,10 +89,10 @@ function renderPortfolio(portfolio) {
             timeDisplay = `${dateStr} ${timeStr}`;
         }
 
-        return `<tr>
+        return `<tr data-symbol="${p.symbol}">
             <td class="cell-symbol"><a href="${chartUrl}" target="_blank">${p.symbol} 📈</a></td>
-            <td>${priceDisplay}</td>
-            <td class="${p.dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}">${p.dailyChange >= 0 ? '+' : ''}${p.dailyChange.toFixed(2)}%</td>
+            <td class="cell-price">${priceDisplay}</td>
+            <td class="cell-change ${p.dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}">${p.dailyChange >= 0 ? '+' : ''}${p.dailyChange.toFixed(2)}%</td>
             <td class="${priceChange >= 0 ? 'cell-positive' : 'cell-negative'}">${priceChange >= 0 ? '+' : ''}${fmt(priceChange, 2)}</td>
             <td class="range-cell">
                 <div class="range-bar">
@@ -119,8 +119,8 @@ function renderPortfolio(portfolio) {
             <td class="${macdClass}">${macdDisplay}</td>
             <td class="cell-sector">${sector}</td>
             <td class="col-personal">${fmt(p.quantity)}</td>
-            <td>$${fmt(p.value, 2)}</td>
-            <td class="${p.dailyValue >= 0 ? 'cell-positive' : 'cell-negative'}">${p.dailyValue >= 0 ? '+' : ''}$${fmt(Math.abs(p.dailyValue), 2)}</td>
+            <td class="cell-value">$${fmt(p.value, 2)}</td>
+            <td class="cell-daily ${p.dailyValue >= 0 ? 'cell-positive' : 'cell-negative'}">${p.dailyValue >= 0 ? '+' : ''}$${fmt(Math.abs(p.dailyValue), 2)}</td>
             <td class="${p.result >= 0 ? 'cell-positive' : 'cell-negative'}">${p.result >= 0 ? '+' : ''}$${fmt(p.result, 2)}</td>
             <td><button class="btn-alert" onclick="promptPriceAlert('${p.symbol}', ${price})" title="Crear alerta">🔔</button></td>
         </tr>`;

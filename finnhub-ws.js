@@ -241,6 +241,7 @@ function updatePriceUI(symbol, price, dailyChange, direction) {
     // Actualizar celdas de precio en el DOM directamente
     const row = document.querySelector(`tr[data-symbol="${symbol}"]`);
     if (row) {
+        // Actualizar precio
         const priceCell = row.querySelector('.cell-price');
         if (priceCell) {
             priceCell.textContent = `$${price.toFixed(2)}`;
@@ -257,6 +258,14 @@ function updatePriceUI(symbol, price, dailyChange, direction) {
             setTimeout(() => {
                 priceCell.classList.remove('flash-up', 'flash-down');
             }, 500);
+        }
+
+        // Actualizar cambio porcentual
+        const changeCell = row.querySelector('.cell-change');
+        if (changeCell) {
+            const sign = dailyChange >= 0 ? '+' : '';
+            changeCell.textContent = `${sign}${dailyChange.toFixed(2)}%`;
+            changeCell.className = `cell-change ${dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}`;
         }
     }
 
