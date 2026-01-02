@@ -241,9 +241,10 @@ function updatePriceFromWebSocket(symbol, price, timestamp, volume) {
 }
 
 function updatePriceUI(symbol, price, dailyChange, direction) {
-    // Actualizar celdas de precio en el DOM directamente
-    const row = document.querySelector(`tr[data-symbol="${symbol}"]`);
-    if (row) {
+    // Actualizar TODAS las celdas con este símbolo (puede estar en Portfolio y Watchlist)
+    const rows = document.querySelectorAll(`tr[data-symbol="${symbol}"]`);
+
+    rows.forEach(row => {
         // Actualizar precio
         const priceCell = row.querySelector('.cell-price');
         if (priceCell) {
@@ -279,7 +280,7 @@ function updatePriceUI(symbol, price, dailyChange, direction) {
             const timeStr = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
             timeCell.textContent = `${dateStr} ${timeStr}`;
         }
-    }
+    });
 
     // Actualizar portfolio y resumen si están visibles (debounced)
     debounceRender();

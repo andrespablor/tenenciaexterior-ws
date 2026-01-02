@@ -1311,11 +1311,11 @@ function renderWatchlist() {
             timeDisplay = `${dateStr} ${timeStr}`;
         }
 
-        return `<tr>
+        return `<tr data-symbol="${symbol}">
             <td class="col-check"><input type="checkbox" data-symbol="${symbol}" onchange="updateWatchlistDeleteBtn()"></td>
             <td class="cell-symbol"><a href="${chartUrl}" target="_blank">${symbol} 📈</a></td>
-            <td>${priceDisplay}</td>
-            <td class="${dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}">${dailyChange >= 0 ? '+' : ''}${dailyChange.toFixed(2)}%</td>
+            <td class="cell-price">${priceDisplay}</td>
+            <td class="cell-change ${dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}">${dailyChange >= 0 ? '+' : ''}${dailyChange.toFixed(2)}%</td>
             <td class="${dailyDiff >= 0 ? 'cell-positive' : 'cell-negative'}">${diffDisplay}</td>
             <td class="range-cell">
                 <div class="range-bar">
@@ -1338,7 +1338,7 @@ function renderWatchlist() {
                 </div>
             </td>
             <td>${closeDisplay}</td>
-            <td>${timeDisplay}</td>
+            <td class="cell-time">${timeDisplay}</td>
             <td>${volDisplay}</td>
             <td>${avgVolDisplay}</td>
             <td class="${macdClass}">${macdDisplay}</td>
