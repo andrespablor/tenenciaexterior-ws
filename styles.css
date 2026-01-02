@@ -3141,3 +3141,86 @@ th.col-status {
     text-align: center;
     color: #333;
 }
+
+/* ========================================
+   WebSocket Connection Status
+   ======================================== */
+.ws-status {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-left: 12px;
+    cursor: default;
+    transition: all 0.3s ease;
+}
+
+.ws-connected {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.ws-connecting,
+.ws-reconnecting {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    animation: pulse-status 1.5s infinite;
+}
+
+.ws-disconnected,
+.ws-error {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+@keyframes pulse-status {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ========================================
+   Price Flash Animations
+   ======================================== */
+.flash-up {
+    animation: flashGreen 0.5s ease;
+}
+
+.flash-down {
+    animation: flashRed 0.5s ease;
+}
+
+@keyframes flashGreen {
+    0% {
+        background-color: rgba(34, 197, 94, 0.4);
+        color: #22c55e;
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+@keyframes flashRed {
+    0% {
+        background-color: rgba(239, 68, 68, 0.4);
+        color: #ef4444;
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+/* Price cell transition */
+.cell-price {
+    transition: background-color 0.3s ease;
+}

@@ -85,6 +85,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const portfolio = calculatePortfolio();
     if (Object.keys(portfolio).length > 0) {
         refreshAllPrices();
+
+        // Iniciar WebSocket para precios en tiempo real
+        if (typeof connectFinnhubWebSocket === 'function' && appSettings.finnhubApiKey) {
+            setTimeout(() => {
+                connectFinnhubWebSocket();
+                subscribeToPortfolioAndWatchlist();
+            }, 2000); // Esperar 2s para que REST cargue datos iniciales
+        }
     } else {
         // Si no hay datos, renderizar tabla vacía o existente
         renderDailyStats();
