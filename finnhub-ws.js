@@ -14,8 +14,7 @@ let subscribedSymbols = new Set();
 // Configuración
 const WS_CONFIG = {
     // Relay server (si está configurado, se usa en lugar de conexión directa a Finnhub)
-    // Cambiar esta URL después de deployar en Fly.io
-    relayServer: '', // Ejemplo: 'wss://finnhub-relay.fly.dev'
+    relayServer: 'wss://tenenciaexterior-ws.onrender.com',
 
     // Directo a Finnhub (fallback si no hay relay)
     endpoint: 'wss://ws.finnhub.io',
