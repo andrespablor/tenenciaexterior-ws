@@ -1101,6 +1101,31 @@ function initializeWatchlist() {
         updateWatchlistSelector();
     });
 
+    // Cambiar icono de lista
+    document.getElementById('edit-watchlist-icon').addEventListener('click', () => {
+        const iconOptions = ['📋', '🇺🇸', '🇧🇷', '🇦🇷', '💰', '📊', '🚀', '💎', '⭐', '🔥', '💼', '🌎'];
+        const currentIcon = watchlists[currentWatchlistId]?.icon || '📋';
+
+        let iconList = iconOptions.map(emoji => `${emoji}`).join('  ');
+        const selected = prompt(`Seleccioná un icono:\n\n${iconList}\n\nO escribí cualquier emoji:`, currentIcon);
+
+        if (!selected || !selected.trim()) return;
+
+        // Asegurar que la estructura existe
+        if (!watchlists[currentWatchlistId].icon) {
+            watchlists[currentWatchlistId] = {
+                displayName: watchlists[currentWatchlistId].displayName || currentWatchlistId,
+                icon: selected.trim(),
+                symbols: watchlists[currentWatchlistId].symbols || watchlists[currentWatchlistId]
+            };
+        } else {
+            watchlists[currentWatchlistId].icon = selected.trim();
+        }
+
+        saveData();
+        updateWatchlistSelector();
+    });
+
     // Select all checkbox
     document.getElementById('watchlist-select-all').addEventListener('change', (e) => {
         document.querySelectorAll('#watchlist-body input[type="checkbox"]').forEach(cb => {
