@@ -42,6 +42,26 @@
 // Inicialización
 // ========================================
 
+// Mapa de traducción de sectores (Finnhub English -> Español abreviado)
+const SECTOR_TRANSLATIONS = {
+    "Technology": "Tecnología",
+    "Semiconductors": "Semicond.",
+    "Health Care": "Salud",
+    "Financial Services": "Fin. Serv.",
+    "Financials": "Finanzas",
+    "Energy": "Energía",
+    "Consumer Cyclical": "Cons. Cícl.",
+    "Consumer Defensive": "Cons. Def.",
+    "Communication Services": "Comunic.",
+    "Industrials": "Industria",
+    "Basic Materials": "Materiales",
+    "Utilities": "Serv. Públ.",
+    "Real Estate": "Inmob.",
+    "Retail": "Retail",
+    "Professional Services": "Serv. Prof.",
+    "N/A": "ETF"
+};
+
 // Carga de perfiles estáticos (Sectores/Industrias)
 window.stockProfiles = {};
 async function loadStockProfiles() {

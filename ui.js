@@ -30,8 +30,12 @@ function renderPortfolio(portfolio) {
         const wk52High = cache.wk52High || price;
         const wk52Low = cache.wk52Low || price;
 
-        // Sector
-        const sector = SECTOR_MAP[p.symbol] || 'Otros';
+        // Sector desde stock profiles (con traducción)
+        const profile = window.stockProfiles?.[p.symbol.toUpperCase()] || {};
+        const rawSector = profile.sector || SECTOR_MAP[p.symbol] || 'Otro';
+        const sector = (typeof SECTOR_TRANSLATIONS !== 'undefined' && SECTOR_TRANSLATIONS[rawSector])
+            ? SECTOR_TRANSLATIONS[rawSector]
+            : rawSector;
 
         return { ...p, value, dailyValue, result, dayHigh, dayLow, wk52High, wk52Low, sector };
     });
