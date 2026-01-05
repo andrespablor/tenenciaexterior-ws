@@ -65,6 +65,45 @@ async function fetchPriceFromFinnhub(symbol) {
     }
 }
 
+// ========================================
+// Finnhub MACD Indicator
+// ========================================
+async function fetchMacdFromApi(symbol) {
+    const apiKey = appSettings.finnhubApiKey;
+    if (!apiKey) return null;
+
+    // Pedir últimos 200 días para asegurar buen cálculo
+    const now = Math.floor(Date.now() / 1000);
+    const from = now - (200 * 24 * 60 * 60);
+
+    const url = `https://finnhub.io/api/v1/indicator?symbol=${symbol}&resolution=D&from=${from}&to=${now}&indicator=macd&token=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.warn(`MACD fetch failed for ${symbol}: ${response.status}`);
+            return null;
+        }
+
+        const data = await response.json();
+        // data = { macd: [...], macdSignal: [...], macdHist: [...], t: [...] }
+
+        if (data.macd && data.macd.length > 0) {
+            const lastIndex = data.macd.length - 1;
+            return {
+                macd: data.macd[lastIndex],
+                signal: data.macdSignal[lastIndex],
+                histogram: data.macdHist[lastIndex],
+                date: data.t[lastIndex]
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching MACD for ${symbol}:`, error);
+        return null;
+    }
+}
+
 // Función auxiliar para obtener datos históricos de Yahoo (para MACD, etc)
 async function fetchYahooHistoricalData(symbol) {
     // 1. Intentar obtener MACD real de Finnhub API (indicador 'macd')
@@ -456,43 +495,6 @@ function calculateEMA(prices, period) {
     return ema;
 }
 
-// Fetch MACD from Finnhub API (Standard Plan)
-async function fetchMacdFromApi(symbol) {
-    const apiKey = appSettings.finnhubApiKey;
-    if (!apiKey) return null;
-
-    // Pedir últimos 200 días para asegurar buen cálculo
-    const now = Math.floor(Date.now() / 1000);
-    const from = now - (200 * 24 * 60 * 60);
-
-    const url = `https://finnhub.io/api/v1/indicator?symbol=${symbol}&resolution=D&from=${from}&to=${now}&indicator=macd&token=${apiKey}`;
-
-    try {
-        // console.log(`📡 Fetching MACD for ${symbol}...`);
-        const response = await fetch(url);
-        if (!response.ok) {
-            console.warn(`MACD fetch failed for ${symbol}: ${response.status}`);
-            return null;
-        }
-
-        const data = await response.json();
-        // data = { macd: [...], macdSignal: [...], macdHist: [...], t: [...] }
-
-        if (data.macd && data.macd.length > 0) {
-            const lastIndex = data.macd.length - 1;
-            return {
-                macd: data.macd[lastIndex],
-                signal: data.macdSignal[lastIndex],
-                histogram: data.macdHist[lastIndex],
-                date: data.t[lastIndex]
-            };
-        }
-        return null;
-    } catch (error) {
-        console.error(`Error fetching MACD for ${symbol}:`, error);
-        return null;
-    }
-}
 
 // Helper simple MACD local (solo como fallback)
 function calculateMACDLocal(prices) {
