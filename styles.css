@@ -220,14 +220,14 @@ td {
 .watchlist-select {
     background: var(--bg-hover);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 6px;
     color: var(--text-primary);
     font-weight: 600;
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
     outline: none;
-    padding: 8px 12px;
-    min-width: 180px;
+    padding: 6px 10px;
+    min-width: 140px;
     transition: all 0.2s ease;
 }
 
@@ -239,7 +239,7 @@ td {
 .watchlist-select option {
     background: var(--bg-card);
     color: var(--text-primary);
-    padding: 8px;
+    padding: 6px;
 }
 
 /* Icon Picker */
@@ -277,9 +277,9 @@ td {
 .btn-icon-only {
     background: var(--bg-hover);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 16px;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
 }

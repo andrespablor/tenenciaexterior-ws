@@ -1047,6 +1047,11 @@ function initializeWatchlist() {
         currentWatchlistId = e.target.value;
         saveData();
         renderWatchlist();
+
+        // Re-suscribir símbolos al WebSocket
+        if (typeof subscribeToPortfolioAndWatchlist === 'function') {
+            subscribeToPortfolioAndWatchlist();
+        }
     });
 
     // Botón "⚙️" - abre modal
