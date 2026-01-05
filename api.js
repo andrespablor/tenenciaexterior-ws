@@ -67,6 +67,17 @@ async function fetchPriceFromFinnhub(symbol) {
 
 // Función auxiliar para obtener datos históricos de Yahoo (para MACD, etc)
 async function fetchYahooHistoricalData(symbol) {
+    // 1. Intentar obtener MACD real de Finnhub API (indicador 'macd')
+    let finnhubMacd = null;
+    try {
+        const macdData = await fetchMacdFromApi(symbol);
+        if (macdData) {
+            finnhubMacd = macdData.histogram; // Usamos el histograma para señal C/V
+        }
+    } catch (e) {
+        // console.warn('Finnhub MACD fetch error:', e);
+    }
+
     const yahooHost = Math.random() > 0.5 ? 'query1.finance.yahoo.com' : 'query2.finance.yahoo.com';
     const url = `https://${yahooHost}/v8/finance/chart/${symbol}?interval=1d&range=2mo`;
 
@@ -85,10 +96,12 @@ async function fetchYahooHistoricalData(symbol) {
             const closes = result.indicators?.quote?.[0]?.close || [];
             const volumes = result.indicators?.quote?.[0]?.volume || [];
 
-            // Calcular MACD
+            // Calcular MACD local si falló la API
             const validCloses = closes.filter(p => p && p > 0);
-            let macd = null;
-            if (validCloses.length >= 26) {
+            let macd = finnhubMacd;
+
+            if (macd === null && validCloses.length >= 26) {
+                // Fallback a cálculo local aproximado (solo si no tenemos el real)
                 const ema12 = calculateEMA(validCloses, 12);
                 const ema26 = calculateEMA(validCloses, 26);
                 macd = ema12 - ema26;
@@ -111,6 +124,14 @@ async function fetchYahooHistoricalData(symbol) {
         } catch (error) {
             continue;
         }
+    }
+
+    // Si falló Yahoo, devolver al menos el MACD si lo conseguimos
+    if (finnhubMacd !== null) {
+        return {
+            wk52High: 0, wk52Low: 0, volume: 0, avgVolume: 0,
+            macd: finnhubMacd
+        };
     }
 
     return null;
@@ -426,7 +447,7 @@ function calculateSMA(prices, period) {
 
 // Calculate EMA
 function calculateEMA(prices, period) {
-    if (prices.length < period) return null;
+    if (!prices || prices.length < period) return null;
     const k = 2 / (period + 1);
     let ema = prices.slice(0, period).reduce((a, b) => a + b, 0) / period;
     for (let i = period; i < prices.length; i++) {
@@ -435,9 +456,47 @@ function calculateEMA(prices, period) {
     return ema;
 }
 
-// Calculate MACD
-function calculateMACD(prices) {
-    if (prices.length < 26) return null;
+// Fetch MACD from Finnhub API (Standard Plan)
+async function fetchMacdFromApi(symbol) {
+    const apiKey = appSettings.finnhubApiKey;
+    if (!apiKey) return null;
+
+    // Pedir últimos 200 días para asegurar buen cálculo
+    const now = Math.floor(Date.now() / 1000);
+    const from = now - (200 * 24 * 60 * 60);
+
+    const url = `https://finnhub.io/api/v1/indicator?symbol=${symbol}&resolution=D&from=${from}&to=${now}&indicator=macd&token=${apiKey}`;
+
+    try {
+        // console.log(`📡 Fetching MACD for ${symbol}...`);
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.warn(`MACD fetch failed for ${symbol}: ${response.status}`);
+            return null;
+        }
+
+        const data = await response.json();
+        // data = { macd: [...], macdSignal: [...], macdHist: [...], t: [...] }
+
+        if (data.macd && data.macd.length > 0) {
+            const lastIndex = data.macd.length - 1;
+            return {
+                macd: data.macd[lastIndex],
+                signal: data.macdSignal[lastIndex],
+                histogram: data.macdHist[lastIndex],
+                date: data.t[lastIndex]
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching MACD for ${symbol}:`, error);
+        return null;
+    }
+}
+
+// Helper simple MACD local (solo como fallback)
+function calculateMACDLocal(prices) {
+    if (!prices || prices.length < 26) return null;
     return calculateEMA(prices, 12) - calculateEMA(prices, 26);
 }
 
@@ -455,26 +514,34 @@ function calculateBollingerPct(prices, period = 20) {
     return ((current - lower) / (upper - lower)) * 100;
 }
 
-// Fetch all technical indicators
+// Fetch all technical indicators (Updated to use API)
 async function fetchTechnicalIndicators(symbol) {
     try {
-        const hist = await fetchHistoricalData(symbol);
-        if (!hist) {
-            console.warn(`${symbol}: No historical data available`);
-            return null;
-        }
-        const { closes } = hist;
+        // 1. MACD Oficial de Finnhub
+        const macdData = await fetchMacdFromApi(symbol);
 
-        if (!closes || closes.length < 50) {
-            console.warn(`${symbol}: Insufficient data (${closes?.length || 0} days)`);
-            return null;
+        // 2. Otros indicadores (por ahora mantenemos cálculo local simple para SMA/RSI para no saturar 
+        // o podríamos migrarlos también si querés)
+        const hist = await fetchHistoricalData(symbol);
+
+        let rsi = null;
+        let sma50 = null;
+        let sma200 = null;
+
+        if (hist && hist.closes) {
+            rsi = calculateRSI(hist.closes, 14);
+            sma50 = calculateSMA(hist.closes, 50);
+            sma200 = calculateSMA(hist.closes, 200);
         }
 
         const indicators = {
-            rsi: calculateRSI(closes, 14),
-            sma50: calculateSMA(closes, 50),
-            macd: calculateMACD(closes),
-            bollingerPct: calculateBollingerPct(closes, 20)
+            macd: macdData ? macdData.histogram : (calculateMACDLocal(hist?.closes) || null), // Fallback local si falla API
+            macdSignal: macdData ? macdData.signal : null,
+            rsi: rsi,
+            sma50: sma50,
+            sma200: sma200,
+            // Bollinger % is not included in the new structure, keeping it for now if needed elsewhere
+            bollingerPct: calculateBollingerPct(hist?.closes, 20)
         };
 
         console.log(`${symbol} indicators:`, indicators);

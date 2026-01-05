@@ -1380,8 +1380,18 @@ function renderWatchlist() {
         const smaLabel = price > sma200 ? '↑' : '↓';
 
         // MACD color
-        const macdClass = macd ? (macd > 0 ? 'cell-positive' : 'cell-negative') : '';
-        const macdDisplay = macd ? macd.toFixed(2) : '-';
+        // MACD Signal (C/V) using Histogram
+        let macdDisplay = '-';
+        let macdClass = '';
+        if (macd !== null && macd !== undefined) {
+            if (macd > 0) {
+                macdDisplay = 'C';
+                macdClass = 'cell-positive'; // Verde
+            } else {
+                macdDisplay = 'V';
+                macdClass = 'cell-negative'; // Rojo
+            }
+        }
 
         // Volume formatting
         const volDisplay = volume > 1000000 ? (volume / 1000000).toFixed(1) + 'M' : volume > 1000 ? (volume / 1000).toFixed(0) + 'K' : volume.toString();
