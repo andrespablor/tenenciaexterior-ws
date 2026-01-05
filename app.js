@@ -1032,8 +1032,22 @@ function getCurrentWatchlist() {
             symbols: []
         };
     }
-    // Retornar el array de símbolos (compatibilidad hacia atrás)
-    return watchlists[currentWatchlistId].symbols || watchlists[currentWatchlistId];
+
+    const wl = watchlists[currentWatchlistId];
+
+    // Si es el formato nuevo (objeto con .symbols)
+    if (wl.symbols && Array.isArray(wl.symbols)) {
+        return wl.symbols;
+    }
+
+    // Si es el formato viejo (array directo)
+    if (Array.isArray(wl)) {
+        return wl;
+    }
+
+    // Fallback: array vacío
+    console.warn(`⚠️ Watchlist ${currentWatchlistId} tiene formato inválido:`, wl);
+    return [];
 }
 
 function initializeWatchlist() {
