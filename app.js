@@ -1049,24 +1049,6 @@ function initializeWatchlist() {
         renderWatchlist();
     });
 
-    // Crear nueva lista
-    document.getElementById('add-watchlist-list').addEventListener('click', () => {
-        const name = prompt('Nombre de la nueva lista:');
-        if (!name || !name.trim()) return;
-        const sanitized = name.trim();
-        const id = sanitized.toLowerCase().replace(/\s+/g, '_');
-        if (watchlists[id]) { alert('Ya existe una lista con ese nombre'); return; }
-        watchlists[id] = {
-            displayName: sanitized,  // Mantener mayúsculas
-            icon: '📋',
-            symbols: []
-        };
-        currentWatchlistId = id;
-        saveData();
-        updateWatchlistSelector();
-        renderWatchlist();
-    });
-
     // Botón "⚙️" - abre modal
     document.getElementById('manage-watchlist-btn').addEventListener('click', openWatchlistManager);
 
