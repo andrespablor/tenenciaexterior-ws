@@ -89,12 +89,7 @@
 
         <!-- Portfolio Section -->
         <section id="portfolio" class="tab-content active">
-            <div class="section-actions">
-                <label class="toggle-label">
-                    <input type="checkbox" id="auto-refresh-portfolio" checked>
-                    <span>Auto (60s)</span>
-                </label>
-            </div>
+            <!-- Auto-refresh removido - WebSocket actualiza en tiempo real -->
             <div class="table-container">
                 <table class="data-table sortable" id="portfolio-table">
                     <thead>
@@ -195,10 +190,7 @@
                     <button class="btn-icon-sm" id="add-watchlist-list" title="Nueva lista">➕</button>
                     <button class="btn-icon-sm delete" id="delete-watchlist-list" title="Eliminar lista">🗑️</button>
                 </div>
-                <label class="toggle-label" style="margin-left: 12px;">
-                    <input type="checkbox" id="auto-refresh-watchlist" checked>
-                    <span>Auto (60s)</span>
-                </label>
+                <!-- Auto-refresh removido - WebSocket actualiza en tiempo real -->
                 <div class="spacer"></div>
                 <input type="text" id="watchlist-symbol" class="search-input" placeholder="Símbolos (ej: AAPL, MSFT)"
                     style="width: 200px;">
