@@ -1438,6 +1438,11 @@ function renderWatchlist() {
         </tr>`;
 
     }).join('');
+
+    // Actualizar logos de forma async (sin bloquear el renderizado)
+    items.forEach(item => {
+        updateSymbolLogo(item.symbol);
+    });
 }
 
 window.removeFromWatchlist = removeFromWatchlist;
