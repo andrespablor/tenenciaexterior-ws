@@ -3093,6 +3093,7 @@ document.getElementById('wl-manager-delete').addEventListener('click', () => {
     saveData();
     updateWatchlistSelector();
 
+
     // Actualizar selector interno del modal
     document.getElementById('wl-manager-selector').value = 'default';
     loadWatchlistDataInModal('default');
@@ -3100,4 +3101,3 @@ document.getElementById('wl-manager-delete').addEventListener('click', () => {
 
 window.openWatchlistManager = openWatchlistManager;
 window.closeWatchlistManager = closeWatchlistManager;
-```
