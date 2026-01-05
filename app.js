@@ -1257,22 +1257,31 @@ async function getCompanyLogo(symbol) {
 
 // Actualizar logo de un símbolo específico (llamado después de renderizar)
 function updateSymbolLogo(symbol) {
+    // Deprecated: Ahora usamos el sistema de eventos onerror en las etiquetas img
+}
+
+// Handler para error de carga de logo (Estrategia híbrida)
+// 1. Intenta cargar assets/logos/SYMBOL.png (definido en el HTML)
+// 2. Si falla, llama a esta función para buscar en Finnhub
+function handleLogoError(img, symbol) {
+    // Evitar loop infinito
+    img.onerror = null;
+
+    // Intentar buscar en Finnhub (cache o API)
     getCompanyLogo(symbol).then(logoUrl => {
         if (logoUrl) {
-            // Buscar todas las filas con este símbolo
-            const rows = document.querySelectorAll(`tr[data-symbol="${symbol}"]`);
-            rows.forEach(row => {
-                const img = row.querySelector('.company-logo');
-                const fallback = row.querySelector('.company-logo-fallback');
-                if (img && logoUrl) {
-                    img.src = logoUrl;
-                    img.style.display = 'block';
-                    if (fallback) fallback.style.display = 'none';
-                }
-            });
+            img.src = logoUrl;
+            // El onload se encargará de mostrarlo
+        } else {
+            // Si falla Finnhub, asegurar que se muestre el fallback (inicial)
+            img.style.display = 'none';
+            if (img.nextElementSibling) {
+                img.nextElementSibling.style.display = 'flex';
+            }
         }
     });
 }
+
 
 function deleteSelectedWatchlist() {
     const checkboxes = document.querySelectorAll('#watchlist-body input[type="checkbox"]:checked');
@@ -1396,7 +1405,12 @@ function renderWatchlist() {
             <td class="col-check"><input type="checkbox" data-symbol="${symbol}" onchange="updateWatchlistDeleteBtn()"></td>
             <td class="cell-symbol">
                 <div class="symbol-with-logo">
-                    <img class="company-logo" alt="${symbol}" style="display:none">
+                    <img src="assets/logos/${symbol}.png" 
+                         class="company-logo" 
+                         alt="${symbol}" 
+                         style="display:none"
+                         onload="this.style.display='block'; this.nextElementSibling.style.display='none'"
+                         onerror="handleLogoError(this, '${symbol}')">
                     <div class="company-logo-fallback">${symbol.charAt(0)}</div>
                     <a href="${chartUrl}" target="_blank">${symbol} 📈</a>
                 </div>
@@ -1439,14 +1453,13 @@ function renderWatchlist() {
 
     }).join('');
 
-    // Actualizar logos de forma async (sin bloquear el renderizado)
-    items.forEach(item => {
-        updateSymbolLogo(item.symbol);
-    });
+
+}).join('');
 }
 
 window.removeFromWatchlist = removeFromWatchlist;
 window.updateWatchlistDeleteBtn = updateWatchlistDeleteBtn;
+window.handleLogoError = handleLogoError;
 
 // ========================================
 // Price Alerts
