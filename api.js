@@ -13,6 +13,30 @@ const CORS_PROXIES = [
 ];
 
 // ========================================
+// Cache Configuration
+// ========================================
+const CACHE_INTERVALS = {
+    PRICE: 0,                          // WebSocket (tiempo real)
+    DAILY_DATA: 24 * 60 * 60 * 1000,  // 24 horas (52-wk, SMA, volume)
+    INDICATORS: 5 * 60 * 1000          // 5 minutos (MACD, Stochastic)
+};
+
+// Helper: Verificar si el cache necesita actualización
+function needsCacheUpdate(symbol, cacheType) {
+    const cache = priceCache[symbol];
+    if (!cache || !cache.lastUpdate) return true;
+
+    const now = Date.now();
+    const lastUpdate = cache.lastUpdate[cacheType];
+
+    if (!lastUpdate) return true;
+
+    const interval = CACHE_INTERVALS[cacheType];
+    return (now - lastUpdate) > interval;
+}
+
+
+// ========================================
 // Finnhub API - Price Fetching
 // ========================================
 async function fetchPriceFromFinnhub(symbol) {
@@ -143,6 +167,85 @@ async function fetchStochasticFromApi(symbol) {
     }
 }
 
+// ========================================
+// Finnhub Daily Data (52-wk Range + Volume)
+// ========================================
+async function fetchDailyDataFromFinnhub(symbol) {
+    const apiKey = appSettings.finnhubApiKey;
+    if (!apiKey) return null;
+
+    const now = Math.floor(Date.now() / 1000);
+    const oneYearAgo = now - (365 * 24 * 60 * 60);
+
+    const url = `https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=D&from=${oneYearAgo}&to=${now}&token=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.warn(`Daily data fetch failed for ${symbol}: ${response.status}`);
+            return null;
+        }
+
+        const data = await response.json();
+
+        if (data.s === 'ok' && data.h && data.l && data.v) {
+            // 52-week range
+            const wk52High = Math.max(...data.h);
+            const wk52Low = Math.min(...data.l);
+
+            // Volume (últimos 60 días para promedio)
+            const recentVolumes = data.v.slice(-60).filter(v => v > 0);
+            const avgVolume = recentVolumes.length > 0
+                ? recentVolumes.reduce((sum, v) => sum + v, 0) / recentVolumes.length
+                : 0;
+            const currentVolume = data.v[data.v.length - 1] || 0;
+
+            return {
+                wk52High,
+                wk52Low,
+                volume: currentVolume,
+                avgVolume
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching daily data for ${symbol}:`, error);
+        return null;
+    }
+}
+
+// ========================================
+// Finnhub SMA Indicator
+// ========================================
+async function fetchSmaFromApi(symbol, period = 200) {
+    const apiKey = appSettings.finnhubApiKey;
+    if (!apiKey) return null;
+
+    const now = Math.floor(Date.now() / 1000);
+    const from = now - (300 * 24 * 60 * 60); // 300 días para asegurar suficientes datos
+
+    const url = `https://finnhub.io/api/v1/indicator?symbol=${symbol}&resolution=D&from=${from}&to=${now}&indicator=sma&indicator_fields={"timeperiod":${period}}&token=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.warn(`SMA fetch failed for ${symbol}: ${response.status}`);
+            return null;
+        }
+
+        const data = await response.json();
+
+        if (data.sma && data.sma.length > 0) {
+            const lastIndex = data.sma.length - 1;
+            return data.sma[lastIndex];
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching SMA for ${symbol}:`, error);
+        return null;
+    }
+}
+
 // Función auxiliar para obtener datos históricos de Yahoo (para MACD, etc)
 async function fetchYahooHistoricalData(symbol) {
     // 1. Intentar obtener MACD real de Finnhub API (indicador 'macd')
@@ -237,64 +340,127 @@ async function fetchPrice(symbol) {
     }
 
     // ===========================================
-    // ESTRATEGIA 1: Intentar Finnhub primero
+    // ESTRATEGIA: Finnhub con Caching Inteligente
     // ===========================================
-    if (appSettings.finnhubApiKey) {
-        try {
-            const finnhubData = await fetchPriceFromFinnhub(symbol);
-
-            if (finnhubData) {
-                // Finnhub tiene el precio básico, pero necesitamos datos históricos para MACD
-                // Vamos a Yahoo SOLO para MACD y otros indicadores técnicos
-                const yahooHistorical = await fetchYahooHistoricalData(symbol);
-
-                // Combinar datos de Finnhub (precio actual) con Yahoo (históricos)
-                const newTimestamp = finnhubData.marketTime;
-
-                // Validar timestamp
-                const existingData = priceCache[symbol];
-                if (existingData && existingData.marketTime >= newTimestamp) {
-                    console.log(`⏭️ ${symbol}: Skipping update. Existing data is newer or same`);
-                    return { price: existingData.price, change: existingData.dailyChange };
-                }
-
-                // Actualizar priceCache con datos de Finnhub + indicadores de Yahoo
-                priceCache[symbol] = {
-                    price: finnhubData.price,
-                    dailyChange: finnhubData.dailyChange,
-                    dailyDiff: finnhubData.dailyDiff,
-                    dayHigh: finnhubData.dayHigh,
-                    dayLow: finnhubData.dayLow,
-                    wk52High: yahooHistorical?.wk52High || finnhubData.dayHigh,
-                    wk52Low: yahooHistorical?.wk52Low || finnhubData.dayLow,
-                    volume: yahooHistorical?.volume || 0,
-                    avgVolume: yahooHistorical?.avgVolume || 0,
-                    macd: yahooHistorical?.macd || null,
-                    stochastic: yahooHistorical?.stochastic || null,
-                    previousClose: finnhubData.previousClose,
-                    marketTime: newTimestamp,
-                    rating: null,
-                    timestamp: Date.now(),
-                    source: 'finnhub'
-                };
-
-                console.log(`✅ ${symbol}: Updated to $${finnhubData.price.toFixed(2)} from Finnhub at ${new Date(newTimestamp * 1000).toLocaleTimeString()}`);
-                // ⚠️ REMOVED saveData() - will be called once at end of refresh cycle
-                return { price: finnhubData.price, change: finnhubData.dailyChange };
-            }
-        } catch (error) {
-            console.warn(`⚠️ Finnhub failed for ${symbol}, falling back to Yahoo: `, error.message);
-        }
+    if (!appSettings.finnhubApiKey) {
+        console.warn(`⚠️ No Finnhub API key, falling back to Yahoo for ${symbol}`);
+        return await fallbackToYahoo(symbol);
     }
 
-    // ===========================================
-    // ESTRATEGIA 2: Fallback a Yahoo Finance
-    // ===========================================
-    console.log(`📊 Using Yahoo Finance for ${symbol}`);
+    try {
+        const cache = priceCache[symbol];
+        const now = Date.now();
+
+        // 1. SIEMPRE obtener precio actual de Finnhub (WebSocket lo maneja en tiempo real)
+        const finnhubData = await fetchPriceFromFinnhub(symbol);
+        if (!finnhubData) {
+            console.warn(`⚠️ Finnhub price failed for ${symbol}, using Yahoo fallback`);
+            return await fallbackToYahoo(symbol);
+        }
+
+        // 2. Verificar si necesitamos actualizar datos diarios (52-wk, SMA, volume)
+        const needsDailyUpdate = needsCacheUpdate(symbol, 'DAILY_DATA');
+
+        // 3. Verificar si necesitamos actualizar indicadores (MACD, Stochastic)
+        const needsIndicatorUpdate = needsCacheUpdate(symbol, 'INDICATORS');
+
+        // 4. Preparar promesas para llamadas paralelas
+        const promises = [];
+
+        // Datos diarios (1x por día)
+        if (needsDailyUpdate) {
+            promises.push(
+                fetchDailyDataFromFinnhub(symbol),
+                fetchSmaFromApi(symbol, 200)
+            );
+        }
+
+        // Indicadores técnicos (cada 5 min)
+        if (needsIndicatorUpdate) {
+            promises.push(
+                fetchMacdFromApi(symbol),
+                fetchStochasticFromApi(symbol)
+            );
+        }
+
+        // 5. Ejecutar todas las llamadas en paralelo
+        let dailyData = cache?.dailyData || {};
+        let sma200 = cache?.sma200 || 0;
+        let indicators = cache?.indicators || {};
+
+        if (promises.length > 0) {
+            const results = await Promise.all(promises);
+            let resultIndex = 0;
+
+            if (needsDailyUpdate) {
+                dailyData = results[resultIndex++] || {};
+                sma200 = results[resultIndex++] || 0;
+            }
+
+            if (needsIndicatorUpdate) {
+                const macdData = results[resultIndex++];
+                const stochData = results[resultIndex++];
+                indicators = {
+                    macd: macdData?.histogram || null,
+                    stochastic: stochData || null
+                };
+            }
+        }
+
+        // 6. Actualizar priceCache con timestamps
+        priceCache[symbol] = {
+            // Precio en tiempo real
+            price: finnhubData.price,
+            dailyChange: finnhubData.dailyChange,
+            dailyDiff: finnhubData.dailyDiff,
+            dayHigh: finnhubData.dayHigh,
+            dayLow: finnhubData.dayLow,
+            previousClose: finnhubData.previousClose,
+            marketTime: finnhubData.marketTime,
+
+            // Datos diarios
+            wk52High: dailyData.wk52High || finnhubData.dayHigh,
+            wk52Low: dailyData.wk52Low || finnhubData.dayLow,
+            volume: dailyData.volume || 0,
+            avgVolume: dailyData.avgVolume || 0,
+            sma200: sma200,
+
+            // Indicadores técnicos
+            macd: indicators.macd,
+            stochastic: indicators.stochastic,
+
+            // Timestamps de última actualización
+            lastUpdate: {
+                price: now,
+                DAILY_DATA: needsDailyUpdate ? now : (cache?.lastUpdate?.DAILY_DATA || now),
+                INDICATORS: needsIndicatorUpdate ? now : (cache?.lastUpdate?.INDICATORS || now)
+            },
+
+            // Metadata
+            rating: null,
+            timestamp: now,
+            source: 'finnhub'
+        };
+
+        const updateType = needsDailyUpdate ? '(full update)' : needsIndicatorUpdate ? '(indicators)' : '(price only)';
+        console.log(`✅ ${symbol}: Updated to $${finnhubData.price.toFixed(2)} ${updateType}`);
+
+        return { price: finnhubData.price, change: finnhubData.dailyChange };
+
+    } catch (error) {
+        console.error(`❌ Error in fetchPrice for ${symbol}:`, error);
+        return await fallbackToYahoo(symbol);
+    }
+}
+
+// ===========================================
+// Fallback a Yahoo Finance (Solo Emergencia)
+// ===========================================
+async function fallbackToYahoo(symbol) {
+    console.log(`📊 Using Yahoo Finance fallback for ${symbol}`);
 
     // Alternar entre query1 y query2 de Yahoo para evitar rate limits
     const yahooHost = Math.random() > 0.5 ? 'query1.finance.yahoo.com' : 'query2.finance.yahoo.com';
-    // Usar 2 meses para asegurar 26+ días de trading para MACD
     const url = `https://${yahooHost}/v8/finance/chart/${symbol}?interval=1d&range=2mo`;
 
     let lastError = null;
@@ -412,6 +578,7 @@ async function fetchPrice(symbol) {
     console.error(`❌ Failed to fetch ${symbol}. Keeping old price:`, priceCache[symbol]?.price || 'N/A');
     return null;
 }
+
 
 // Fetch analyst rating (scraping desde Yahoo Finance)
 async function fetchAnalystRating(symbol) {
