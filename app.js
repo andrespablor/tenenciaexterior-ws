@@ -1452,9 +1452,6 @@ function renderWatchlist() {
         </tr>`;
 
     }).join('');
-
-
-}).join('');
 }
 
 window.removeFromWatchlist = removeFromWatchlist;
