@@ -210,10 +210,11 @@ function subscribeToPortfolioAndWatchlist() {
         movements.forEach(m => symbols.add(m.symbol));
     }
 
-    // Símbolos de la watchlist
+    // Símbolos de la watchlist (nueva estructura con metadata)
     if (typeof watchlists !== 'undefined' && typeof currentWatchlistId !== 'undefined') {
-        const currentWatchlist = watchlists[currentWatchlistId] || [];
-        currentWatchlist.forEach(s => symbols.add(s));
+        const currentWatchlist = watchlists[currentWatchlistId];
+        const symbolsArray = currentWatchlist?.symbols || currentWatchlist || [];
+        symbolsArray.forEach(s => symbols.add(s));
     }
 
     // Suscribirse a todos

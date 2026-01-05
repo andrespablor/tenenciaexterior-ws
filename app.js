@@ -1026,9 +1026,14 @@ let watchlistSort = { key: null, asc: true };
 // Helper para obtener la lista actual
 function getCurrentWatchlist() {
     if (!watchlists[currentWatchlistId]) {
-        watchlists[currentWatchlistId] = [];
+        watchlists[currentWatchlistId] = {
+            displayName: currentWatchlistId === 'default' ? 'Mi Watchlist' : currentWatchlistId,
+            icon: '📋',
+            symbols: []
+        };
     }
-    return watchlists[currentWatchlistId];
+    // Retornar el array de símbolos (compatibilidad hacia atrás)
+    return watchlists[currentWatchlistId].symbols || watchlists[currentWatchlistId];
 }
 
 function initializeWatchlist() {
@@ -1047,10 +1052,15 @@ function initializeWatchlist() {
     // Crear nueva lista
     document.getElementById('add-watchlist-list').addEventListener('click', () => {
         const name = prompt('Nombre de la nueva lista:');
-        if (!name) return;
-        const id = name.toLowerCase().replace(/\s+/g, '_');
-        if (watchlists[id]) { alert('Ya existe'); return; }
-        watchlists[id] = [];
+        if (!name || !name.trim()) return;
+        const sanitized = name.trim();
+        const id = sanitized.toLowerCase().replace(/\s+/g, '_');
+        if (watchlists[id]) { alert('Ya existe una lista con ese nombre'); return; }
+        watchlists[id] = {
+            displayName: sanitized,  // Mantener mayúsculas
+            icon: '📋',
+            symbols: []
+        };
         currentWatchlistId = id;
         saveData();
         updateWatchlistSelector();
@@ -1068,17 +1078,25 @@ function initializeWatchlist() {
         renderWatchlist();
     });
 
-    // Editar nombre de lista
+    // Editar nombre de lista (ahora permite renombrar todas, incluso default)
     document.getElementById('edit-watchlist-name').addEventListener('click', () => {
-        if (currentWatchlistId === 'default') { alert('No podés renombrar la lista por defecto'); return; }
-        const newName = prompt('Nuevo nombre:', currentWatchlistId);
-        if (!newName) return;
-        const newId = newName.toLowerCase().replace(/\s+/g, '_');
-        if (newId === currentWatchlistId) return;
-        if (watchlists[newId]) { alert('Ya existe una lista con ese nombre'); return; }
-        watchlists[newId] = watchlists[currentWatchlistId];
-        delete watchlists[currentWatchlistId];
-        currentWatchlistId = newId;
+        const currentDisplayName = watchlists[currentWatchlistId]?.displayName || currentWatchlistId;
+        const newName = prompt('Nuevo nombre:', currentDisplayName);
+        if (!newName || !newName.trim()) return;
+        const sanitized = newName.trim();
+
+        // Solo actualizar displayName, mantener mismo ID
+        if (!watchlists[currentWatchlistId].displayName) {
+            // Migrar formato antiguo
+            watchlists[currentWatchlistId] = {
+                displayName: sanitized,
+                icon: '📋',
+                symbols: watchlists[currentWatchlistId]
+            };
+        } else {
+            watchlists[currentWatchlistId].displayName = sanitized;
+        }
+
         saveData();
         updateWatchlistSelector();
     });
@@ -1115,9 +1133,13 @@ function initializeWatchlist() {
 
 function updateWatchlistSelector() {
     const select = document.getElementById('watchlist-selector');
-    select.innerHTML = Object.keys(watchlists).map(id =>
-        `<option value="${id}" ${id === currentWatchlistId ? 'selected' : ''}>${id === 'default' ? '📋 Mi Watchlist' : '📋 ' + id}</option>`
-    ).join('');
+    select.innerHTML = Object.keys(watchlists).map(id => {
+        const wl = watchlists[id];
+        const displayName = wl.displayName || (id === 'default' ? 'Mi Watchlist' : id);
+        const icon = wl.icon || '📋';
+        const count = (wl.symbols || wl).length;
+        return `<option value="${id}" ${id === currentWatchlistId ? 'selected' : ''}>${icon} ${displayName} (${count})</option>`;
+    }).join('');
 }
 
 async function addToWatchlist() {

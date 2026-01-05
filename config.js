@@ -31,7 +31,14 @@ const DEFAULT_DAILY_STATS = [
 ];
 
 let dailyStats = [];
-let watchlists = { default: [] };
+// Nueva estructura de watchlists con metadata
+let watchlists = {
+    default: {
+        displayName: 'Mi Watchlist',
+        icon: '📋',
+        symbols: []
+    }
+};
 let currentWatchlistId = 'default';
 let priceAlerts = [];
 let priceCache = {};

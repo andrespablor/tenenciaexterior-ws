@@ -151,8 +151,32 @@ function loadData() {
         dailyStats = [...DEFAULT_DAILY_STATS];
     }
 
-    if (wls) watchlists = JSON.parse(wls);
-    else if (oldWl) watchlists = { default: JSON.parse(oldWl) };
+    if (wls) {
+        const loaded = JSON.parse(wls);
+        // Migrar formato antiguo (array) a nuevo (objeto con metadata)
+        watchlists = {};
+        for (const [id, value] of Object.entries(loaded)) {
+            if (Array.isArray(value)) {
+                // Formato antiguo: { default: ['AAPL', 'MSFT'] }
+                watchlists[id] = {
+                    displayName: id === 'default' ? 'Mi Watchlist' : id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                    icon: '📋',
+                    symbols: value
+                };
+            } else {
+                // Formato nuevo: ya tiene metadata
+                watchlists[id] = value;
+            }
+        }
+    } else if (oldWl) {
+        watchlists = {
+            default: {
+                displayName: 'Mi Watchlist',
+                icon: '📋',
+                symbols: JSON.parse(oldWl)
+            }
+        };
+    }
     if (wlId) currentWatchlistId = wlId;
     if (alerts) priceAlerts = JSON.parse(alerts);
     if (settings) {
