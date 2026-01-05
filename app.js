@@ -2205,9 +2205,10 @@ window.addEventListener('beforeinstallprompt', function (e) {
     // Optionally save event to trigger install prompt later
     window.deferredPrompt = e;
 
-    if (typeof showToast === 'function') {
-        showToast('💡 Puedes instalar esta app en tu dispositivo!', 'info', 5000);
-    }
+    // Toast desactivado - no molestar al usuario
+    // if (typeof showToast === 'function') {
+    //     showToast('💡 Puedes instalar esta app en tu dispositivo!', 'info', 5000);
+    // }
 });
 
 // PWA: Detect successful install
