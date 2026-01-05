@@ -1428,6 +1428,21 @@ function renderWatchlist() {
             }
         }
 
+        // Stochastic desde priceCache
+        const cache = priceCache[symbol] || {};
+        const stoch = cache.stochastic || null;
+        let stochClass = '';
+        let stochDisplay = '-';
+        if (stoch && stoch.k !== null) {
+            const k = stoch.k;
+            stochDisplay = k.toFixed(0); // Mostrar solo %K (sin decimales)
+            if (k > 80) {
+                stochClass = 'cell-positive'; // Sobrecompra (verde)
+            } else if (k < 20) {
+                stochClass = 'cell-negative'; // Sobreventa (rojo)
+            }
+        }
+
         // Volume formatting
         const volDisplay = volume > 1000000 ? (volume / 1000000).toFixed(1) + 'M' : volume > 1000 ? (volume / 1000).toFixed(0) + 'K' : volume.toString();
         const avgVolDisplay = avgVolume > 1000000 ? (avgVolume / 1000000).toFixed(1) + 'M' : avgVolume > 1000 ? (avgVolume / 1000).toFixed(0) + 'K' : avgVolume.toString();
@@ -1489,6 +1504,7 @@ function renderWatchlist() {
             <td>${avgVolDisplay}</td>
             <td class="${macdClass}">${macdDisplay}</td>
             <td class="cell-${smaStatus}" title="SMA 200: $${fmt(sma200, 2)}">${smaLabel} $${fmt(sma200, 0)}</td>
+            <td class="${stochClass}">${stochDisplay}</td>
             <td class="cell-sector" title="${window.stockProfiles?.[symbol]?.name || ''}">
                 ${window.stockProfiles?.[symbol]?.sector || SECTOR_MAP[symbol] || 'Otro'}
             </td>
