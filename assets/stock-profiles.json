@@ -1,0 +1,2634 @@
+﻿{
+    "VRSK":  {
+                 "sector":  "Professional Services",
+                 "name":  "Verisk Analytics Inc",
+                 "currency":  "USD",
+                 "ticker":  "VRSK",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/VRSK.png",
+                 "country":  "US"
+             },
+    "NET":  {
+                "sector":  "Technology",
+                "name":  "Cloudflare Inc",
+                "currency":  "USD",
+                "ticker":  "NET",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NET.png",
+                "country":  "US"
+            },
+    "MCHP":  {
+                 "sector":  "Semiconductors",
+                 "name":  "Microchip Technology Inc",
+                 "currency":  "USD",
+                 "ticker":  "MCHP",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MCHP.png",
+                 "country":  "US"
+             },
+    "IDXX":  {
+                 "sector":  "Health Care",
+                 "name":  "IDEXX Laboratories Inc",
+                 "currency":  "USD",
+                 "ticker":  "IDXX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/IDXX.png",
+                 "country":  "US"
+             },
+    "ETHE":  {
+                 "sector":  "N/A",
+                 "name":  "Grayscale Ethereum Trust ETF",
+                 "currency":  "USD",
+                 "ticker":  "ETHE",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950590382296.png",
+                 "country":  "US"
+             },
+    "ELV":  {
+                "sector":  "Health Care",
+                "name":  "Elevance Health Inc",
+                "currency":  "USD",
+                "ticker":  "ELV",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ANTM.png",
+                "country":  "US"
+            },
+    "MELI":  {
+                 "sector":  "Retail",
+                 "name":  "MercadoLibre Inc",
+                 "currency":  "USD",
+                 "ticker":  "MELI",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MELI.png",
+                 "country":  "UY"
+             },
+    "AVAL":  {
+                 "sector":  "Banking",
+                 "name":  "Grupo Aval Acciones y Valores SA",
+                 "currency":  "COP",
+                 "ticker":  "GRUPOAVAL.BC",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GRUPOAVAL.BC.png",
+                 "country":  "CO"
+             },
+    "XOM":  {
+                "sector":  "Energy",
+                "name":  "Exxon Mobil Corp",
+                "currency":  "USD",
+                "ticker":  "XOM",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/XOM.png",
+                "country":  "US"
+            },
+    "NVO":  {
+                "sector":  "Pharmaceuticals",
+                "name":  "Novo Nordisk A/S",
+                "currency":  "DKK",
+                "ticker":  "NOVO B.CO",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NOVO B.CO.png",
+                "country":  "DK"
+            },
+    "PLD":  {
+                "sector":  "Real Estate",
+                "name":  "Prologis Inc",
+                "currency":  "USD",
+                "ticker":  "PLD",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/942959032636.png",
+                "country":  "US"
+            },
+    "STM":  {
+                "sector":  "Semiconductors",
+                "name":  "STMicroelectronics NV",
+                "currency":  "USD",
+                "ticker":  "STMPA.PA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/STM.PA.png",
+                "country":  "NL"
+            },
+    "QCOM":  {
+                 "sector":  "Semiconductors",
+                 "name":  "Qualcomm Inc",
+                 "currency":  "USD",
+                 "ticker":  "QCOM",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/QCOM.png",
+                 "country":  "US"
+             },
+    "HES":  {
+                "sector":  "Energy",
+                "name":  "Hess Corp",
+                "currency":  "USD",
+                "ticker":  "HES",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/HES.png",
+                "country":  "US"
+            },
+    "INTU":  {
+                 "sector":  "Technology",
+                 "name":  "Intuit Inc",
+                 "currency":  "USD",
+                 "ticker":  "INTU",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/INTU.png",
+                 "country":  "US"
+             },
+    "ZM":  {
+               "sector":  "Technology",
+               "name":  "Zoom Communications Inc",
+               "currency":  "USD",
+               "ticker":  "ZM",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ZM.png",
+               "country":  "US"
+           },
+    "DIA":  {
+                "name":  "DIA",
+                "sector":  "ETF - Dow Jones"
+            },
+    "TJX":  {
+                "sector":  "Retail",
+                "name":  "TJX Companies Inc",
+                "currency":  "USD",
+                "ticker":  "TJX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TJX.png",
+                "country":  "US"
+            },
+    "ACN":  {
+                "sector":  "Technology",
+                "name":  "Accenture PLC",
+                "currency":  "USD",
+                "ticker":  "ACN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ACN.png",
+                "country":  "IE"
+            },
+    "ZS":  {
+               "sector":  "Technology",
+               "name":  "Zscaler Inc",
+               "currency":  "USD",
+               "ticker":  "ZS",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ZS.png",
+               "country":  "US"
+           },
+    "BKR":  {
+                "sector":  "Energy",
+                "name":  "Baker Hughes Co",
+                "currency":  "USD",
+                "ticker":  "BKR",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BKR.png",
+                "country":  "US"
+            },
+    "PAGS":  {
+                 "sector":  "Financial Services",
+                 "name":  "PagSeguro Digital Ltd",
+                 "currency":  "BRL",
+                 "ticker":  "PAGS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PAGS.png",
+                 "country":  "KY"
+             },
+    "AMAT":  {
+                 "sector":  "Semiconductors",
+                 "name":  "Applied Materials Inc",
+                 "currency":  "USD",
+                 "ticker":  "AMAT",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AMAT.png",
+                 "country":  "US"
+             },
+    "XLI":  {
+                "name":  "XLI",
+                "sector":  "ETF - Industrials"
+            },
+    "ODFL":  {
+                 "sector":  "Road \u0026 Rail",
+                 "name":  "Old Dominion Freight Line Inc",
+                 "currency":  "USD",
+                 "ticker":  "ODFL",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ODFL.png",
+                 "country":  "US"
+             },
+    "EWW":  {
+                "name":  "EWW",
+                "sector":  "ETF - Mexico"
+            },
+    "RELX":  {
+                 "sector":  "Professional Services",
+                 "name":  "RELX PLC",
+                 "currency":  "GBP",
+                 "ticker":  "REL.L",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/REL.L.png",
+                 "country":  "GB"
+             },
+    "CIG":  {
+                "sector":  "Utilities",
+                "name":  "Energy of Minas Gerais Co",
+                "currency":  "BRL",
+                "ticker":  "CMIG4.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CMIG4.SA.png",
+                "country":  "BR"
+            },
+    "LOW":  {
+                "sector":  "Retail",
+                "name":  "Lowe\u0027s Companies Inc",
+                "currency":  "USD",
+                "ticker":  "LOW",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/LOW.png",
+                "country":  "US"
+            },
+    "AGG":  {
+                "name":  "AGG",
+                "sector":  "ETF - Bonds (Total)"
+            },
+    "PATH":  {
+                 "sector":  "Technology",
+                 "name":  "UiPath Inc",
+                 "currency":  "USD",
+                 "ticker":  "PATH",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PATH.png",
+                 "country":  "US"
+             },
+    "XPEV":  {
+                 "sector":  "Automobiles",
+                 "name":  "Xpeng Inc",
+                 "currency":  "CNY",
+                 "ticker":  "XPEV",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/XPEV.png",
+                 "country":  "CN"
+             },
+    "APP":  {
+                "sector":  "Technology",
+                "name":  "Applovin Corp",
+                "currency":  "USD",
+                "ticker":  "APP",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/APP.png",
+                "country":  "US"
+            },
+    "PBR.A":  {
+                  "sector":  "Energy",
+                  "name":  "Petroleo Brasileiro SA Petrobras",
+                  "currency":  "BRL",
+                  "ticker":  "PETR4.SA",
+                  "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PETR4.SA.png",
+                  "country":  "BR"
+              },
+    "MU":  {
+               "sector":  "Semiconductors",
+               "name":  "Micron Technology Inc",
+               "currency":  "USD",
+               "ticker":  "MU",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MU.png",
+               "country":  "US"
+           },
+    "KEY":  {
+                "sector":  "Banking",
+                "name":  "KeyCorp",
+                "currency":  "USD",
+                "ticker":  "KEY",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/KEY.png",
+                "country":  "US"
+            },
+    "INDA":  {
+                 "name":  "INDA",
+                 "sector":  "ETF - India"
+             },
+    "PNC":  {
+                "sector":  "Banking",
+                "name":  "PNC Financial Services Group Inc",
+                "currency":  "USD",
+                "ticker":  "PNC",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PNC.png",
+                "country":  "US"
+            },
+    "RIO":  {
+                "sector":  "Metals \u0026 Mining",
+                "name":  "Rio Tinto PLC",
+                "currency":  "USD",
+                "ticker":  "RIO.L",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/RIO.L.png",
+                "country":  "GB"
+            },
+    "CL":  {
+               "sector":  "Consumer products",
+               "name":  "Colgate-Palmolive Co",
+               "currency":  "USD",
+               "ticker":  "CL",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CL.png",
+               "country":  "US"
+           },
+    "AMX":  {
+                "sector":  "Telecommunication",
+                "name":  "America Movil SAB de CV",
+                "currency":  "MXN",
+                "ticker":  "AMXB.MX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AMXL.MX.png",
+                "country":  "MX"
+            },
+    "MSFT":  {
+                 "sector":  "Technology",
+                 "name":  "Microsoft Corp",
+                 "currency":  "USD",
+                 "ticker":  "MSFT",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MSFT.png",
+                 "country":  "US"
+             },
+    "JNJ":  {
+                "sector":  "Pharmaceuticals",
+                "name":  "Johnson \u0026 Johnson",
+                "currency":  "USD",
+                "ticker":  "JNJ",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/JNJ.png",
+                "country":  "US"
+            },
+    "TSLA":  {
+                 "sector":  "Automobiles",
+                 "name":  "Tesla Inc",
+                 "currency":  "USD",
+                 "ticker":  "TSLA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TSLA.png",
+                 "country":  "US"
+             },
+    "DIS":  {
+                "sector":  "Media",
+                "name":  "Walt Disney Co",
+                "currency":  "USD",
+                "ticker":  "DIS",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DIS.png",
+                "country":  "US"
+            },
+    "SMH":  {
+                "name":  "SMH",
+                "sector":  "ETF - Semiconductors"
+            },
+    "DEO":  {
+                "sector":  "Beverages",
+                "name":  "Diageo PLC",
+                "currency":  "USD",
+                "ticker":  "DGE.L",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DGE.L.png",
+                "country":  "GB"
+            },
+    "LTM":  {
+                "sector":  "Airlines",
+                "name":  "LATAM Airlines Group SA",
+                "currency":  "USD",
+                "ticker":  "LTM.SN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/942958634826.png",
+                "country":  "CL"
+            },
+    "HON":  {
+                "sector":  "Industrial Conglomerates",
+                "name":  "Honeywell International Inc",
+                "currency":  "USD",
+                "ticker":  "HON",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/942965692746.png",
+                "country":  "US"
+            },
+    "SOXX":  {
+                 "name":  "SOXX",
+                 "sector":  "ETF - Semiconductors"
+             },
+    "PBR":  {
+                "sector":  "Energy",
+                "name":  "Petroleo Brasileiro SA Petrobras",
+                "currency":  "BRL",
+                "ticker":  "PETR4.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PETR4.SA.png",
+                "country":  "BR"
+            },
+    "FISV":  {
+                 "sector":  "Financial Services",
+                 "name":  "Fiserv Inc",
+                 "currency":  "USD",
+                 "ticker":  "FISV",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/FISV.png",
+                 "country":  "US"
+             },
+    "PAYX":  {
+                 "sector":  "Professional Services",
+                 "name":  "Paychex Inc",
+                 "currency":  "USD",
+                 "ticker":  "PAYX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PAYX.png",
+                 "country":  "US"
+             },
+    "TXN":  {
+                "sector":  "Semiconductors",
+                "name":  "Texas Instruments Inc",
+                "currency":  "USD",
+                "ticker":  "TXN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TXN.png",
+                "country":  "US"
+            },
+    "BHP":  {
+                "sector":  "Metals \u0026 Mining",
+                "name":  "BHP Group Ltd",
+                "currency":  "USD",
+                "ticker":  "BHP.AX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BHP.AX.png",
+                "country":  "AU"
+            },
+    "MRK":  {
+                "sector":  "Pharmaceuticals",
+                "name":  "Merck \u0026 Co Inc",
+                "currency":  "USD",
+                "ticker":  "MRK",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MRK.png",
+                "country":  "US"
+            },
+    "CRH":  {
+                "sector":  "Construction",
+                "name":  "CRH PLC",
+                "currency":  "USD",
+                "ticker":  "CRH",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CRH.L.png",
+                "country":  "IE"
+            },
+    "TRV":  {
+                "sector":  "Insurance",
+                "name":  "Travelers Companies Inc",
+                "currency":  "USD",
+                "ticker":  "TRV",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TRV.png",
+                "country":  "US"
+            },
+    "XLF":  {
+                "name":  "XLF",
+                "sector":  "ETF - Financials"
+            },
+    "PSX":  {
+                "sector":  "Energy",
+                "name":  "Phillips 66",
+                "currency":  "USD",
+                "ticker":  "PSX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PSX.png",
+                "country":  "US"
+            },
+    "DUK":  {
+                "sector":  "Utilities",
+                "name":  "Duke Energy Corp",
+                "currency":  "USD",
+                "ticker":  "DUK",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DUK.png",
+                "country":  "US"
+            },
+    "CSCO":  {
+                 "sector":  "Communications",
+                 "name":  "Cisco Systems Inc",
+                 "currency":  "USD",
+                 "ticker":  "CSCO",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950800186156.png",
+                 "country":  "US"
+             },
+    "KDP":  {
+                "sector":  "Beverages",
+                "name":  "Keurig Dr Pepper Inc",
+                "currency":  "USD",
+                "ticker":  "KDP",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/KDP.png",
+                "country":  "US"
+            },
+    "EEM":  {
+                "name":  "EEM",
+                "sector":  "ETF - Emerging Mkts"
+            },
+    "XLV":  {
+                "name":  "XLV",
+                "sector":  "ETF - Health Care"
+            },
+    "COF":  {
+                "sector":  "Financial Services",
+                "name":  "Capital One Financial Corp",
+                "currency":  "USD",
+                "ticker":  "COF",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/COF.png",
+                "country":  "US"
+            },
+    "MO":  {
+               "sector":  "Tobacco",
+               "name":  "Altria Group Inc",
+               "currency":  "USD",
+               "ticker":  "MO",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MO.png",
+               "country":  "US"
+           },
+    "PG":  {
+               "sector":  "Consumer products",
+               "name":  "Procter \u0026 Gamble Co",
+               "currency":  "USD",
+               "ticker":  "PG",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PG.png",
+               "country":  "US"
+           },
+    "AAPL":  {
+                 "sector":  "Technology",
+                 "name":  "Apple Inc",
+                 "currency":  "USD",
+                 "ticker":  "AAPL",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AAPL.png",
+                 "country":  "US"
+             },
+    "NVS":  {
+                "sector":  "Pharmaceuticals",
+                "name":  "Novartis AG",
+                "currency":  "USD",
+                "ticker":  "NOVN.SW",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NOVN.SW.png",
+                "country":  "CH"
+            },
+    "BITO":  {
+                 "name":  "BITO",
+                 "sector":  "ETF - Bitcoin Strat."
+             },
+    "ABT":  {
+                "sector":  "Health Care",
+                "name":  "Abbott Laboratories",
+                "currency":  "USD",
+                "ticker":  "ABT",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ABT.png",
+                "country":  "US"
+            },
+    "ANSS":  {
+                 "sector":  "Technology",
+                 "name":  "ANSYS Inc",
+                 "currency":  "USD",
+                 "ticker":  "ANSS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ANSS.png",
+                 "country":  "US"
+             },
+    "BCH":  {
+                "sector":  "Banking",
+                "name":  "Banco de Chile",
+                "currency":  "CLP",
+                "ticker":  "CHILE.SN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CHILE.SN.png",
+                "country":  "CL"
+            },
+    "GDXJ":  {
+                 "name":  "GDXJ",
+                 "sector":  "ETF - Junior Gold"
+             },
+    "VIPS":  {
+                 "sector":  "Retail",
+                 "name":  "Vipshop Holdings Ltd",
+                 "currency":  "CNY",
+                 "ticker":  "VIPS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/VIPS.png",
+                 "country":  "CN"
+             },
+    "YPF":  {
+                "sector":  "Energy",
+                "name":  "YPF SA",
+                "currency":  "ARS",
+                "ticker":  "YPFD2.BA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/YPFD3.BA.png",
+                "country":  "AR"
+            },
+    "TSM":  {
+                "sector":  "Semiconductors",
+                "name":  "Taiwan Semiconductor Manufacturing Co Ltd",
+                "currency":  "TWD",
+                "ticker":  "2330.TW",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/2330.TW.png",
+                "country":  "TW"
+            },
+    "PM":  {
+               "sector":  "Tobacco",
+               "name":  "Philip Morris International Inc",
+               "currency":  "USD",
+               "ticker":  "PM",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PM.png",
+               "country":  "US"
+           },
+    "NU":  {
+               "sector":  "Banking",
+               "name":  "Nu Holdings Ltd",
+               "currency":  "USD",
+               "ticker":  "NU",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NU.png",
+               "country":  "BR"
+           },
+    "AMD":  {
+                "sector":  "Semiconductors",
+                "name":  "Advanced Micro Devices Inc",
+                "currency":  "USD",
+                "ticker":  "AMD",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AMD.png",
+                "country":  "US"
+            },
+    "BUD":  {
+                "sector":  "Beverages",
+                "name":  "Anheuser-Busch Inbev SA",
+                "currency":  "USD",
+                "ticker":  "ABI.BR",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/942958593266.png",
+                "country":  "BE"
+            },
+    "VALE":  {
+                 "sector":  "Metals \u0026 Mining",
+                 "name":  "Vale SA",
+                 "currency":  "BRL",
+                 "ticker":  "VALE3.SA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/VALE3.SA.png",
+                 "country":  "BR"
+             },
+    "EWU":  {
+                "name":  "EWU",
+                "sector":  "ETF - UK"
+            },
+    "GIS":  {
+                "sector":  "Food Products",
+                "name":  "General Mills Inc",
+                "currency":  "USD",
+                "ticker":  "GIS",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GIS.png",
+                "country":  "US"
+            },
+    "CVX":  {
+                "sector":  "Energy",
+                "name":  "Chevron Corp",
+                "currency":  "USD",
+                "ticker":  "CVX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CVX.png",
+                "country":  "US"
+            },
+    "TFC":  {
+                "sector":  "Banking",
+                "name":  "Truist Financial Corp",
+                "currency":  "USD",
+                "ticker":  "TFC",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TFC.png",
+                "country":  "US"
+            },
+    "UGP":  {
+                "sector":  "Retail",
+                "name":  "Ultrapar Participacoes SA",
+                "currency":  "BRL",
+                "ticker":  "UGPA3.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/UGPA3.SA.png",
+                "country":  "BR"
+            },
+    "FTNT":  {
+                 "sector":  "Technology",
+                 "name":  "Fortinet Inc",
+                 "currency":  "USD",
+                 "ticker":  "FTNT",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/FTNT.png",
+                 "country":  "US"
+             },
+    "XLE":  {
+                "name":  "XLE",
+                "sector":  "ETF - Energy"
+            },
+    "DIDIY":  {
+                  "sector":  "Road \u0026 Rail",
+                  "name":  "DiDi Global Inc",
+                  "currency":  "CNY",
+                  "ticker":  "DIDIY",
+                  "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DIDI.png",
+                  "country":  "CN"
+              },
+    "CTAS":  {
+                 "sector":  "Commercial Services \u0026 Supplies",
+                 "name":  "Cintas Corp",
+                 "currency":  "USD",
+                 "ticker":  "CTAS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CTAS.png",
+                 "country":  "US"
+             },
+    "XLC":  {
+                "name":  "XLC",
+                "sector":  "ETF - Communication"
+            },
+    "SNOW":  {
+                 "sector":  "Technology",
+                 "name":  "Snowflake Inc",
+                 "currency":  "USD",
+                 "ticker":  "SNOW",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SNOW.png",
+                 "country":  "US"
+             },
+    "DDOG":  {
+                 "sector":  "Technology",
+                 "name":  "Datadog Inc",
+                 "currency":  "USD",
+                 "ticker":  "DDOG",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DDOG.png",
+                 "country":  "US"
+             },
+    "EWJ":  {
+                "name":  "EWJ",
+                "sector":  "ETF - Japan"
+            },
+    "DLTR":  {
+                 "sector":  "Retail",
+                 "name":  "Dollar Tree Inc",
+                 "currency":  "USD",
+                 "ticker":  "DLTR",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DLTR.png",
+                 "country":  "US"
+             },
+    "CHKP":  {
+                 "sector":  "Technology",
+                 "name":  "Check Point Software Technologies Ltd",
+                 "currency":  "USD",
+                 "ticker":  "CHKP",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CHKP.png",
+                 "country":  "IL"
+             },
+    "RTX":  {
+                "sector":  "Aerospace \u0026 Defense",
+                "name":  "RTX Corp",
+                "currency":  "USD",
+                "ticker":  "RTX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/RTX.png",
+                "country":  "US"
+            },
+    "BRFS":  {
+                 "sector":  "Food Products",
+                 "name":  "BRF SA",
+                 "currency":  "BRL",
+                 "ticker":  "BRFS3.SA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BRFS3.SA.png",
+                 "country":  "BR"
+             },
+    "META":  {
+                 "sector":  "Media",
+                 "name":  "Meta Platforms Inc",
+                 "currency":  "USD",
+                 "ticker":  "META",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/FB.png",
+                 "country":  "US"
+             },
+    "TX":  {
+               "sector":  "Metals \u0026 Mining",
+               "name":  "Ternium SA",
+               "currency":  "USD",
+               "ticker":  "TX",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TX.png",
+               "country":  "LU"
+           },
+    "YMM":  {
+                "sector":  "Road \u0026 Rail",
+                "name":  "Full Truck Alliance Co Ltd",
+                "currency":  "CNY",
+                "ticker":  "YMM",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950791631716.png",
+                "country":  "CN"
+            },
+    "ARGT":  {
+                 "name":  "ARGT",
+                 "sector":  "ETF - Argentina"
+             },
+    "IBN":  {
+                "sector":  "Banking",
+                "name":  "ICICI Bank Ltd",
+                "currency":  "INR",
+                "ticker":  "ICICIBANK.NS",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ICICIBANK.NS.png",
+                "country":  "IN"
+            },
+    "IWM":  {
+                "name":  "IWM",
+                "sector":  "ETF - Russell 2000"
+            },
+    "TTE":  {
+                "sector":  "Energy",
+                "name":  "TotalEnergies SE",
+                "currency":  "USD",
+                "ticker":  "TTE.PA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TTE.PA.png",
+                "country":  "FR"
+            },
+    "TEAM":  {
+                 "sector":  "Technology",
+                 "name":  "Atlassian Corp",
+                 "currency":  "USD",
+                 "ticker":  "TEAM",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950834860636.png",
+                 "country":  "AU"
+             },
+    "KHC":  {
+                "sector":  "Food Products",
+                "name":  "Kraft Heinz Co",
+                "currency":  "USD",
+                "ticker":  "KHC",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/KHC.png",
+                "country":  "US"
+            },
+    "GOOG":  {
+                 "sector":  "Media",
+                 "name":  "Alphabet Inc",
+                 "currency":  "USD",
+                 "ticker":  "GOOGL",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GOOG.png",
+                 "country":  "US"
+             },
+    "BA":  {
+               "sector":  "Aerospace \u0026 Defense",
+               "name":  "Boeing Co",
+               "currency":  "USD",
+               "ticker":  "BA",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BA.png",
+               "country":  "US"
+           },
+    "SID":  {
+                "sector":  "Metals \u0026 Mining",
+                "name":  "Companhia Siderurgica Nacional SA",
+                "currency":  "BRL",
+                "ticker":  "CSNA3.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CSNA3.SA.png",
+                "country":  "BR"
+            },
+    "PEG":  {
+                "sector":  "Utilities",
+                "name":  "Public Service Enterprise Group Inc",
+                "currency":  "USD",
+                "ticker":  "PEG",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PEG.png",
+                "country":  "US"
+            },
+    "GLD":  {
+                "name":  "GLD",
+                "sector":  "ETF - Gold"
+            },
+    "BIIB":  {
+                 "sector":  "Biotechnology",
+                 "name":  "Biogen Inc",
+                 "currency":  "USD",
+                 "ticker":  "BIIB",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BIIB.png",
+                 "country":  "US"
+             },
+    "KMI":  {
+                "sector":  "Energy",
+                "name":  "Kinder Morgan Inc",
+                "currency":  "USD",
+                "ticker":  "KMI",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/KMI.png",
+                "country":  "US"
+            },
+    "TENB":  {
+                 "sector":  "Technology",
+                 "name":  "Tenable Holdings Inc",
+                 "currency":  "USD",
+                 "ticker":  "TENB",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TENB.png",
+                 "country":  "US"
+             },
+    "BILI":  {
+                 "sector":  "Media",
+                 "name":  "Bilibili Inc",
+                 "currency":  "CNY",
+                 "ticker":  "BILI",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BILI.png",
+                 "country":  "CN"
+             },
+    "OKTA":  {
+                 "sector":  "Technology",
+                 "name":  "Okta Inc",
+                 "currency":  "USD",
+                 "ticker":  "OKTA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/OKTA.png",
+                 "country":  "US"
+             },
+    "CMCSA":  {
+                  "sector":  "Media",
+                  "name":  "Comcast Corp",
+                  "currency":  "USD",
+                  "ticker":  "CMCSA",
+                  "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CMCSA.png",
+                  "country":  "US"
+              },
+    "ILMN":  {
+                 "sector":  "Life Sciences Tools \u0026 Services",
+                 "name":  "Illumina Inc",
+                 "currency":  "USD",
+                 "ticker":  "ILMN",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ILMN.png",
+                 "country":  "US"
+             },
+    "USB":  {
+                "sector":  "Banking",
+                "name":  "US Bancorp",
+                "currency":  "USD",
+                "ticker":  "USB",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/USB.png",
+                "country":  "US"
+            },
+    "SRE":  {
+                "sector":  "Utilities",
+                "name":  "Sempra",
+                "currency":  "USD",
+                "ticker":  "SRE",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SRE.png",
+                "country":  "US"
+            },
+    "ARKG":  {
+                 "name":  "ARKG",
+                 "sector":  "ETF - Volatility/Thematic"
+             },
+    "GLOB":  {
+                 "sector":  "Technology",
+                 "name":  "Globant SA",
+                 "currency":  "USD",
+                 "ticker":  "GLOB",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GLOB.png",
+                 "country":  "LU"
+             },
+    "XP":  {
+               "sector":  "Financial Services",
+               "name":  "XP Inc",
+               "currency":  "BRL",
+               "ticker":  "XP",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/XP.png",
+               "country":  "KY"
+           },
+    "BZ":  {
+               "sector":  "Professional Services",
+               "name":  "Kanzhun Ltd",
+               "currency":  "CNY",
+               "ticker":  "BZ",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950801843296.png",
+               "country":  "CN"
+           },
+    "WFC":  {
+                "sector":  "Banking",
+                "name":  "Wells Fargo \u0026 Co",
+                "currency":  "USD",
+                "ticker":  "WFC",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/WFC.png",
+                "country":  "US"
+            },
+    "TLT":  {
+                "name":  "TLT",
+                "sector":  "ETF - Bonds (20y)"
+            },
+    "DOCU":  {
+                 "sector":  "Technology",
+                 "name":  "DocuSign Inc",
+                 "currency":  "USD",
+                 "ticker":  "DOCU",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DOCU.png",
+                 "country":  "US"
+             },
+    "NVDA":  {
+                 "sector":  "Semiconductors",
+                 "name":  "NVIDIA Corp",
+                 "currency":  "USD",
+                 "ticker":  "NVDA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NVDA.png",
+                 "country":  "US"
+             },
+    "HAL":  {
+                "sector":  "Energy",
+                "name":  "Halliburton Co",
+                "currency":  "USD",
+                "ticker":  "HAL",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/HAL.png",
+                "country":  "US"
+            },
+    "XLB":  {
+                "name":  "XLB",
+                "sector":  "ETF - Materials"
+            },
+    "UL":  {
+               "sector":  "Consumer products",
+               "name":  "Unilever PLC",
+               "currency":  "EUR",
+               "ticker":  "ULVR.L",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ULVR.L.png",
+               "country":  "GB"
+           },
+    "VIV":  {
+                "sector":  "Telecommunication",
+                "name":  "Telefonica Brasil SA",
+                "currency":  "BRL",
+                "ticker":  "VIVT3.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/VIVT3.SA.png",
+                "country":  "BR"
+            },
+    "BEST":  {
+                 "sector":  "Logistics \u0026 Transportation",
+                 "name":  "BEST Inc",
+                 "currency":  "CNY",
+                 "ticker":  "BEST",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BEST.png",
+                 "country":  "CN"
+             },
+    "AXP":  {
+                "sector":  "Financial Services",
+                "name":  "American Express Co",
+                "currency":  "USD",
+                "ticker":  "AXP",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AXP.png",
+                "country":  "US"
+            },
+    "ASML":  {
+                 "sector":  "Semiconductors",
+                 "name":  "ASML Holding NV",
+                 "currency":  "EUR",
+                 "ticker":  "ASML.AS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ASML.AS.png",
+                 "country":  "NL"
+             },
+    "ADP":  {
+                "sector":  "Professional Services",
+                "name":  "Automatic Data Processing Inc",
+                "currency":  "USD",
+                "ticker":  "ADP",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ADP.png",
+                "country":  "US"
+            },
+    "GS":  {
+               "sector":  "Financial Services",
+               "name":  "Goldman Sachs Group Inc",
+               "currency":  "USD",
+               "ticker":  "GS",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GS.png",
+               "country":  "US"
+           },
+    "EA":  {
+               "sector":  "Media",
+               "name":  "Electronic Arts Inc",
+               "currency":  "USD",
+               "ticker":  "EA",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/EA.png",
+               "country":  "US"
+           },
+    "PYPL":  {
+                 "sector":  "Financial Services",
+                 "name":  "PayPal Holdings Inc",
+                 "currency":  "USD",
+                 "ticker":  "PYPL",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PYPL.png",
+                 "country":  "US"
+             },
+    "ADSK":  {
+                 "sector":  "Technology",
+                 "name":  "Autodesk Inc",
+                 "currency":  "USD",
+                 "ticker":  "ADSK",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ADSK.png",
+                 "country":  "US"
+             },
+    "COP":  {
+                "sector":  "Energy",
+                "name":  "ConocoPhillips",
+                "currency":  "USD",
+                "ticker":  "COP",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/COP.png",
+                "country":  "US"
+            },
+    "EBR":  {
+                "sector":  "Utilities",
+                "name":  "Centrais Eletricas Brasileiras SA - Eletrobras",
+                "currency":  "BRL",
+                "ticker":  "ELET6.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ELET6.SA.png",
+                "country":  "BR"
+            },
+    "KMB":  {
+                "sector":  "Consumer products",
+                "name":  "Kimberly-Clark Corp",
+                "currency":  "USD",
+                "ticker":  "KMB",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/KMB.png",
+                "country":  "US"
+            },
+    "BIDU":  {
+                 "sector":  "Media",
+                 "name":  "Baidu Inc",
+                 "currency":  "CNY",
+                 "ticker":  "BIDU",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BIDU.png",
+                 "country":  "CN"
+             },
+    "MOMO":  {
+                 "sector":  "Media",
+                 "name":  "Hello Group Inc",
+                 "currency":  "CNY",
+                 "ticker":  "MOMO",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MOMO.png",
+                 "country":  "CN"
+             },
+    "BMA":  {
+                "sector":  "Banking",
+                "name":  "Banco Macro SA",
+                "currency":  "ARS",
+                "ticker":  "BMA2.BA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BMA3.BA.png",
+                "country":  "AR"
+            },
+    "DXCM":  {
+                 "sector":  "Health Care",
+                 "name":  "Dexcom Inc",
+                 "currency":  "USD",
+                 "ticker":  "DXCM",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DXCM.png",
+                 "country":  "US"
+             },
+    "SPGI":  {
+                 "sector":  "Financial Services",
+                 "name":  "S\u0026P Global Inc",
+                 "currency":  "USD",
+                 "ticker":  "SPGI",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SPGI.png",
+                 "country":  "US"
+             },
+    "JPM":  {
+                "sector":  "Banking",
+                "name":  "JPMorgan Chase \u0026 Co",
+                "currency":  "USD",
+                "ticker":  "JPM",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/JPM.png",
+                "country":  "US"
+            },
+    "AMGN":  {
+                 "sector":  "Biotechnology",
+                 "name":  "Amgen Inc",
+                 "currency":  "USD",
+                 "ticker":  "AMGN",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AMGN.png",
+                 "country":  "US"
+             },
+    "ABNB":  {
+                 "sector":  "Hotels, Restaurants \u0026 Leisure",
+                 "name":  "Airbnb Inc",
+                 "currency":  "USD",
+                 "ticker":  "ABNB",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ABNB.png",
+                 "country":  "US"
+             },
+    "CCU":  {
+                "sector":  "Beverages",
+                "name":  "Compania Cervecerias Unidas SA",
+                "currency":  "CLP",
+                "ticker":  "CCU.SN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CCU.SN.png",
+                "country":  "CL"
+            },
+    "KO":  {
+               "sector":  "Beverages",
+               "name":  "Coca-Cola Co",
+               "currency":  "USD",
+               "ticker":  "KO",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/KO.png",
+               "country":  "US"
+           },
+    "KOF":  {
+                "sector":  "Beverages",
+                "name":  "Coca-Cola Femsa SAB de CV",
+                "currency":  "MXN",
+                "ticker":  "KOFUBL.MX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/KOFUBL.MX.png",
+                "country":  "MX"
+            },
+    "BP":  {
+               "sector":  "Energy",
+               "name":  "BP PLC",
+               "currency":  "USD",
+               "ticker":  "BP.L",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BP.L.png",
+               "country":  "GB"
+           },
+    "C":  {
+              "sector":  "Banking",
+              "name":  "Citigroup Inc",
+              "currency":  "USD",
+              "ticker":  "C",
+              "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/C.png",
+              "country":  "US"
+          },
+    "LLY":  {
+                "sector":  "Pharmaceuticals",
+                "name":  "Eli Lilly and Co",
+                "currency":  "USD",
+                "ticker":  "LLY",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/LLY.png",
+                "country":  "US"
+            },
+    "SYF":  {
+                "sector":  "Financial Services",
+                "name":  "Synchrony Financial",
+                "currency":  "USD",
+                "ticker":  "SYF",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SYF.png",
+                "country":  "US"
+            },
+    "XLK":  {
+                "name":  "XLK",
+                "sector":  "ETF - Technology"
+            },
+    "RACE":  {
+                 "sector":  "Automobiles",
+                 "name":  "Ferrari NV",
+                 "currency":  "EUR",
+                 "ticker":  "RACE.MI",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/RACE.MI.png",
+                 "country":  "IT"
+             },
+    "ED":  {
+               "sector":  "Utilities",
+               "name":  "Consolidated Edison Inc",
+               "currency":  "USD",
+               "ticker":  "ED",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ED.png",
+               "country":  "US"
+           },
+    "IQ":  {
+               "sector":  "Media",
+               "name":  "iQIYI Inc",
+               "currency":  "CNY",
+               "ticker":  "IQ",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/IQ.png",
+               "country":  "CN"
+           },
+    "DOW":  {
+                "sector":  "Chemicals",
+                "name":  "Dow Inc",
+                "currency":  "USD",
+                "ticker":  "DOW",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DOW.png",
+                "country":  "US"
+            },
+    "GGAL":  {
+                 "sector":  "Banking",
+                 "name":  "Grupo Financiero Galicia SA",
+                 "currency":  "ARS",
+                 "ticker":  "GGAL2.BA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GGAL3.BA.png",
+                 "country":  "AR"
+             },
+    "SUPV":  {
+                 "sector":  "Banking",
+                 "name":  "Grupo Supervielle SA",
+                 "currency":  "ARS",
+                 "ticker":  "SUPV2.BA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SUPV3.BA.png",
+                 "country":  "AR"
+             },
+    "MNST":  {
+                 "sector":  "Beverages",
+                 "name":  "Monster Beverage Corp",
+                 "currency":  "USD",
+                 "ticker":  "MNST",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MNST.png",
+                 "country":  "US"
+             },
+    "WBA":  {
+                "sector":  "Retail",
+                "name":  "Walgreens Boots Alliance Inc",
+                "currency":  "USD",
+                "ticker":  "WBA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/WBA.png",
+                "country":  "US"
+            },
+    "PEP":  {
+                "sector":  "Beverages",
+                "name":  "PepsiCo Inc",
+                "currency":  "USD",
+                "ticker":  "PEP",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PEP.png",
+                "country":  "US"
+            },
+    "JBSS":  {
+                 "sector":  "Food Products",
+                 "name":  "John B Sanfilippo \u0026 Son Inc",
+                 "currency":  "USD",
+                 "ticker":  "JBSS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/942961960596.png",
+                 "country":  "US"
+             },
+    "SHEL":  {
+                 "sector":  "Energy",
+                 "name":  "Shell PLC",
+                 "currency":  "USD",
+                 "ticker":  "SHEL.L",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SHEL.L.png",
+                 "country":  "GB"
+             },
+    "EDN":  {
+                "sector":  "Utilities",
+                "name":  "Empresa Distribuidora y Comercializadora Norte SA",
+                "currency":  "ARS",
+                "ticker":  "EDN.BA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/EDN3.BA.png",
+                "country":  "AR"
+            },
+    "CX":  {
+               "sector":  "Construction",
+               "name":  "Cemex SAB de CV",
+               "currency":  "USD",
+               "ticker":  "CEMEXCPO.MX",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CEMEXCPO.MX.png",
+               "country":  "MX"
+           },
+    "DE":  {
+               "sector":  "Machinery",
+               "name":  "Deere \u0026 Co",
+               "currency":  "USD",
+               "ticker":  "DE",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DE.png",
+               "country":  "US"
+           },
+    "SO":  {
+               "sector":  "Utilities",
+               "name":  "Southern Co",
+               "currency":  "USD",
+               "ticker":  "SO",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SO.png",
+               "country":  "US"
+           },
+    "ISRG":  {
+                 "sector":  "Health Care",
+                 "name":  "Intuitive Surgical Inc",
+                 "currency":  "USD",
+                 "ticker":  "ISRG",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ISRG.png",
+                 "country":  "US"
+             },
+    "MDLZ":  {
+                 "sector":  "Food Products",
+                 "name":  "Mondelez International Inc",
+                 "currency":  "USD",
+                 "ticker":  "MDLZ",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MDLZ.png",
+                 "country":  "US"
+             },
+    "VOO":  {
+                "name":  "VOO",
+                "sector":  "ETF - S\u0026P 500"
+            },
+    "GGB":  {
+                "sector":  "Metals \u0026 Mining",
+                "name":  "Gerdau SA",
+                "currency":  "BRL",
+                "ticker":  "GGBR4.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GGBR4.SA.png",
+                "country":  "BR"
+            },
+    "BBD":  {
+                "sector":  "Banking",
+                "name":  "Banco Bradesco SA",
+                "currency":  "BRL",
+                "ticker":  "BBDC4.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BBDC4.SA.png",
+                "country":  "BR"
+            },
+    "USO":  {
+                "name":  "USO",
+                "sector":  "ETF - Oil Fund"
+            },
+    "BTI":  {
+                "sector":  "Tobacco",
+                "name":  "British American Tobacco plc",
+                "currency":  "GBP",
+                "ticker":  "BATS.L",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BATS.L.png",
+                "country":  "GB"
+            },
+    "EFA":  {
+                "name":  "EFA",
+                "sector":  "ETF - Dev. Markets"
+            },
+    "NIO":  {
+                "sector":  "Automobiles",
+                "name":  "NIO Inc",
+                "currency":  "CNY",
+                "ticker":  "NIO",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NIO.png",
+                "country":  "CN"
+            },
+    "VNQ":  {
+                "name":  "VNQ",
+                "sector":  "ETF - Real Estate"
+            },
+    "CEPU":  {
+                 "sector":  "Utilities",
+                 "name":  "Central Puerto SA",
+                 "currency":  "ARS",
+                 "ticker":  "CEPU2.BA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CEPU3.BA.png",
+                 "country":  "AR"
+             },
+    "TCOM":  {
+                 "sector":  "Hotels, Restaurants \u0026 Leisure",
+                 "name":  "Trip.com Group Ltd",
+                 "currency":  "CNY",
+                 "ticker":  "9961.HK",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/9961.HK.png",
+                 "country":  "SG"
+             },
+    "ING":  {
+                "sector":  "Banking",
+                "name":  "ING Groep NV",
+                "currency":  "EUR",
+                "ticker":  "INGA.AS",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/INGA.AS.png",
+                "country":  "NL"
+            },
+    "GE":  {
+               "sector":  "Aerospace \u0026 Defense",
+               "name":  "General Electric Co",
+               "currency":  "USD",
+               "ticker":  "GE",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GE.png",
+               "country":  "US"
+           },
+    "V":  {
+              "sector":  "Financial Services",
+              "name":  "Visa Inc",
+              "currency":  "USD",
+              "ticker":  "V",
+              "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/V.png",
+              "country":  "US"
+          },
+    "WIT":  {
+                "sector":  "Technology",
+                "name":  "Wipro Ltd",
+                "currency":  "INR",
+                "ticker":  "WIPRO.NS",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/WIPRO.NS.png",
+                "country":  "IN"
+            },
+    "TM":  {
+               "sector":  "Automobiles",
+               "name":  "Toyota Motor Corp",
+               "currency":  "JPY",
+               "ticker":  "7203.T",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/7203.T.png",
+               "country":  "JP"
+           },
+    "VZ":  {
+               "sector":  "Telecommunication",
+               "name":  "Verizon Communications Inc",
+               "currency":  "USD",
+               "ticker":  "VZ",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/VZ.png",
+               "country":  "US"
+           },
+    "CRWD":  {
+                 "sector":  "Technology",
+                 "name":  "CrowdStrike Holdings Inc",
+                 "currency":  "USD",
+                 "ticker":  "CRWD",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CRWD.png",
+                 "country":  "US"
+             },
+    "MTCH":  {
+                 "sector":  "Media",
+                 "name":  "Match Group Inc",
+                 "currency":  "USD",
+                 "ticker":  "MTCH",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MTCH.png",
+                 "country":  "US"
+             },
+    "MRO":  {
+                "sector":  "Energy",
+                "name":  "Marathon Oil Corp",
+                "currency":  "USD",
+                "ticker":  "MRO",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MRO.png",
+                "country":  "US"
+            },
+    "NEE":  {
+                "sector":  "Utilities",
+                "name":  "Nextera Energy Inc",
+                "currency":  "USD",
+                "ticker":  "NEE",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NEE.png",
+                "country":  "US"
+            },
+    "DESP":  {
+                 "sector":  "Hotels, Restaurants \u0026 Leisure",
+                 "name":  "Despegar.com Corp",
+                 "currency":  "USD",
+                 "ticker":  "DESP",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DESP.png",
+                 "country":  "AR"
+             },
+    "PLTR":  {
+                 "sector":  "Technology",
+                 "name":  "Palantir Technologies Inc",
+                 "currency":  "USD",
+                 "ticker":  "PLTR",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PLTR.png",
+                 "country":  "US"
+             },
+    "VRTX":  {
+                 "sector":  "Biotechnology",
+                 "name":  "Vertex Pharmaceuticals Inc",
+                 "currency":  "USD",
+                 "ticker":  "VRTX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/VRTX.png",
+                 "country":  "US"
+             },
+    "TEO":  {
+                "sector":  "Telecommunication",
+                "name":  "Telecom Argentina SA",
+                "currency":  "ARS",
+                "ticker":  "TECO22.BA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TECO23.BA.png",
+                "country":  "AR"
+            },
+    "MRNA":  {
+                 "sector":  "Biotechnology",
+                 "name":  "Moderna Inc",
+                 "currency":  "USD",
+                 "ticker":  "MRNA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MRNA.png",
+                 "country":  "US"
+             },
+    "PCAR":  {
+                 "sector":  "Machinery",
+                 "name":  "Paccar Inc",
+                 "currency":  "USD",
+                 "ticker":  "PCAR",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PCAR.png",
+                 "country":  "US"
+             },
+    "PANW":  {
+                 "sector":  "Technology",
+                 "name":  "Palo Alto Networks Inc",
+                 "currency":  "USD",
+                 "ticker":  "PANW",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PANW.png",
+                 "country":  "US"
+             },
+    "MA":  {
+               "sector":  "Financial Services",
+               "name":  "Mastercard Inc",
+               "currency":  "USD",
+               "ticker":  "MA",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MA.png",
+               "country":  "US"
+           },
+    "ADI":  {
+                "sector":  "Semiconductors",
+                "name":  "Analog Devices Inc",
+                "currency":  "USD",
+                "ticker":  "ADI",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ADI.png",
+                "country":  "US"
+            },
+    "MCD":  {
+                "sector":  "Hotels, Restaurants \u0026 Leisure",
+                "name":  "McDonald\u0027s Corp",
+                "currency":  "USD",
+                "ticker":  "MCD",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MCD.png",
+                "country":  "US"
+            },
+    "TAL":  {
+                "sector":  "Diversified Consumer Services",
+                "name":  "TAL Education Group",
+                "currency":  "USD",
+                "ticker":  "TAL",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TAL.png",
+                "country":  "CN"
+            },
+    "BAC":  {
+                "sector":  "Banking",
+                "name":  "Bank of America Corp",
+                "currency":  "USD",
+                "ticker":  "BAC",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BAC.png",
+                "country":  "US"
+            },
+    "SLB":  {
+                "sector":  "Energy",
+                "name":  "Slb NV",
+                "currency":  "USD",
+                "ticker":  "SLB",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SLB.png",
+                "country":  "US"
+            },
+    "ASR":  {
+                "sector":  "Transportation Infrastructure",
+                "name":  "Grupo Aeroportuario del Sureste SAB de CV",
+                "currency":  "MXN",
+                "ticker":  "ASURB.MX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ASURB.MX.png",
+                "country":  "MX"
+            },
+    "STNE":  {
+                 "sector":  "Financial Services",
+                 "name":  "StoneCo Ltd",
+                 "currency":  "BRL",
+                 "ticker":  "STNE",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/STNE.png",
+                 "country":  "KY"
+             },
+    "GBTC":  {
+                 "sector":  "N/A",
+                 "name":  "Grayscale Bitcoin Trust (Btc)",
+                 "currency":  "USD",
+                 "ticker":  "GBTC",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950531296756.png",
+                 "country":  "US"
+             },
+    "BSBR":  {
+                 "sector":  "Banking",
+                 "name":  "Banco Santander Brasil SA",
+                 "currency":  "BRL",
+                 "ticker":  "SANB3.SA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SANB4.SA.png",
+                 "country":  "BR"
+             },
+    "INTC":  {
+                 "sector":  "Semiconductors",
+                 "name":  "Intel Corp",
+                 "currency":  "USD",
+                 "ticker":  "INTC",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/INTC.png",
+                 "country":  "US"
+             },
+    "ADBE":  {
+                 "sector":  "Technology",
+                 "name":  "Adobe Inc",
+                 "currency":  "USD",
+                 "ticker":  "ADBE",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ADBE.png",
+                 "country":  "US"
+             },
+    "PAM":  {
+                "sector":  "Utilities",
+                "name":  "Pampa Energia SA",
+                "currency":  "ARS",
+                "ticker":  "PAMP2.BA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PAMP3.BA.png",
+                "country":  "AR"
+            },
+    "PAC":  {
+                "sector":  "Transportation Infrastructure",
+                "name":  "Grupo Aeroportuario del Pacifico SAB de CV",
+                "currency":  "MXN",
+                "ticker":  "GAPB.MX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GAPB.MX.png",
+                "country":  "MX"
+            },
+    "SBS":  {
+                "sector":  "Utilities",
+                "name":  "Companhia de Saneamento Basico do Estado de Sao Paulo - SABESP",
+                "currency":  "BRL",
+                "ticker":  "SBSP3.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SBSP3.SA.png",
+                "country":  "BR"
+            },
+    "KLAC":  {
+                 "sector":  "Semiconductors",
+                 "name":  "KLA Corp",
+                 "currency":  "USD",
+                 "ticker":  "KLAC",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/KLAC.png",
+                 "country":  "US"
+             },
+    "SOHU":  {
+                 "sector":  "Media",
+                 "name":  "Sohu.com Ltd",
+                 "currency":  "USD",
+                 "ticker":  "SOHU",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SOHU.png",
+                 "country":  "CN"
+             },
+    "IBM":  {
+                "sector":  "Technology",
+                "name":  "International Business Machines Corp",
+                "currency":  "USD",
+                "ticker":  "IBM",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/IBM.png",
+                "country":  "US"
+            },
+    "DFS":  {
+                "sector":  "Financial Services",
+                "name":  "Discover Financial Services",
+                "currency":  "USD",
+                "ticker":  "DFS",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DFS.png",
+                "country":  "US"
+            },
+    "PGR":  {
+                "sector":  "Insurance",
+                "name":  "Progressive Corp",
+                "currency":  "USD",
+                "ticker":  "PGR",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PGR.png",
+                "country":  "US"
+            },
+    "MMM":  {
+                "sector":  "Industrial Conglomerates",
+                "name":  "3M Co",
+                "currency":  "USD",
+                "ticker":  "MMM",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MMM.png",
+                "country":  "US"
+            },
+    "ORLY":  {
+                 "sector":  "Retail",
+                 "name":  "O\u0027Reilly Automotive Inc",
+                 "currency":  "USD",
+                 "ticker":  "ORLY",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ORLY.png",
+                 "country":  "US"
+             },
+    "BIOX":  {
+                 "sector":  "Chemicals",
+                 "name":  "Bioceres Crop Solutions Corp",
+                 "currency":  "USD",
+                 "ticker":  "BIOX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BIOX.png",
+                 "country":  "AR"
+             },
+    "BABA":  {
+                 "sector":  "Retail",
+                 "name":  "Alibaba Group Holding Ltd",
+                 "currency":  "CNY",
+                 "ticker":  "BABA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BABA.png",
+                 "country":  "HK"
+             },
+    "WDAY":  {
+                 "sector":  "Technology",
+                 "name":  "Workday Inc",
+                 "currency":  "USD",
+                 "ticker":  "WDAY",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/WDAY.png",
+                 "country":  "US"
+             },
+    "ENIC":  {
+                 "sector":  "Utilities",
+                 "name":  "Enel Chile SA",
+                 "currency":  "USD",
+                 "ticker":  "ENELCHILE.SN",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ENELCHILE.SN.png",
+                 "country":  "CL"
+             },
+    "STT":  {
+                "sector":  "Financial Services",
+                "name":  "State Street Corp",
+                "currency":  "USD",
+                "ticker":  "STT",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/STT.png",
+                "country":  "US"
+            },
+    "OXY":  {
+                "sector":  "Energy",
+                "name":  "Occidental Petroleum Corp",
+                "currency":  "USD",
+                "ticker":  "OXY",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/OXY.png",
+                "country":  "US"
+            },
+    "XBI":  {
+                "name":  "XBI",
+                "sector":  "ETF - Biotech"
+            },
+    "MDB":  {
+                "sector":  "Technology",
+                "name":  "MongoDB Inc",
+                "currency":  "USD",
+                "ticker":  "MDB",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MDB.png",
+                "country":  "US"
+            },
+    "AZN":  {
+                "sector":  "Pharmaceuticals",
+                "name":  "AstraZeneca PLC",
+                "currency":  "USD",
+                "ticker":  "AZN.L",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AZN.L.png",
+                "country":  "GB"
+            },
+    "MAR":  {
+                "sector":  "Hotels, Restaurants \u0026 Leisure",
+                "name":  "Marriott International Inc",
+                "currency":  "USD",
+                "ticker":  "MAR",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MAR.png",
+                "country":  "US"
+            },
+    "WB":  {
+               "sector":  "Media",
+               "name":  "Weibo Corp",
+               "currency":  "USD",
+               "ticker":  "9898.HK",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/9898.HK.png",
+               "country":  "CN"
+           },
+    "MRVL":  {
+                 "sector":  "Semiconductors",
+                 "name":  "Marvell Technology Inc",
+                 "currency":  "USD",
+                 "ticker":  "MRVL",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MRVL.png",
+                 "country":  "US"
+             },
+    "SAP":  {
+                "sector":  "Technology",
+                "name":  "SAP SE",
+                "currency":  "EUR",
+                "ticker":  "SAP.DE",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SAP.DE.png",
+                "country":  "DE"
+            },
+    "GFS":  {
+                "sector":  "Semiconductors",
+                "name":  "GlobalFoundries Inc",
+                "currency":  "USD",
+                "ticker":  "GFS",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GFS.png",
+                "country":  "US"
+            },
+    "LULU":  {
+                 "sector":  "Textiles, Apparel \u0026 Luxury Goods",
+                 "name":  "Lululemon Athletica Inc",
+                 "currency":  "USD",
+                 "ticker":  "LULU",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/LULU.png",
+                 "country":  "CA"
+             },
+    "WMB":  {
+                "sector":  "Energy",
+                "name":  "Williams Companies Inc",
+                "currency":  "USD",
+                "ticker":  "WMB",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/WMB.png",
+                "country":  "US"
+            },
+    "NOW":  {
+                "sector":  "Technology",
+                "name":  "ServiceNow Inc",
+                "currency":  "USD",
+                "ticker":  "NOW",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NOW.png",
+                "country":  "US"
+            },
+    "FITB":  {
+                 "sector":  "Banking",
+                 "name":  "Fifth Third Bancorp",
+                 "currency":  "USD",
+                 "ticker":  "FITB",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/FITB.png",
+                 "country":  "US"
+             },
+    "SQM":  {
+                "sector":  "Chemicals",
+                "name":  "Sociedad Quimica y Minera de Chile SA",
+                "currency":  "USD",
+                "ticker":  "SQM-A.SN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SQM-A.SN.png",
+                "country":  "CL"
+            },
+    "SNPS":  {
+                 "sector":  "Technology",
+                 "name":  "Synopsys Inc",
+                 "currency":  "USD",
+                 "ticker":  "SNPS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SNPS.png",
+                 "country":  "US"
+             },
+    "LRCX":  {
+                 "sector":  "Semiconductors",
+                 "name":  "Lam Research Corp",
+                 "currency":  "USD",
+                 "ticker":  "LRCX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/LRCX.png",
+                 "country":  "US"
+             },
+    "BRK.B":  {
+                  "sector":  "Financial Services",
+                  "name":  "Berkshire Hathaway Inc",
+                  "currency":  "USD",
+                  "ticker":  "BRK.A",
+                  "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BRK.B.png",
+                  "country":  "US"
+              },
+    "HUYA":  {
+                 "sector":  "Media",
+                 "name":  "HUYA Inc",
+                 "currency":  "CNY",
+                 "ticker":  "HUYA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/HUYA.png",
+                 "country":  "CN"
+             },
+    "ROST":  {
+                 "sector":  "Retail",
+                 "name":  "Ross Stores Inc",
+                 "currency":  "USD",
+                 "ticker":  "ROST",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ROST.png",
+                 "country":  "US"
+             },
+    "MS":  {
+               "sector":  "Financial Services",
+               "name":  "Morgan Stanley",
+               "currency":  "USD",
+               "ticker":  "MS",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MS.png",
+               "country":  "US"
+           },
+    "VIST":  {
+                 "sector":  "Energy",
+                 "name":  "Vista Energy SAB de CV",
+                 "currency":  "USD",
+                 "ticker":  "VISTAA.MX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/VISTAA.MX.png",
+                 "country":  "MX"
+             },
+    "ARKW":  {
+                 "name":  "ARKW",
+                 "sector":  "ETF - Volatility/Thematic"
+             },
+    "AMZN":  {
+                 "sector":  "Retail",
+                 "name":  "Amazon.com Inc",
+                 "currency":  "USD",
+                 "ticker":  "AMZN",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AMZN.png",
+                 "country":  "US"
+             },
+    "ETN":  {
+                "sector":  "Electrical Equipment",
+                "name":  "Eaton Corporation PLC",
+                "currency":  "USD",
+                "ticker":  "ETN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ETN.png",
+                "country":  "IE"
+            },
+    "BEKE":  {
+                 "sector":  "Real Estate",
+                 "name":  "Ke Holdings Inc",
+                 "currency":  "CNY",
+                 "ticker":  "2423.HK",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BEKE.png",
+                 "country":  "CN"
+             },
+    "AZUL":  {
+                 "sector":  "Airlines",
+                 "name":  "Azul SA",
+                 "currency":  "BRL",
+                 "ticker":  "AZUL",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AZUL.png",
+                 "country":  "BR"
+             },
+    "NKE":  {
+                "sector":  "Textiles, Apparel \u0026 Luxury Goods",
+                "name":  "Nike Inc",
+                "currency":  "USD",
+                "ticker":  "NKE",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NKE.png",
+                "country":  "US"
+            },
+    "CPRT":  {
+                 "sector":  "Commercial Services \u0026 Supplies",
+                 "name":  "Copart Inc",
+                 "currency":  "USD",
+                 "ticker":  "CPRT",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CPRT.png",
+                 "country":  "US"
+             },
+    "EWG":  {
+                "name":  "EWG",
+                "sector":  "ETF - Germany"
+            },
+    "CYBR":  {
+                 "sector":  "Technology",
+                 "name":  "Cyberark Software Ltd",
+                 "currency":  "USD",
+                 "ticker":  "CYBR",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CYBR.png",
+                 "country":  "IL"
+             },
+    "IBIT":  {
+                 "name":  "IBIT",
+                 "sector":  "ETF - Bitcoin Spot"
+             },
+    "MPC":  {
+                "sector":  "Energy",
+                "name":  "Marathon Petroleum Corp",
+                "currency":  "USD",
+                "ticker":  "MPC",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/MPC.png",
+                "country":  "US"
+            },
+    "LCID":  {
+                 "sector":  "Automobiles",
+                 "name":  "Lucid Group Inc",
+                 "currency":  "USD",
+                 "ticker":  "LCID",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/LCID.png",
+                 "country":  "US"
+             },
+    "TV":  {
+               "sector":  "Media",
+               "name":  "Grupo Televisa SAB",
+               "currency":  "MXN",
+               "ticker":  "TLEVISACPO.MX",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TLEVISACPO.MX.png",
+               "country":  "MX"
+           },
+    "EBAY":  {
+                 "sector":  "Retail",
+                 "name":  "eBay Inc",
+                 "currency":  "USD",
+                 "ticker":  "EBAY",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/EBAY.png",
+                 "country":  "US"
+             },
+    "VLO":  {
+                "sector":  "Energy",
+                "name":  "Valero Energy Corp",
+                "currency":  "USD",
+                "ticker":  "VLO",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/VLO.png",
+                "country":  "US"
+            },
+    "GDX":  {
+                "name":  "GDX",
+                "sector":  "ETF - Gold Miners"
+            },
+    "SLV":  {
+                "name":  "SLV",
+                "sector":  "ETF - Silver"
+            },
+    "BBAR":  {
+                 "sector":  "Banking",
+                 "name":  "Banco BBVA Argentina SA",
+                 "currency":  "ARS",
+                 "ticker":  "BBAR2.BA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/942958560446.png",
+                 "country":  "AR"
+             },
+    "SUZ":  {
+                "sector":  "Paper \u0026 Forest",
+                "name":  "Suzano SA",
+                "currency":  "BRL",
+                "ticker":  "SUZB3.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SUZB3.SA.png",
+                "country":  "BR"
+            },
+    "ERJ":  {
+                "sector":  "Aerospace \u0026 Defense",
+                "name":  "Embraer SA",
+                "currency":  "BRL",
+                "ticker":  "EMBR3.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/EMBR3.SA.png",
+                "country":  "BR"
+            },
+    "AVGO":  {
+                 "sector":  "Semiconductors",
+                 "name":  "Broadcom Inc",
+                 "currency":  "USD",
+                 "ticker":  "AVGO",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AVGO.png",
+                 "country":  "US"
+             },
+    "HD":  {
+               "sector":  "Retail",
+               "name":  "Home Depot Inc",
+               "currency":  "USD",
+               "ticker":  "HD",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/HD.png",
+               "country":  "US"
+           },
+    "NFLX":  {
+                 "sector":  "Media",
+                 "name":  "Netflix Inc",
+                 "currency":  "USD",
+                 "ticker":  "NFLX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NFLX.png",
+                 "country":  "US"
+             },
+    "ELP":  {
+                "sector":  "Utilities",
+                "name":  "Companhia Paranaense de Energia",
+                "currency":  "BRL",
+                "ticker":  "CPLE6.SA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CPLE6.SA.png",
+                "country":  "BR"
+            },
+    "HSBC":  {
+                 "sector":  "Banking",
+                 "name":  "HSBC Holdings PLC",
+                 "currency":  "USD",
+                 "ticker":  "HSBA.L",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/HSBA.L.png",
+                 "country":  "GB"
+             },
+    "SBUX":  {
+                 "sector":  "Hotels, Restaurants \u0026 Leisure",
+                 "name":  "Starbucks Corp",
+                 "currency":  "USD",
+                 "ticker":  "SBUX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SBUX.png",
+                 "country":  "US"
+             },
+    "ITUB":  {
+                 "sector":  "Banking",
+                 "name":  "Itau Unibanco Holding SA",
+                 "currency":  "BRL",
+                 "ticker":  "ITUB4.SA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ITUB4.SA.png",
+                 "country":  "BR"
+             },
+    "INFY":  {
+                 "sector":  "Technology",
+                 "name":  "Infosys Ltd",
+                 "currency":  "INR",
+                 "ticker":  "INFY.NS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/INFY.NS.png",
+                 "country":  "IN"
+             },
+    "UNP":  {
+                "sector":  "Road \u0026 Rail",
+                "name":  "Union Pacific Corp",
+                "currency":  "USD",
+                "ticker":  "UNP",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/UNP.png",
+                "country":  "US"
+            },
+    "U":  {
+              "sector":  "Technology",
+              "name":  "Unity Software Inc",
+              "currency":  "USD",
+              "ticker":  "U",
+              "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/U.png",
+              "country":  "US"
+          },
+    "ABEV":  {
+                 "sector":  "Beverages",
+                 "name":  "Ambev SA",
+                 "currency":  "BRL",
+                 "ticker":  "ABEV3.SA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ABEV3.SA.png",
+                 "country":  "BR"
+             },
+    "KWEB":  {
+                 "name":  "KWEB",
+                 "sector":  "ETF - China Tech"
+             },
+    "NTES":  {
+                 "sector":  "Media",
+                 "name":  "NetEase Inc",
+                 "currency":  "CNY",
+                 "ticker":  "NTES",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NTES.png",
+                 "country":  "CN"
+             },
+    "XLU":  {
+                "name":  "XLU",
+                "sector":  "ETF - Utilities"
+            },
+    "UNH":  {
+                "sector":  "Health Care",
+                "name":  "UnitedHealth Group Inc",
+                "currency":  "USD",
+                "ticker":  "UNH",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/UNH.png",
+                "country":  "US"
+            },
+    "BLK":  {
+                "sector":  "Financial Services",
+                "name":  "BlackRock Inc",
+                "currency":  "USD",
+                "ticker":  "BLK",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950002356066.png",
+                "country":  "US"
+            },
+    "CHTR":  {
+                 "sector":  "Media",
+                 "name":  "Charter Communications Inc",
+                 "currency":  "USD",
+                 "ticker":  "CHTR",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CHTR.png",
+                 "country":  "US"
+             },
+    "NXPI":  {
+                 "sector":  "Semiconductors",
+                 "name":  "NXP Semiconductors NV",
+                 "currency":  "USD",
+                 "ticker":  "NXPI",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/NXPI.png",
+                 "country":  "NL"
+             },
+    "TGS":  {
+                "sector":  "Energy",
+                "name":  "Transportadora de Gas del Sur SA",
+                "currency":  "ARS",
+                "ticker":  "TGSU22.BA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TGSU23.BA.png",
+                "country":  "AR"
+            },
+    "EOG":  {
+                "sector":  "Energy",
+                "name":  "EOG Resources Inc",
+                "currency":  "USD",
+                "ticker":  "EOG",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/EOG.png",
+                "country":  "US"
+            },
+    "CRM":  {
+                "sector":  "Technology",
+                "name":  "Salesforce Inc",
+                "currency":  "USD",
+                "ticker":  "CRM",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CRM.png",
+                "country":  "US"
+            },
+    "SIRI":  {
+                 "sector":  "Media",
+                 "name":  "Sirius XM Holdings Inc",
+                 "currency":  "USD",
+                 "ticker":  "SIRI",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SIRI.png",
+                 "country":  "US"
+             },
+    "IAU":  {
+                "name":  "IAU",
+                "sector":  "ETF - Gold"
+            },
+    "GOOGL":  {
+                  "sector":  "Media",
+                  "name":  "Alphabet Inc",
+                  "currency":  "USD",
+                  "ticker":  "GOOGL",
+                  "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GOOG.png",
+                  "country":  "US"
+              },
+    "ON":  {
+               "sector":  "Semiconductors",
+               "name":  "ON Semiconductor Corp",
+               "currency":  "USD",
+               "ticker":  "ON",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ON.png",
+               "country":  "US"
+           },
+    "JD":  {
+               "sector":  "Retail",
+               "name":  "JD.com Inc",
+               "currency":  "CNY",
+               "ticker":  "9618.HK",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/9618.HK.png",
+               "country":  "CN"
+           },
+    "OMAB":  {
+                 "sector":  "Transportation Infrastructure",
+                 "name":  "Grupo Aeroportuario del Centro Norte SAB de CV",
+                 "currency":  "MXN",
+                 "ticker":  "OMAB.MX",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/OMAB.MX.png",
+                 "country":  "MX"
+             },
+    "AI":  {
+               "sector":  "Technology",
+               "name":  "C3.ai Inc",
+               "currency":  "USD",
+               "ticker":  "AI",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AI.png",
+               "country":  "US"
+           },
+    "SWKS":  {
+                 "sector":  "Semiconductors",
+                 "name":  "Skyworks Solutions Inc",
+                 "currency":  "USD",
+                 "ticker":  "SWKS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SWKS.png",
+                 "country":  "US"
+             },
+    "ARKK":  {
+                 "name":  "ARKK",
+                 "sector":  "ETF - Innovation"
+             },
+    "EWZ":  {
+                "name":  "EWZ",
+                "sector":  "ETF - Brazil"
+            },
+    "LIN":  {
+                "sector":  "Chemicals",
+                "name":  "Linde PLC",
+                "currency":  "USD",
+                "ticker":  "LIN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950838588696.png",
+                "country":  "GB"
+            },
+    "RF":  {
+               "sector":  "Banking",
+               "name":  "Regions Financial Corp",
+               "currency":  "USD",
+               "ticker":  "RF",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/RF.png",
+               "country":  "US"
+           },
+    "EXC":  {
+                "sector":  "Utilities",
+                "name":  "Exelon Corp",
+                "currency":  "USD",
+                "ticker":  "EXC",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/EXC.png",
+                "country":  "US"
+            },
+    "PDD":  {
+                "sector":  "Retail",
+                "name":  "PDD Holdings Inc",
+                "currency":  "CNY",
+                "ticker":  "PDD",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/PDD.png",
+                "country":  "IE"
+            },
+    "ARKF":  {
+                 "name":  "ARKF",
+                 "sector":  "ETF - Volatility/Thematic"
+             },
+    "BK":  {
+               "sector":  "Financial Services",
+               "name":  "Bank of New York Mellon Corp",
+               "currency":  "USD",
+               "ticker":  "BK",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BK.png",
+               "country":  "US"
+           },
+    "UMC":  {
+                "sector":  "Semiconductors",
+                "name":  "United Microelectronics Corp",
+                "currency":  "TWD",
+                "ticker":  "2303.TW",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/2303.TW.png",
+                "country":  "TW"
+            },
+    "FAST":  {
+                 "sector":  "Trading Companies \u0026 Distributors",
+                 "name":  "Fastenal Co",
+                 "currency":  "USD",
+                 "ticker":  "FAST",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/FAST.png",
+                 "country":  "US"
+             },
+    "FXI":  {
+                "name":  "FXI",
+                "sector":  "ETF - China Large"
+            },
+    "SPY":  {
+                "name":  "SPY",
+                "sector":  "ETF - S\u0026P 500"
+            },
+    "ABBV":  {
+                 "sector":  "Biotechnology",
+                 "name":  "AbbVie Inc",
+                 "currency":  "USD",
+                 "ticker":  "ABBV",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ABBV.png",
+                 "country":  "US"
+             },
+    "COST":  {
+                 "sector":  "Retail",
+                 "name":  "Costco Wholesale Corp",
+                 "currency":  "USD",
+                 "ticker":  "COST",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/COST.png",
+                 "country":  "US"
+             },
+    "LI":  {
+               "sector":  "Automobiles",
+               "name":  "Li Auto Inc",
+               "currency":  "CNY",
+               "ticker":  "2015.HK",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/2015.HK.png",
+               "country":  "CN"
+           },
+    "WMT":  {
+                "sector":  "Retail",
+                "name":  "Walmart Inc",
+                "currency":  "USD",
+                "ticker":  "WMT",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/WMT.png",
+                "country":  "US"
+            },
+    "SNY":  {
+                "sector":  "Pharmaceuticals",
+                "name":  "Sanofi SA",
+                "currency":  "EUR",
+                "ticker":  "SAN.PA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SAN.PA.png",
+                "country":  "FR"
+            },
+    "EDU":  {
+                "sector":  "Diversified Consumer Services",
+                "name":  "New Oriental Education \u0026 Technology Group Inc",
+                "currency":  "USD",
+                "ticker":  "EDU",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/EDU.png",
+                "country":  "CN"
+            },
+    "XEL":  {
+                "sector":  "Utilities",
+                "name":  "Xcel Energy Inc",
+                "currency":  "USD",
+                "ticker":  "XEL",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/XEL.png",
+                "country":  "US"
+            },
+    "XLP":  {
+                "name":  "XLP",
+                "sector":  "ETF - Consumer Stap."
+            },
+    "AEP":  {
+                "sector":  "Utilities",
+                "name":  "American Electric Power Company Inc",
+                "currency":  "USD",
+                "ticker":  "AEP",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/AEP.png",
+                "country":  "US"
+            },
+    "CAT":  {
+                "sector":  "Machinery",
+                "name":  "Caterpillar Inc",
+                "currency":  "USD",
+                "ticker":  "CAT",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CAT.png",
+                "country":  "US"
+            },
+    "UBER":  {
+                 "sector":  "Road \u0026 Rail",
+                 "name":  "Uber Technologies Inc",
+                 "currency":  "USD",
+                 "ticker":  "UBER",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/UBER.png",
+                 "country":  "US"
+             },
+    "GILD":  {
+                 "sector":  "Biotechnology",
+                 "name":  "Gilead Sciences Inc",
+                 "currency":  "USD",
+                 "ticker":  "GILD",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GILD.png",
+                 "country":  "US"
+             },
+    "REGN":  {
+                 "sector":  "Biotechnology",
+                 "name":  "Regeneron Pharmaceuticals Inc",
+                 "currency":  "USD",
+                 "ticker":  "REGN",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/REGN.png",
+                 "country":  "US"
+             },
+    "DVN":  {
+                "sector":  "Energy",
+                "name":  "Devon Energy Corp",
+                "currency":  "USD",
+                "ticker":  "DVN",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/DVN.png",
+                "country":  "US"
+            },
+    "IBB":  {
+                "name":  "IBB",
+                "sector":  "ETF - Biotech"
+            },
+    "SCHW":  {
+                 "sector":  "Financial Services",
+                 "name":  "Charles Schwab Corp",
+                 "currency":  "USD",
+                 "ticker":  "SCHW",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/SCHW.png",
+                 "country":  "US"
+             },
+    "LOMA":  {
+                 "sector":  "Construction",
+                 "name":  "Loma Negra Compania Industrial Argentina SA",
+                 "currency":  "ARS",
+                 "ticker":  "LOMA2.BA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/LOMA3.BA.png",
+                 "country":  "AR"
+             },
+    "TIMB":  {
+                 "sector":  "Telecommunication",
+                 "name":  "Tim SA",
+                 "currency":  "BRL",
+                 "ticker":  "TIMS3.SA",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/950001992706.png",
+                 "country":  "BR"
+             },
+    "HTHT":  {
+                 "sector":  "Hotels, Restaurants \u0026 Leisure",
+                 "name":  "H World Group Ltd",
+                 "currency":  "CNY",
+                 "ticker":  "1179.HK",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/1179.HK.png",
+                 "country":  "CN"
+             },
+    "CIB":  {
+                "sector":  "Banking",
+                "name":  "Grupo Cibest SA",
+                "currency":  "COP",
+                "ticker":  "BCOLOMBIA.BC",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BCOLOMBIA.BC.png",
+                "country":  "CO"
+            },
+    "CRESY":  {
+                  "sector":  "Food Products",
+                  "name":  "Cresud SACIF y A",
+                  "currency":  "ARS",
+                  "ticker":  "CRES2.BA",
+                  "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CRES3.BA.png",
+                  "country":  "AR"
+              },
+    "GSK":  {
+                "sector":  "Pharmaceuticals",
+                "name":  "GSK plc",
+                "currency":  "GBP",
+                "ticker":  "GSK.L",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/GSK.L.png",
+                "country":  "GB"
+            },
+    "XLY":  {
+                "name":  "XLY",
+                "sector":  "ETF - Consumer Disc."
+            },
+    "UBS":  {
+                "sector":  "Financial Services",
+                "name":  "UBS Group AG",
+                "currency":  "USD",
+                "ticker":  "UBSG.SW",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/UBSG.SW.png",
+                "country":  "CH"
+            },
+    "MCHI":  {
+                 "name":  "MCHI",
+                 "sector":  "ETF - China"
+             },
+    "BKNG":  {
+                 "sector":  "Hotels, Restaurants \u0026 Leisure",
+                 "name":  "Booking Holdings Inc",
+                 "currency":  "USD",
+                 "ticker":  "BKNG",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/BKNG.png",
+                 "country":  "US"
+             },
+    "QQQ":  {
+                "name":  "QQQ",
+                "sector":  "ETF - Nasdaq 100"
+            },
+    "IVV":  {
+                "name":  "IVV",
+                "sector":  "ETF - S\u0026P 500"
+            },
+    "TMUS":  {
+                 "sector":  "Telecommunication",
+                 "name":  "T-Mobile US Inc",
+                 "currency":  "USD",
+                 "ticker":  "TMUS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/TMUS.png",
+                 "country":  "US"
+             },
+    "ZTO":  {
+                "sector":  "Logistics \u0026 Transportation",
+                "name":  "ZTO Express (Cayman) Inc",
+                "currency":  "CNY",
+                "ticker":  "2057.HK",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/2057.HK.png",
+                "country":  "CN"
+            },
+    "EC":  {
+               "sector":  "Energy",
+               "name":  "Ecopetrol SA",
+               "currency":  "COP",
+               "ticker":  "ECOPETROL.BC",
+               "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/ECOPETROL.BC.png",
+               "country":  "CO"
+           },
+    "CSX":  {
+                "sector":  "Road \u0026 Rail",
+                "name":  "CSX Corp",
+                "currency":  "USD",
+                "ticker":  "CSX",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CSX.png",
+                "country":  "US"
+            },
+    "TCEHY":  {
+                  "sector":  "Media",
+                  "name":  "Tencent Holdings Ltd",
+                  "currency":  "CNY",
+                  "ticker":  "700.HK",
+                  "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/942958650786.png",
+                  "country":  "CN"
+              },
+    "D":  {
+              "sector":  "Utilities",
+              "name":  "Dominion Energy Inc",
+              "currency":  "USD",
+              "ticker":  "D",
+              "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/D.png",
+              "country":  "US"
+          },
+    "CDNS":  {
+                 "sector":  "Technology",
+                 "name":  "Cadence Design Systems Inc",
+                 "currency":  "USD",
+                 "ticker":  "CDNS",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/CDNS.png",
+                 "country":  "US"
+             },
+    "IRS":  {
+                "sector":  "Real Estate",
+                "name":  "IRSA Inversiones y Representaciones SA",
+                "currency":  "ARS",
+                "ticker":  "IRSA2.BA",
+                "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/IRSA3.BA.png",
+                "country":  "AR"
+            },
+    "UNG":  {
+                "name":  "UNG",
+                "sector":  "ETF - Natural Gas"
+            },
+    "FUTU":  {
+                 "sector":  "Financial Services",
+                 "name":  "Futu Holdings Ltd",
+                 "currency":  "HKD",
+                 "ticker":  "FUTU",
+                 "logo":  "https://static2.finnhub.io/file/publicdatany/finnhubimage/stock_logo/FUTU.png",
+                 "country":  "HK"
+             }
+}
