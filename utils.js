@@ -57,6 +57,39 @@ function shouldRefreshPrices() {
     }
 }
 
+// Detectar estado del mercado (REGULAR, AFTER_HOURS, CLOSED)
+function getMarketStatus() {
+    var now = new Date();
+    try {
+        var etTimeStr = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+        var etTime = new Date(etTimeStr);
+        var hours = etTime.getHours();
+        var minutes = etTime.getMinutes();
+        var day = etTime.getDay();
+
+        // Fin de semana
+        if (day === 0 || day === 6) {
+            return 'CLOSED';
+        }
+
+        var currentMinutes = hours * 60 + minutes;
+        var marketOpen = 9 * 60 + 30;  // 9:30 AM
+        var marketClose = 16 * 60;      // 4:00 PM
+        var afterHoursEnd = 20 * 60;    // 8:00 PM
+
+        if (currentMinutes >= marketOpen && currentMinutes < marketClose) {
+            return 'REGULAR';
+        } else if (currentMinutes >= marketClose && currentMinutes < afterHoursEnd) {
+            return 'AFTER_HOURS';
+        } else {
+            return 'CLOSED';
+        }
+    } catch (e) {
+        console.warn('Market status check failed, defaulting to REGULAR', e);
+        return 'REGULAR';
+    }
+}
+
 // Exponer globalmente
 window.fmt = fmt;
 window.fmtDate = fmtDate;
@@ -64,5 +97,6 @@ window.debounce = debounce;
 window.sanitizeHTML = sanitizeHTML;
 window.isValidSymbol = isValidSymbol;
 window.shouldRefreshPrices = shouldRefreshPrices;
+window.getMarketStatus = getMarketStatus;
 
 console.log('Utils: Loaded');

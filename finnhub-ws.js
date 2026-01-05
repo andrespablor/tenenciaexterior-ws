@@ -29,6 +29,10 @@ const WS_CONFIG = {
 // Timestamps para throttling por símbolo
 const lastPriceUpdate = {};
 
+// Cachés de precios (separados por horario de mercado)
+const closePrices = {};      // Precio de cierre del mercado regular
+const afterHoursPrices = {};  // Precio actual durante after-hours
+
 // ========================================
 // Gestión de Conexión
 // ========================================
@@ -240,14 +244,33 @@ function updatePriceFromWebSocket(symbol, price, timestamp, volume) {
     const dailyChange = previousClose ? ((price - previousClose) / previousClose) * 100 : 0;
     const dailyDiff = previousClose ? (price - previousClose) : 0;
 
-    // Actualizar cache
+    // Detectar estado del mercado
+    const marketStatus = typeof getMarketStatus === 'function' ? getMarketStatus() : 'REGULAR';
+
+    // Actualizar cache principal
     cache.price = price;
     cache.dailyChange = dailyChange;
     cache.dailyDiff = dailyDiff;
-    cache.marketTime = Math.floor(timestamp / 1000); // Convertir a segundos
+    cache.marketTime = Math.floor(timestamp / 1000);
     cache.volume = (cache.volume || 0) + volume;
     cache.timestamp = Date.now();
     cache.source = 'websocket';
+
+    // Manejar precios según horario del mercado
+    if (marketStatus === 'REGULAR') {
+        // Durante horario regular, actualizar precio de cierre
+        closePrices[symbol] = price;
+        // Limpiar precio after-hours si había
+        delete afterHoursPrices[symbol];
+    } else if (marketStatus === 'AFTER_HOURS') {
+        // Durante after-hours, guardar precio por separado
+        afterHoursPrices[symbol] = price;
+        // Mantener el último precio de cierre si existe
+        if (!closePrices[symbol]) {
+            closePrices[symbol] = previousClose;
+        }
+    }
+    // Si está CLOSED, no actualizar nada
 
     // Actualizar high/low del día
     if (!cache.dayHigh || price > cache.dayHigh) cache.dayHigh = price;
@@ -255,18 +278,36 @@ function updatePriceFromWebSocket(symbol, price, timestamp, volume) {
 
     // Disparar actualización de UI con indicador de dirección
     const direction = price > oldPrice ? 'up' : (price < oldPrice ? 'down' : 'same');
-    updatePriceUI(symbol, price, dailyChange, direction);
+    updatePriceUI(symbol, price, dailyChange, direction, marketStatus);
 }
 
-function updatePriceUI(symbol, price, dailyChange, direction) {
+function updatePriceUI(symbol, price, dailyChange, direction, marketStatus) {
     // Actualizar TODAS las celdas con este símbolo (puede estar en Portfolio y Watchlist)
     const rows = document.querySelectorAll(`tr[data-symbol="${symbol}"]`);
 
     rows.forEach(row => {
+        // Detectar si es una fila de Watchlist o Portfolio
+        const isWatchlistRow = row.closest('#watchlist-table') !== null;
+
         // Actualizar precio
         const priceCell = row.querySelector('.cell-price');
         if (priceCell) {
-            priceCell.textContent = `$${price.toFixed(2)}`;
+            let priceText = '';
+
+            // Si es after-hours Y es Watchlist, mostrar ambos precios
+            if (marketStatus === 'AFTER_HOURS' && isWatchlistRow && closePrices[symbol]) {
+                const closePrice = closePrices[symbol];
+                const afterPrice = afterHoursPrices[symbol] || price;
+                priceText = `$${closePrice.toFixed(2)} <span class="after-hours-price">(🌙 $${afterPrice.toFixed(2)})</span>`;
+            } else if (marketStatus === 'AFTER_HOURS' && !isWatchlistRow && closePrices[symbol]) {
+                // En Portfolio durante after-hours, solo mostrar precio de cierre
+                priceText = `$${closePrices[symbol].toFixed(2)}`;
+            } else {
+                // Horario regular o no hay precio de cierre guardado
+                priceText = `$${price.toFixed(2)}`;
+            }
+
+            priceCell.innerHTML = priceText;
 
             // Efecto flash
             priceCell.classList.remove('flash-up', 'flash-down');

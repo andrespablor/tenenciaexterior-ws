@@ -3224,3 +3224,11 @@ th.col-status {
 .cell-price {
     transition: background-color 0.3s ease;
 }
+
+/* After-hours price styling */
+.after-hours-price {
+    font-size: 0.85em;
+    opacity: 0.75;
+    margin-left: 4px;
+    color: var(--text-muted);
+}
