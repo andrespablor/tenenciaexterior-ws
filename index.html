@@ -186,10 +186,8 @@
                     <select id="watchlist-selector" class="watchlist-select">
                         <option value="default">Mi Watchlist</option>
                     </select>
-                    <button class="btn-icon-sm" id="edit-watchlist-icon" title="Cambiar icono">🎨</button>
-                    <button class="btn-icon-sm" id="edit-watchlist-name" title="Renombrar lista">✏️</button>
-                    <button class="btn-icon-sm" id="add-watchlist-list" title="Nueva lista">➕</button>
-                    <button class="btn-icon-sm delete" id="delete-watchlist-list" title="Eliminar lista">🗑️</button>
+                    <button class="btn btn-outline btn-small" id="manage-watchlist-btn">⚙️ Gestionar</button>
+                    <button class="btn btn-primary btn-small" id="add-watchlist-list">➕ Nueva</button>
                 </div>
                 <!-- Auto-refresh removido - WebSocket actualiza en tiempo real -->
                 <div class="spacer"></div>
@@ -380,6 +378,48 @@
         </div>
     </div>
 
+
+
+    <!-- Watchlist Manager Modal -->
+    <div id="watchlist-manager-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ Gestionar Watchlist</h3>
+                <button class="modal-close" id="close-watchlist-manager">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="wl-manager-name" class="form-control" placeholder="Mi Watchlist">
+                </div>
+
+                <div class="form-group">
+                    <label>Icono</label>
+                    <div class="icon-picker">
+                        <button class="icon-option" data-icon="📋">📋</button>
+                        <button class="icon-option" data-icon="🇺🇸">🇺🇸</button>
+                        <button class="icon-option" data-icon="🇧🇷">🇧🇷</button>
+                        <button class="icon-option" data-icon="🇦🇷">🇦🇷</button>
+                        <button class="icon-option" data-icon="💰">💰</button>
+                        <button class="icon-option" data-icon="📊">📊</button>
+                        <button class="icon-option" data-icon="🚀">🚀</button>
+                        <button class="icon-option" data-icon="💎">💎</button>
+                        <button class="icon-option" data-icon="⭐">⭐</button>
+                        <button class="icon-option" data-icon="🔥">🔥</button>
+                        <button class="icon-option" data-icon="💼">💼</button>
+                        <button class="icon-option" data-icon="🌎">🌎</button>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button class="btn btn-danger" id="wl-manager-delete" style="margin-right: auto;">🗑
+                        Eliminar</button>
+                    <button class="btn btn-outline" id="wl-manager-cancel">Cancelar</button>
+                    <button class="btn btn-primary" id="wl-manager-save">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Alert Manager Modal -->
     <div id="alert-manager-modal" class="modal">

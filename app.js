@@ -1067,63 +1067,25 @@ function initializeWatchlist() {
         renderWatchlist();
     });
 
-    // Eliminar lista actual
-    document.getElementById('delete-watchlist-list').addEventListener('click', () => {
-        if (currentWatchlistId === 'default') { alert('No podés eliminar la lista por defecto'); return; }
-        if (!confirm('¿Eliminar esta lista?')) return;
-        delete watchlists[currentWatchlistId];
-        currentWatchlistId = 'default';
+    // Botón "Gestionar" - abre modal
+    document.getElementById('manage-watchlist-btn').addEventListener('click', openWatchlistManager);
+
+    // Botón "Nueva" - prompt rápido
+    document.getElementById('add-watchlist-list').addEventListener('click', () => {
+        const name = prompt('Nombre de la nueva lista:');
+        if (!name || !name.trim()) return;
+        const sanitized = name.trim();
+        const id = sanitized.toLowerCase().replace(/\s+/g, '_');
+        if (watchlists[id]) { alert('Ya existe una lista con ese nombre'); return; }
+        watchlists[id] = {
+            displayName: sanitized,
+            icon: '📋',
+            symbols: []
+        };
+        currentWatchlistId = id;
         saveData();
         updateWatchlistSelector();
         renderWatchlist();
-    });
-
-    // Editar nombre de lista (ahora permite renombrar todas, incluso default)
-    document.getElementById('edit-watchlist-name').addEventListener('click', () => {
-        const currentDisplayName = watchlists[currentWatchlistId]?.displayName || currentWatchlistId;
-        const newName = prompt('Nuevo nombre:', currentDisplayName);
-        if (!newName || !newName.trim()) return;
-        const sanitized = newName.trim();
-
-        // Solo actualizar displayName, mantener mismo ID
-        if (!watchlists[currentWatchlistId].displayName) {
-            // Migrar formato antiguo
-            watchlists[currentWatchlistId] = {
-                displayName: sanitized,
-                icon: '📋',
-                symbols: watchlists[currentWatchlistId]
-            };
-        } else {
-            watchlists[currentWatchlistId].displayName = sanitized;
-        }
-
-        saveData();
-        updateWatchlistSelector();
-    });
-
-    // Cambiar icono de lista
-    document.getElementById('edit-watchlist-icon').addEventListener('click', () => {
-        const iconOptions = ['📋', '🇺🇸', '🇧🇷', '🇦🇷', '💰', '📊', '🚀', '💎', '⭐', '🔥', '💼', '🌎'];
-        const currentIcon = watchlists[currentWatchlistId]?.icon || '📋';
-
-        let iconList = iconOptions.map(emoji => `${emoji}`).join('  ');
-        const selected = prompt(`Seleccioná un icono:\n\n${iconList}\n\nO escribí cualquier emoji:`, currentIcon);
-
-        if (!selected || !selected.trim()) return;
-
-        // Asegurar que la estructura existe
-        if (!watchlists[currentWatchlistId].icon) {
-            watchlists[currentWatchlistId] = {
-                displayName: watchlists[currentWatchlistId].displayName || currentWatchlistId,
-                icon: selected.trim(),
-                symbols: watchlists[currentWatchlistId].symbols || watchlists[currentWatchlistId]
-            };
-        } else {
-            watchlists[currentWatchlistId].icon = selected.trim();
-        }
-
-        saveData();
-        updateWatchlistSelector();
     });
 
     // Select all checkbox
@@ -3014,3 +2976,87 @@ window.addPriceAlert = function (symbol, targetPrice, direction) {
     }
 };
 
+// ========================================
+// WATCHLIST MANAGER MODAL
+// ========================================
+let selectedIcon = '📋';
+
+function openWatchlistManager() {
+    const modal = document.getElementById('watchlist-manager-modal');
+    const wl = watchlists[currentWatchlistId];
+
+    // Cargar datos actuales
+    document.getElementById('wl-manager-name').value = wl?.displayName || currentWatchlistId;
+    selectedIcon = wl?.icon || '📋';
+
+    // Marcar icono seleccionado
+    document.querySelectorAll('.icon-option').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.icon === selectedIcon);
+    });
+
+    modal.style.display = 'flex';
+}
+
+function closeWatchlistManager() {
+    document.getElementById('watchlist-manager-modal').style.display = 'none';
+}
+
+// Event listeners del modal
+document.getElementById('close-watchlist-manager').addEventListener('click', closeWatchlistManager);
+document.getElementById('wl-manager-cancel').addEventListener('click', closeWatchlistManager);
+
+// Selector de iconos
+document.querySelectorAll('.icon-option').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        selectedIcon = btn.dataset.icon;
+        document.querySelectorAll('.icon-option').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+    });
+});
+
+// Guardar cambios
+document.getElementById('wl-manager-save').addEventListener('click', () => {
+    const newName = document.getElementById('wl-manager-name').value.trim();
+    if (!newName) {
+        alert('El nombre no puede estar vacío');
+        return;
+    }
+
+    // Actualizar watchlist
+    if (!watchlists[currentWatchlistId].displayName) {
+        // Migrar formato antiguo
+        watchlists[currentWatchlistId] = {
+            displayName: newName,
+            icon: selectedIcon,
+            symbols: watchlists[currentWatchlistId]
+        };
+    } else {
+        watchlists[currentWatchlistId].displayName = newName;
+        watchlists[currentWatchlistId].icon = selectedIcon;
+    }
+
+    saveData();
+    updateWatchlistSelector();
+    closeWatchlistManager();
+});
+
+// Eliminar lista
+document.getElementById('wl-manager-delete').addEventListener('click', () => {
+    if (currentWatchlistId === 'default') {
+        alert('No podés eliminar la lista por defecto');
+        return;
+    }
+
+    if (!confirm(`¿Eliminar "${watchlists[currentWatchlistId].displayName}"?`)) return;
+
+    delete watchlists[currentWatchlistId];
+    currentWatchlistId = 'default';
+    saveData();
+    updateWatchlistSelector();
+    renderWatchlist();
+    closeWatchlistManager();
+});
+
+window.openWatchlistManager = openWatchlistManager;
+window.closeWatchlistManager = closeWatchlistManager;
