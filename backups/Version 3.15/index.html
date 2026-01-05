@@ -1,0 +1,479 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📈 Portfolio Tracker</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Portfolio">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo" id="app-title">
+                    <svg class="bull-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-10h11l-1.5 5h-8l-1.5-5zm5.5-6l1 2h-2l1-2z"
+                            fill="currentColor" />
+                    </svg>
+                    Cartera exterior
+                </h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline btn-small" id="refresh-prices">
+                        <span id="refresh-icon">↻</span>
+                        <span id="refresh-text">Refresh</span>
+                    </button>
+                </div>
+                <span id="ws-status" class="ws-status ws-disconnected" title="WebSocket Status">🔴 Desconectado</span>
+            </div>
+            <div class="header-right">
+                <div class="period-selector">
+                    <select id="year-filter">
+                        <option value="2026">📅 2026</option>
+                        <option value="2025">📅 2025</option>
+                        <option value="all">📊 Todo</option>
+                    </select>
+                </div>
+                <button id="alert-manager-btn" class="btn btn-outline btn-small" title="Gestión de Alertas">
+                    <span class="alert-badge" id="alert-badge">0</span>🔔
+                </button>
+                <button class="btn btn-outline btn-small" id="settings-btn" title="Configuración">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-row stats-row-4">
+            <div class="stat-card">
+                <span class="stat-label">INVERTIDO</span>
+                <span class="stat-value" id="total-value">$0.00</span>
+                <span class="stat-sub" id="positions-count">0 posiciones</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">RESULTADO HOY</span>
+                <span class="stat-value" id="daily-result">$0.00</span>
+                <span class="stat-sub" id="daily-percent">0.00%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">💼 RESULTADO TENENCIA</span>
+                <span class="stat-value" id="positions-result">$0.00</span>
+                <span class="stat-sub" id="positions-pct">0%</span>
+            </div>
+            <div class="stat-card accent">
+                <span class="stat-label">RESULTADO TOTAL</span>
+                <span class="stat-value" id="total-result">$0.00</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="portfolio">TENENCIA</button>
+            <button class="tab" data-tab="summary">RESUMEN</button>
+            <button class="tab" data-tab="history">OPERACIONES</button>
+            <button class="tab" data-tab="watchlist">WATCHLIST</button>
+            <button class="tab" data-tab="stats">ESTADÍSTICAS</button>
+        </nav>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="tab-content active">
+            <div class="section-actions">
+                <label class="toggle-label">
+                    <input type="checkbox" id="auto-refresh-portfolio" checked>
+                    <span>Auto (60s)</span>
+                </label>
+            </div>
+            <div class="table-container">
+                <table class="data-table sortable" id="portfolio-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="symbol" title="Símbolo del activo">ESPECIE ↕</th>
+                            <th data-sort="currentPrice" title="Último precio de mercado">ÚLTIMO ↕</th>
+                            <th data-sort="dailyChange" title="Cambio porcentual del día">% ↕</th>
+                            <th data-sort="priceChange" title="Diferencia de precio en USD">DIF ↕</th>
+                            <th title="Rango de precio del día (mín - máx)">DAY RANGE</th>
+                            <th title="Rango de precio de 52 semanas">52-WK RANGE</th>
+                            <th title="Precio de cierre del día anterior">CIERRE</th>
+                            <th title="Hora de última operación">HORA</th>
+                            <th title="MACD - Momentum indicator">MACD</th>
+                            <th data-sort="sector" title="Sector del activo">SECTOR ↕</th>
+                            <th class="col-personal" data-sort="quantity" title="Cantidad de acciones que posees">
+                                TENENCIA ↕</th>
+                            <th data-sort="value" title="Valor actual de tu posición">INVERTIDO ↕</th>
+                            <th data-sort="dailyValue" title="Ganancia/pérdida del día en USD">DIARIO ↕</th>
+                            <th data-sort="result" title="Resultado total (realizado + no realizado)">RESULTADO ↕</th>
+                            <th title="Configurar alerta de precio">🔔</th>
+                        </tr>
+                    </thead>
+                    <tbody id="portfolio-body"></tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="portfolio-empty">
+                <p>No hay posiciones abiertas</p>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="history" class="tab-content">
+            <div class="section-actions">
+                <input type="text" id="history-search" class="search-input" placeholder="🔍 Buscar especie...">
+                <input type="file" id="csv-input" accept=".csv" style="display: none;">
+                <button class="btn btn-outline btn-small" id="import-csv-btn">📥 Importar</button>
+                <button class="btn btn-outline btn-small" id="export-csv-btn">📤 Exportar</button>
+                <button class="btn btn-danger btn-small" id="delete-selected-btn" style="display: none;">🗑 (<span
+                        id="selected-count">0</span>)</button>
+                <div class="spacer"></div>
+                <button class="btn btn-primary" id="add-movement-btn">+ Log Trade</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table sortable" id="history-table">
+                    <thead>
+                        <tr>
+                            <th class="col-check"><input type="checkbox" id="select-all-movements"
+                                    title="Seleccionar todos"></th>
+                            <th data-sort="date">FECHA ↕</th>
+                            <th data-sort="type">TIPO ↕</th>
+                            <th data-sort="symbol">ESPECIE ↕</th>
+                            <th data-sort="quantity">CANTIDAD ↕</th>
+                            <th data-sort="price">PRECIO ↕</th>
+                            <th data-sort="importe">IMPORTE ↕</th>
+                            <th>ACC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body"></tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="history-empty">
+                <p>No hay movimientos registrados</p>
+                <p style="font-size: 11px; margin-top: 8px;">Importa un CSV con columnas: Fecha, Tipo, Especie,
+                    Cantidad, Precio</p>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section id="summary" class="tab-content">
+            <div class="table-container">
+                <table class="data-table sortable" id="summary-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="symbol">ESPECIE ↕</th>
+                            <th data-sort="currentPrice">PRECIO ↕</th>
+                            <th data-sort="dailyChange">% ↕</th>
+                            <th>52-WK RANGE</th>
+                            <th data-sort="currentQuantity">TENENCIA ↕</th>
+                            <th data-sort="currentValue">VALOR ACT. ↕</th>
+                            <th data-sort="totalResult">RESULTADO ↕</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summary-body"></tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="summary-empty">
+                <p>No hay datos</p>
+            </div>
+        </section>
+        <!-- Watchlist Section -->
+        <section id="watchlist" class="tab-content">
+            <div class="section-actions">
+                <div class="watchlist-selector-group">
+                    <select id="watchlist-selector" class="watchlist-select">
+                        <option value="default">Mi Watchlist</option>
+                    </select>
+                    <button class="btn-icon-sm" id="edit-watchlist-name" title="Renombrar lista">✏️</button>
+                    <button class="btn-icon-sm" id="add-watchlist-list" title="Nueva lista">➕</button>
+                    <button class="btn-icon-sm delete" id="delete-watchlist-list" title="Eliminar lista">🗑️</button>
+                </div>
+                <label class="toggle-label" style="margin-left: 12px;">
+                    <input type="checkbox" id="auto-refresh-watchlist" checked>
+                    <span>Auto (60s)</span>
+                </label>
+                <div class="spacer"></div>
+                <input type="text" id="watchlist-symbol" class="search-input" placeholder="Símbolos (ej: AAPL, MSFT)"
+                    style="width: 200px;">
+                <button class="btn btn-primary btn-small" id="add-watchlist-btn">+ Agregar</button>
+                <button class="btn btn-danger btn-small" id="delete-watchlist-selected" style="display: none;">🗑️
+                    Eliminar</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table sortable" id="watchlist-table">
+                    <thead>
+                        <tr>
+                            <th class="col-check"><input type="checkbox" id="watchlist-select-all"></th>
+                            <th class="sortable-col" data-sort="symbol">ESPECIE ↕</th>
+                            <th>ÚLTIMO</th>
+                            <th class="sortable-col" data-sort="change">% ↕</th>
+                            <th>DIF</th>
+                            <th>DAY RANGE</th>
+                            <th>52-WK</th>
+                            <th>CIERRE</th>
+                            <th>HORA</th>
+                            <th>VOL</th>
+                            <th>AVG VOL</th>
+                            <th>MACD</th>
+                            <th>SMA 200</th>
+                            <th>SECTOR</th>
+                            <th>ACC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="watchlist-body"></tbody>
+                </table>
+            </div>
+            <div class="empty-state" id="watchlist-empty">
+                <p>No hay acciones en tu watchlist</p>
+                <p style="font-size: 11px; margin-top: 8px;">Agregá símbolos separados por coma (ej: AAPL, MSFT, GOOGL)
+                </p>
+            </div>
+        </section>
+
+        <!-- Stats Section (Redesigned - Clean) -->
+        <section id="stats" class="tab-content">
+            <!-- Full Width Evolution Chart -->
+            <div class="chart-card chart-full">
+                <h3>Evolución del Portfolio</h3>
+                <canvas id="evolution-chart"></canvas>
+            </div>
+
+            <!-- Hidden sector chart canvas - still needed for internal calculations -->
+            <canvas id="sector-chart" style="display: none;"></canvas>
+
+            <!-- Daily Stats Toggle -->
+            <div class="daily-stats-toggle">
+                <button class="btn btn-outline btn-small" id="toggle-daily-stats">
+                    📅 Ver Historial Diario
+                </button>
+                <button class="btn btn-outline btn-small" id="export-daily-stats" onclick="exportDailyStatsToCSV()">
+                    📥 Exportar CSV
+                </button>
+                <button class="btn btn-primary btn-small" id="save-daily-snapshot" onclick="manualSaveSnapshot()">
+                    💾 Grabar Snapshot
+                </button>
+            </div>
+
+            <!-- Daily Stats Table (hidden by default) -->
+            <div class="table-container mt-4" id="daily-stats-container" style="display: none;">
+                <h3>Resumen Diario</h3>
+                <table class="data-table" id="daily-stats-table">
+                    <thead>
+                        <tr>
+                            <th>FECHA</th>
+                            <th>INVERTIDO</th>
+                            <th>RESULTADO</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="daily-stats-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Modal -->
+        <div class="modal" id="movement-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Registrar Movimiento</h3>
+                    <button class="modal-close" id="close-movement-modal">&times;</button>
+                </div>
+                <form id="movement-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="movement-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select id="movement-type" required>
+                                <option value="COMPRA">COMPRA</option>
+                                <option value="VENTA">VENTA</option>
+                                <option value="DIVIDENDO">DIVIDENDO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Especie</label>
+                            <input type="text" id="movement-symbol" required placeholder="AAPL" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" id="movement-quantity" required placeholder="100" min="1" step="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio</label>
+                        <input type="number" id="movement-price" required placeholder="150.00" min="0.01" step="0.01">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancel-movement">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>⚙️ Configuración</h3>
+                    <button class="modal-close" id="close-settings-modal">&times;</button>
+                </div>
+                <div class="settings-body">
+                    <div class="setting-item">
+                        <label>Nombre de la App</label>
+                        <input type="text" id="setting-app-name" placeholder="Portfolio Tracker">
+                    </div>
+                    <div class="setting-item">
+                        <label>Tema</label>
+                        <div class="theme-selector">
+                            <button class="theme-btn active" data-theme="dark">🌙 Oscuro</button>
+                            <button class="theme-btn" data-theme="light">☀️ Claro</button>
+                        </div>
+                    </div>
+                    ```
+                    <a href="https://finnhub.io/register" target="_blank"
+                        style="font-size: 0.85em; margin-left: 8px; color: var(--primary);">
+                        (Obtener gratis)
+                    </a>
+                    </label>
+                    <input type="text" id="finnhub-api-key" placeholder="Ingresá tu API key">
+                    <small style="color: var(--text-muted); display: block; margin-top: 6px; font-size: 0.85em;">
+                        ℹ️ Finnhub proporciona datos más confiables. Yahoo Finance se usa como fallback.
+                    </small>
+                </div>
+                <div class="setting-item">
+                    <label for="alert-email">📧 Email para Alertas (Opcional)</label>
+                    <input type="email" id="alert-email" placeholder="tu@email.com">
+                    <small style="color: #94a3b8; font-size: 11px; display: block; margin-top: 4px;">
+                        Si lo dejás vacío, usa el email de tu cuenta de Google
+                    </small>
+                </div>
+                <div class="setting-item">
+                    <label>💾 Almacenamiento de Datos</label>
+                    <div class="storage-selector">
+                        <div class="storage-option">
+                            <input type="radio" name="storage-backend" value="local" id="storage-local" checked>
+                            <label for="storage-local">
+                                <strong>💾 LocalStorage</strong>
+                                <small>Solo en este dispositivo</small>
+                            </label>
+                        </div>
+                        <div class="storage-option">
+                            <input type="radio" name="storage-backend" value="sheets" id="storage-sheets">
+                            <label for="storage-sheets">
+                                <strong>📊 Google Sheets</strong>
+                                <small>Sincronización cross-device</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-actions">
+                    <button class="btn btn-outline" id="cancel-settings">Cancelar</button>
+                    <button class="btn btn-primary" id="save-settings">Guardar</button>
+                    <div class="version" style="opacity: 0.5; font-size: 10px; margin-top: 5px;">v3.0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Alert Manager Modal -->
+    <div id="alert-manager-modal" class="modal">
+        <div class="alert-modal">
+            <div class="alert-modal__header">
+                <h2 class="alert-modal__title">🔔 Alerts</h2>
+                <button class="alert-modal__close" onclick="closeAlertManager()">×</button>
+            </div>
+            <div class="alert-modal__body">
+                <div class="alert-modal__hint">
+                    💡 Creá alertas desde el botón 🔔 en la tabla de cotizaciones
+                </div>
+                <div id="alert-list-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <span>v3.1-ws</span>
+        <span>•</span>
+        <span>01/01/2026</span>
+    </footer>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Registrar Service Worker con auto-actualización
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registrado');
+
+                        // Chequear actualizaciones cada 60 segundos
+                        setInterval(() => {
+                            registration.update();
+                        }, 60000);
+
+                        // Detectar cuando hay una nueva versión esperando
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Nueva versión disponible
+                                    console.log('🔄 Nueva versión disponible');
+
+                                    // Mostrar notificación al usuario
+                                    if (typeof showToast === 'function') {
+                                        showToast('🔄 Nueva versión disponible. Refrescá la página.', 'info', 10000);
+                                    }
+
+                                    // Opción: Auto-reload después de 3 segundos
+                                    // setTimeout(() => window.location.reload(), 3000);
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.warn('⚠️ Service Worker no se pudo registrar:', error);
+                    });
+
+                // Forzar reload cuando el SW toma control
+                let refreshing = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (!refreshing) {
+                        refreshing = true;
+                        console.log('🔄 Service Worker actualizado, recargando...');
+                        window.location.reload();
+                    }
+                });
+            });
+        }
+    </script>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script src="utils.js"></script>
+    <script src="storage.js"></script>
+    <script src="calculations.js"></script>
+    <script src="api.js"></script>
+    <script src="ui.js"></script>
+    <script src="charts.js"></script>
+    <script src="finnhub-ws.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
