@@ -1057,7 +1057,7 @@ function initializeWatchlist() {
     });
 
     // Selector de lista
-    document.getElementById('watchlist-selector').addEventListener('change', (e) => {
+    document.getElementById('watchlist-selector').addEventListener('change', async (e) => {
         currentWatchlistId = e.target.value;
         saveData();
         renderWatchlist();
@@ -1065,6 +1065,23 @@ function initializeWatchlist() {
         // Re-suscribir símbolos al WebSocket
         if (typeof subscribeToPortfolioAndWatchlist === 'function') {
             subscribeToPortfolioAndWatchlist();
+        }
+
+        // Fetch precios de símbolos que no tienen cache
+        const list = getCurrentWatchlist();
+        const symbolsWithoutCache = list.filter(symbol => !priceCache[symbol] || !priceCache[symbol].price);
+
+        if (symbolsWithoutCache.length > 0) {
+            console.log(`🔄 Fetching prices for ${symbolsWithoutCache.length} symbols...`);
+
+            // Fetch en paralelo con rate limiting
+            for (let i = 0; i < symbolsWithoutCache.length; i += 5) {
+                const batch = symbolsWithoutCache.slice(i, i + 5);
+                await Promise.all(batch.map(symbol => fetchPrice(symbol)));
+                await new Promise(resolve => setTimeout(resolve, 100)); // Delay entre batches
+            }
+
+            renderWatchlist(); // Re-render con los precios nuevos
         }
     });
 
