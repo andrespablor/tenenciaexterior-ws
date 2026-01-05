@@ -41,7 +41,22 @@
 // ========================================
 // Inicialización
 // ========================================
+
+// Carga de perfiles estáticos (Sectores/Industrias)
+window.stockProfiles = {};
+async function loadStockProfiles() {
+    try {
+        const res = await fetch('assets/stock-profiles.json');
+        if (res.ok) {
+            window.stockProfiles = await res.json();
+        }
+    } catch (e) {
+        // Ignorar si no existe aún
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+    loadStockProfiles(); // Iniciar carga en paralelo (no await para no bloquear UI)
     loadData(); // Cargar desde localStorage primero
     loadSettings();
 
@@ -1454,7 +1469,9 @@ function renderWatchlist() {
             <td>${avgVolDisplay}</td>
             <td class="${macdClass}">${macdDisplay}</td>
             <td class="cell-${smaStatus}" title="SMA 200: $${fmt(sma200, 2)}">${smaLabel} $${fmt(sma200, 0)}</td>
-            <td class="cell-sector">${SECTOR_MAP[symbol] || 'Otro'}</td>
+            <td class="cell-sector" title="${window.stockProfiles?.[symbol]?.name || ''}">
+                ${window.stockProfiles?.[symbol]?.sector || SECTOR_MAP[symbol] || 'Otro'}
+            </td>
             <td>
                 <button class="btn-alert" onclick="promptPriceAlert('${symbol}', ${price})" title="Crear alerta">🔔</button>
                 <button class="btn-icon" onclick="removeFromWatchlist('${symbol}')" title="Quitar">🗑️</button>
