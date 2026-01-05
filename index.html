@@ -389,11 +389,13 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Lista actual</label>
-                    <div style="display: flex; gap: 8px;">
+                    <div style="display: flex; gap: 8px; align-items: center;">
                         <select id="wl-manager-selector" class="form-control" style="flex: 1;">
                             <option value="default">Mi Watchlist</option>
                         </select>
-                        <button class="btn btn-primary" id="wl-manager-new">➕ Nueva</button>
+                        <button class="btn-icon-only" id="wl-move-up" title="Subir">↑</button>
+                        <button class="btn-icon-only" id="wl-move-down" title="Bajar">↓</button>
+                        <button class="btn btn-primary" id="wl-manager-new">➕</button>
                     </div>
                 </div>
 

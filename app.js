@@ -1084,13 +1084,31 @@ function initializeWatchlist() {
 
 function updateWatchlistSelector() {
     const select = document.getElementById('watchlist-selector');
-    select.innerHTML = Object.keys(watchlists).map(id => {
+
+    // Obtener orden guardado o usar Object.keys por defecto
+    const savedOrder = localStorage.getItem('watchlistOrder');
+    let orderedIds = savedOrder ? JSON.parse(savedOrder) : Object.keys(watchlists);
+
+    // Agregar listas nuevas que no estén en el orden guardado
+    Object.keys(watchlists).forEach(id => {
+        if (!orderedIds.includes(id)) {
+            orderedIds.push(id);
+        }
+    });
+
+    // Filtrar IDs que ya no existen
+    orderedIds = orderedIds.filter(id => watchlists[id]);
+
+    select.innerHTML = orderedIds.map(id => {
         const wl = watchlists[id];
         const displayName = wl.displayName || (id === 'default' ? 'Mi Watchlist' : id);
         const icon = wl.icon || '📋';
         const count = (wl.symbols || wl).length;
         return `<option value="${id}" ${id === currentWatchlistId ? 'selected' : ''}>${icon} ${displayName} (${count})</option>`;
     }).join('');
+
+    // Guardar orden actualizado
+    localStorage.setItem('watchlistOrder', JSON.stringify(orderedIds));
 }
 
 async function addToWatchlist() {
@@ -3015,6 +3033,51 @@ document.getElementById('wl-manager-new').addEventListener('click', () => {
     // Cargar datos de la nueva lista
     loadWatchlistDataInModal(id);
 });
+
+// Botones de reordenamiento ↑↓
+document.getElementById('wl-move-up').addEventListener('click', () => {
+    const selector = document.getElementById('wl-manager-selector');
+    const selectedIndex = selector.selectedIndex;
+
+    if (selectedIndex <= 0) return; // Ya está al principio
+
+    // Intercambiar opciones
+    const selected = selector.options[selectedIndex];
+    const previous = selector.options[selectedIndex - 1];
+    selector.insertBefore(selected, previous);
+
+    saveWatchlistOrder();
+});
+
+document.getElementById('wl-move-down').addEventListener('click', () => {
+    const selector = document.getElementById('wl-manager-selector');
+    const selectedIndex = selector.selectedIndex;
+
+    if (selectedIndex >= selector.options.length - 1) return; // Ya está al final
+
+    // Intercambiar opciones
+    const selected = selector.options[selectedIndex];
+    const next = selector.options[selectedIndex + 2]; // Insertamos ANTES del siguiente (+2)
+
+    if (next) {
+        selector.insertBefore(selected, next);
+    } else {
+        selector.appendChild(selected);
+    }
+
+    saveWatchlistOrder();
+});
+
+function saveWatchlistOrder() {
+    // Guardar el orden actual en localStorage
+    const selector = document.getElementById('wl-manager-selector');
+    const order = Array.from(selector.options).map(opt => opt.value);
+    localStorage.setItem('watchlistOrder', JSON.stringify(order));
+
+    // Actualizar el selector principal también
+    updateWatchlistSelector();
+}
+
 
 // Selector de iconos
 document.querySelectorAll('.icon-option').forEach(btn => {

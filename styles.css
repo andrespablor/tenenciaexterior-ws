@@ -245,17 +245,17 @@ td {
 /* Icon Picker */
 .icon-picker {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
     margin-top: 8px;
 }
 
 .icon-option {
     background: var(--bg-hover);
     border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 24px;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
     aspect-ratio: 1;
