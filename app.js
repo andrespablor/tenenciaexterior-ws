@@ -2294,13 +2294,9 @@ async function refreshAllPricesFast() {
         }
         saveData(); // Single save after all updates
 
-        // Show result
-        if (typeof showToast === 'function') {
-            if (errorCount === 0) {
-                showToast(successCount + ' precios actualizados', 'success');
-            } else {
-                showToast(successCount + ' OK, ' + errorCount + ' errores', 'warning');
-            }
+        // Show result - solo mostrar si hay errores
+        if (typeof showToast === 'function' && errorCount > 0) {
+            showToast(successCount + ' OK, ' + errorCount + ' errores', 'warning');
         }
 
         console.log('Parallel refresh complete. Success:', successCount, 'Errors:', errorCount);
@@ -2508,7 +2504,7 @@ setTimeout(function () {
                     checkPriceAlerts();
                 }
             }
-            if (typeof showToast === 'function') showToast(ok + ' precios actualizados', 'success');
+            // Toast removido - WebSocket actualiza en tiempo real
         } finally { isRefreshing = false; }
     };
     console.log('Refresh patched OK');
