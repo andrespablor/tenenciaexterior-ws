@@ -238,9 +238,28 @@ function updatePriceFromWebSocket(symbol, price, timestamp, volume) {
 
     const cache = priceCache[symbol];
     const oldPrice = cache.price || price;
-    const previousClose = cache.previousClose || oldPrice;
 
-    // Calcular cambio diario
+    // CRÍTICO: Asegurar que previousClose viene de Finnhub REST
+    // Si no existe, significa que es la primera actualización WebSocket
+    // y necesitamos el previousClose oficial
+    let previousClose = cache.previousClose;
+
+    if (!previousClose && typeof fetchPriceFromFinnhub === 'function') {
+        // Llamar a REST una sola vez para obtener previousClose correcto
+        console.warn(`⚠️ ${symbol}: No previousClose in cache. Fetching from Finnhub REST...`);
+        fetchPriceFromFinnhub(symbol).then(data => {
+            if (data && data.previousClose) {
+                priceCache[symbol].previousClose = data.previousClose;
+                console.log(`✅ ${symbol}: previousClose set to ${data.previousClose}`);
+                // Recalcular con el previousClose correcto
+                updatePriceFromWebSocket(symbol, price, timestamp, volume);
+            }
+        });
+        // Por ahora usar el oldPrice como fallback temporal
+        previousClose = oldPrice;
+    }
+
+    // Calcular cambio diario (ahora siempre con previousClose correcto)
     const dailyChange = previousClose ? ((price - previousClose) / previousClose) * 100 : 0;
     const dailyDiff = previousClose ? (price - previousClose) : 0;
 

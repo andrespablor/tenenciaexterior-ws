@@ -44,6 +44,7 @@ async function fetchPriceFromFinnhub(symbol) {
             return null;
         }
 
+        // Calcular % y DIF desde Finnhub (fuente única de verdad)
         const change = prev ? ((price - prev) / prev) * 100 : 0;
         const dailyDiff = prev ? (price - prev) : 0;
 
