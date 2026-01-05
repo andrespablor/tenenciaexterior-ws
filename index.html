@@ -186,8 +186,7 @@
                     <select id="watchlist-selector" class="watchlist-select">
                         <option value="default">Mi Watchlist</option>
                     </select>
-                    <button class="btn btn-outline btn-small" id="manage-watchlist-btn">⚙️ Gestionar</button>
-                    <button class="btn btn-primary btn-small" id="add-watchlist-list">➕ Nueva</button>
+                    <button class="btn-icon-only" id="manage-watchlist-btn" title="Gestionar listas">⚙️</button>
                 </div>
                 <!-- Auto-refresh removido - WebSocket actualiza en tiempo real -->
                 <div class="spacer"></div>
@@ -384,10 +383,20 @@
     <div id="watchlist-manager-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>⚙️ Gestionar Watchlist</h3>
+                <h3>⚙️ Gestionar Watchlists</h3>
                 <button class="modal-close" id="close-watchlist-manager">×</button>
             </div>
             <div class="modal-body">
+                <div class="form-group">
+                    <label>Lista actual</label>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="wl-manager-selector" class="form-control" style="flex: 1;">
+                            <option value="default">Mi Watchlist</option>
+                        </select>
+                        <button class="btn btn-primary" id="wl-manager-new">➕ Nueva</button>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Nombre</label>
                     <input type="text" id="wl-manager-name" class="form-control" placeholder="Mi Watchlist">

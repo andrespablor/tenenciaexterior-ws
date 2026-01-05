@@ -1067,26 +1067,8 @@ function initializeWatchlist() {
         renderWatchlist();
     });
 
-    // Botón "Gestionar" - abre modal
+    // Botón "⚙️" - abre modal
     document.getElementById('manage-watchlist-btn').addEventListener('click', openWatchlistManager);
-
-    // Botón "Nueva" - prompt rápido
-    document.getElementById('add-watchlist-list').addEventListener('click', () => {
-        const name = prompt('Nombre de la nueva lista:');
-        if (!name || !name.trim()) return;
-        const sanitized = name.trim();
-        const id = sanitized.toLowerCase().replace(/\s+/g, '_');
-        if (watchlists[id]) { alert('Ya existe una lista con ese nombre'); return; }
-        watchlists[id] = {
-            displayName: sanitized,
-            icon: '📋',
-            symbols: []
-        };
-        currentWatchlistId = id;
-        saveData();
-        updateWatchlistSelector();
-        renderWatchlist();
-    });
 
     // Select all checkbox
     document.getElementById('watchlist-select-all').addEventListener('change', (e) => {
@@ -2983,18 +2965,32 @@ let selectedIcon = '📋';
 
 function openWatchlistManager() {
     const modal = document.getElementById('watchlist-manager-modal');
-    const wl = watchlists[currentWatchlistId];
 
-    // Cargar datos actuales
-    document.getElementById('wl-manager-name').value = wl?.displayName || currentWatchlistId;
+    // Poblar selector interno con todas las listas
+    const selector = document.getElementById('wl-manager-selector');
+    selector.innerHTML = Object.keys(watchlists).map(id => {
+        const wl = watchlists[id];
+        const displayName = wl.displayName || (id === 'default' ? 'Mi Watchlist' : id);
+        const icon = wl.icon || '📋';
+        const count = (wl.symbols || wl).length;
+        return `<option value="${id}" ${id === currentWatchlistId ? 'selected' : ''}>${icon} ${displayName} (${count})</option>`;
+    }).join('');
+
+    // Cargar datos de la lista actual
+    loadWatchlistDataInModal(currentWatchlistId);
+
+    modal.style.display = 'flex';
+}
+
+function loadWatchlistDataInModal(id) {
+    const wl = watchlists[id];
+    document.getElementById('wl-manager-name').value = wl?.displayName || id;
     selectedIcon = wl?.icon || '📋';
 
     // Marcar icono seleccionado
     document.querySelectorAll('.icon-option').forEach(btn => {
         btn.classList.toggle('selected', btn.dataset.icon === selectedIcon);
     });
-
-    modal.style.display = 'flex';
 }
 
 function closeWatchlistManager() {
@@ -3004,6 +3000,39 @@ function closeWatchlistManager() {
 // Event listeners del modal
 document.getElementById('close-watchlist-manager').addEventListener('click', closeWatchlistManager);
 document.getElementById('wl-manager-cancel').addEventListener('click', closeWatchlistManager);
+
+// Cambiar de lista dentro del modal
+document.getElementById('wl-manager-selector').addEventListener('change', (e) => {
+    loadWatchlistDataInModal(e.target.value);
+});
+
+// Botón "Nueva lista" dentro del modal
+document.getElementById('wl-manager-new').addEventListener('click', () => {
+    const name = prompt('Nombre de la nueva lista:');
+    if (!name || !name.trim()) return;
+    const sanitized = name.trim();
+    const id = sanitized.toLowerCase().replace(/\s+/g, '_');
+    if (watchlists[id]) { alert('Ya existe una lista con ese nombre'); return; }
+
+    watchlists[id] = {
+        displayName: sanitized,
+        icon: '📋',
+        symbols: []
+    };
+
+    saveData();
+
+    // Actualizar selector interno
+    const selector = document.getElementById('wl-manager-selector');
+    const newOption = document.createElement('option');
+    newOption.value = id;
+    newOption.selected = true;
+    newOption.textContent = `📋 ${sanitized} (0)`;
+    selector.appendChild(newOption);
+
+    // Cargar datos de la nueva lista
+    loadWatchlistDataInModal(id);
+});
 
 // Selector de iconos
 document.querySelectorAll('.icon-option').forEach(btn => {
@@ -3017,23 +3046,24 @@ document.querySelectorAll('.icon-option').forEach(btn => {
 
 // Guardar cambios
 document.getElementById('wl-manager-save').addEventListener('click', () => {
+    const selectedId = document.getElementById('wl-manager-selector').value;
     const newName = document.getElementById('wl-manager-name').value.trim();
     if (!newName) {
         alert('El nombre no puede estar vacío');
         return;
     }
 
-    // Actualizar watchlist
-    if (!watchlists[currentWatchlistId].displayName) {
+    // Actualizar watchlist seleccionada
+    if (!watchlists[selectedId].displayName) {
         // Migrar formato antiguo
-        watchlists[currentWatchlistId] = {
+        watchlists[selectedId] = {
             displayName: newName,
             icon: selectedIcon,
-            symbols: watchlists[currentWatchlistId]
+            symbols: watchlists[selectedId]
         };
     } else {
-        watchlists[currentWatchlistId].displayName = newName;
-        watchlists[currentWatchlistId].icon = selectedIcon;
+        watchlists[selectedId].displayName = newName;
+        watchlists[selectedId].icon = selectedIcon;
     }
 
     saveData();
@@ -3043,20 +3073,31 @@ document.getElementById('wl-manager-save').addEventListener('click', () => {
 
 // Eliminar lista
 document.getElementById('wl-manager-delete').addEventListener('click', () => {
-    if (currentWatchlistId === 'default') {
+    const selectedId = document.getElementById('wl-manager-selector').value;
+
+    if (selectedId === 'default') {
         alert('No podés eliminar la lista por defecto');
         return;
     }
 
-    if (!confirm(`¿Eliminar "${watchlists[currentWatchlistId].displayName}"?`)) return;
+    if (!confirm(`¿Eliminar "${watchlists[selectedId].displayName}"?`)) return;
 
-    delete watchlists[currentWatchlistId];
-    currentWatchlistId = 'default';
+    delete watchlists[selectedId];
+
+    // Si era la lista actual, cambiar a default
+    if (currentWatchlistId === selectedId) {
+        currentWatchlistId = 'default';
+        renderWatchlist();
+    }
+
     saveData();
     updateWatchlistSelector();
-    renderWatchlist();
-    closeWatchlistManager();
+
+    // Actualizar selector interno del modal
+    document.getElementById('wl-manager-selector').value = 'default';
+    loadWatchlistDataInModal('default');
 });
 
 window.openWatchlistManager = openWatchlistManager;
 window.closeWatchlistManager = closeWatchlistManager;
+```

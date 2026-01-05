@@ -273,6 +273,23 @@ td {
     box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
 }
 
+/* Button icon only */
+.btn-icon-only {
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon-only:hover {
+    background: var(--bg-card);
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
 .btn-icon-sm {
     background: none;
     border: none;
