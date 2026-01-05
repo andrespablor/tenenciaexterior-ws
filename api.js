@@ -104,6 +104,45 @@ async function fetchMacdFromApi(symbol) {
     }
 }
 
+// ========================================
+// Finnhub Stochastic Oscillator
+// ========================================
+async function fetchStochasticFromApi(symbol) {
+    const apiKey = appSettings.finnhubApiKey;
+    if (!apiKey) return null;
+
+    // Pedir últimos 100 días
+    const now = Math.floor(Date.now() / 1000);
+    const from = now - (100 * 24 * 60 * 60);
+
+    // Parámetros estándar: periodK=14, periodD=3, kSmooth=3
+    const url = `https://finnhub.io/api/v1/indicator?symbol=${symbol}&resolution=D&from=${from}&to=${now}&indicator=stoch&indicator_fields={"periodK":14,"periodD":3,"kSmooth":3}&token=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.warn(`Stochastic fetch failed for ${symbol}: ${response.status}`);
+            return null;
+        }
+
+        const data = await response.json();
+        // data = { stochK: [...], stochD: [...], t: [...] }
+
+        if (data.stochK && data.stochK.length > 0) {
+            const lastIndex = data.stochK.length - 1;
+            return {
+                k: data.stochK[lastIndex],
+                d: data.stochD[lastIndex],
+                date: data.t[lastIndex]
+            };
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching Stochastic for ${symbol}:`, error);
+        return null;
+    }
+}
+
 // Función auxiliar para obtener datos históricos de Yahoo (para MACD, etc)
 async function fetchYahooHistoricalData(symbol) {
     // 1. Intentar obtener MACD real de Finnhub API (indicador 'macd')
@@ -115,6 +154,17 @@ async function fetchYahooHistoricalData(symbol) {
         }
     } catch (e) {
         // console.warn('Finnhub MACD fetch error:', e);
+    }
+
+    // 2. Intentar obtener Stochastic de Finnhub API
+    let finnhubStochastic = null;
+    try {
+        const stochData = await fetchStochasticFromApi(symbol);
+        if (stochData) {
+            finnhubStochastic = stochData; // { k, d, date }
+        }
+    } catch (e) {
+        // console.warn('Finnhub Stochastic fetch error:', e);
     }
 
     const yahooHost = Math.random() > 0.5 ? 'query1.finance.yahoo.com' : 'query2.finance.yahoo.com';
@@ -157,7 +207,8 @@ async function fetchYahooHistoricalData(symbol) {
                 wk52Low: meta.fiftyTwoWeekLow,
                 volume: meta.regularMarketVolume || 0,
                 avgVolume,
-                macd
+                macd,
+                stochastic: finnhubStochastic
             };
 
         } catch (error) {
@@ -165,11 +216,12 @@ async function fetchYahooHistoricalData(symbol) {
         }
     }
 
-    // Si falló Yahoo, devolver al menos el MACD si lo conseguimos
-    if (finnhubMacd !== null) {
+    // Si falló Yahoo, devolver al menos los indicadores de Finnhub si los conseguimos
+    if (finnhubMacd !== null || finnhubStochastic !== null) {
         return {
             wk52High: 0, wk52Low: 0, volume: 0, avgVolume: 0,
-            macd: finnhubMacd
+            macd: finnhubMacd,
+            stochastic: finnhubStochastic
         };
     }
 
@@ -218,6 +270,7 @@ async function fetchPrice(symbol) {
                     volume: yahooHistorical?.volume || 0,
                     avgVolume: yahooHistorical?.avgVolume || 0,
                     macd: yahooHistorical?.macd || null,
+                    stochastic: yahooHistorical?.stochastic || null,
                     previousClose: finnhubData.previousClose,
                     marketTime: newTimestamp,
                     rating: null,
