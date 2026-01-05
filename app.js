@@ -1220,6 +1220,88 @@ function removeFromWatchlist(symbol) {
     }
 }
 
+// Helper: Mapear símbolos a dominios para logos
+function getCompanyDomain(symbol) {
+    const domainMap = {
+        'AAPL': 'apple.com',
+        'MSFT': 'microsoft.com',
+        'GOOGL': 'google.com',
+        'GOOG': 'google.com',
+        'AMZN': 'amazon.com',
+        'META': 'meta.com',
+        'TSLA': 'tesla.com',
+        'NVDA': 'nvidia.com',
+        'NFLX': 'netflix.com',
+        'DIS': 'disney.com',
+        'BABA': 'alibaba.com',
+        'INTC': 'intel.com',
+        'AMD': 'amd.com',
+        'PYPL': 'paypal.com',
+        'ADBE': 'adobe.com',
+        'CRM': 'salesforce.com',
+        'ORCL': 'oracle.com',
+        'IBM': 'ibm.com',
+        'CSCO': 'cisco.com',
+        'QCOM': 'qualcomm.com',
+        'V': 'visa.com',
+        'MA': 'mastercard.com',
+        'JPM': 'jpmorganchase.com',
+        'BAC': 'bankofamerica.com',
+        'WMT': 'walmart.com',
+        'KO': 'coca-cola.com',
+        'PEP': 'pepsico.com',
+        'MCD': 'mcdonalds.com',
+        'NKE': 'nike.com',
+        'SBUX': 'starbucks.com',
+        'UNH': 'unitedhealthgroup.com',
+        'JNJ': 'jnj.com',
+        'PFE': 'pfizer.com',
+        'MRNA': 'modernatx.com',
+        'XOM': 'exxonmobil.com',
+        'CVX': 'chevron.com',
+        'BA': 'boeing.com',
+        'GE': 'ge.com',
+        'CAT': 'caterpillar.com',
+        'SPOT': 'spotify.com',
+        'UBER': 'uber.com',
+        'LYFT': 'lyft.com',
+        'ABNB': 'airbnb.com',
+        'SQ': 'squareup.com',
+        'SHOP': 'shopify.com',
+        'SNAP': 'snap.com',
+        'TWTR': 'twitter.com',
+        'ZM': 'zoom.us',
+        'DOCU': 'docusign.com',
+        // Latinoamérica
+        'MELI': 'mercadolibre.com',
+        'GLOB': 'globant.com',
+        'VIST': 'vista.com',
+        'DESP': 'despegar.com',
+        'YPF': 'ypf.com',
+        'GGAL': 'bancogalicia.com',
+        'BMA': 'bma.com.ar',
+        'SUPV': 'supervielle.com.ar',
+        'LOMA': 'lomalarga.com',
+        'CRESY': 'cresud.com.ar',
+        'EDN': 'edenor.com',
+        'CEPU': 'cepu.com.ar',
+        'TGS': 'tgs.com.ar',
+        'BBAR': 'francesbb.com.ar',
+        'PAM': 'pampaenergia.com',
+        'TEO': 'telecom.com.ar',
+        'TX': 'tenaris.com',
+        'NU': 'nu.com.co',
+        'VALE': 'vale.com',
+        'ITUB': 'itau.com',
+        'BBD': 'bb.com.br',
+        'PBR': 'petrobras.com.br',
+        'ABEV': 'ambev.com.br',
+        'EWZ': 'ishares.com'
+    };
+
+    return domainMap[symbol] || `${symbol.toLowerCase()}.com`;
+}
+
 function deleteSelectedWatchlist() {
     const checkboxes = document.querySelectorAll('#watchlist-body input[type="checkbox"]:checked');
     const toDelete = Array.from(checkboxes).map(cb => cb.dataset.symbol);
@@ -1340,7 +1422,16 @@ function renderWatchlist() {
 
         return `<tr data-symbol="${symbol}">
             <td class="col-check"><input type="checkbox" data-symbol="${symbol}" onchange="updateWatchlistDeleteBtn()"></td>
-            <td class="cell-symbol"><a href="${chartUrl}" target="_blank">${symbol} 📈</a></td>
+            <td class="cell-symbol">
+                <div class="symbol-with-logo">
+                    <img src="https://logo.clearbit.com/${getCompanyDomain(symbol)}" 
+                         class="company-logo" 
+                         alt="${symbol}"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="company-logo-fallback" style="display:none">${symbol.charAt(0)}</div>
+                    <a href="${chartUrl}" target="_blank">${symbol} 📈</a>
+                </div>
+            </td>
             <td class="cell-price">${priceDisplay}</td>
             <td class="cell-change ${dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}">${dailyChange >= 0 ? '+' : ''}${dailyChange.toFixed(2)}%</td>
             <td class="${dailyDiff >= 0 ? 'cell-positive' : 'cell-negative'}">${diffDisplay}</td>
