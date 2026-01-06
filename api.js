@@ -128,7 +128,7 @@ async function fetchMacdFromApi(symbol) {
     }
 }
 
-}
+
 
 // ========================================
 // Local Stochastic Calculation
@@ -390,17 +390,28 @@ async function fetchPrice(symbol) {
         }
 
         // 5. Ejecutar todas las llamadas en paralelo
-        let dailyData = cache?.dailyData || {};
+        let dailyData = {
+            wk52High: cache?.wk52High,
+            wk52Low: cache?.wk52Low,
+            volume: cache?.volume,
+            avgVolume: cache?.avgVolume,
+            highs: cache?.highs,
+            lows: cache?.lows,
+            closes: cache?.closes
+        };
         let sma200 = cache?.sma200 || 0;
-        let indicators = cache?.indicators || {};
+        let indicators = {
+            macd: cache?.macd,
+            stochastic: cache?.stochastic
+        };
 
         if (promises.length > 0) {
             const results = await Promise.all(promises);
             let resultIndex = 0;
 
             if (needsDailyUpdate) {
-                dailyData = results[resultIndex++] || {};
-                sma200 = results[resultIndex++] || 0;
+                dailyData = results[resultIndex++] || dailyData;
+                sma200 = results[resultIndex++] || sma200;
             }
 
             if (needsIndicatorUpdate) {
@@ -417,8 +428,8 @@ async function fetchPrice(symbol) {
                 }
 
                 indicators = {
-                    macd: macdData?.histogram || null,
-                    stochastic: stochData || null
+                    macd: macdData?.histogram || indicators.macd,
+                    stochastic: stochData || indicators.stochastic
                 };
             }
         }
@@ -440,6 +451,11 @@ async function fetchPrice(symbol) {
             volume: dailyData.volume || 0,
             avgVolume: dailyData.avgVolume || 0,
             sma200: sma200,
+
+            // Persist raw history for local calculations
+            highs: dailyData.highs,
+            lows: dailyData.lows,
+            closes: dailyData.closes,
 
             // Indicadores técnicos
             macd: indicators.macd,
