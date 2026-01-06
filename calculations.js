@@ -109,29 +109,27 @@ function calculateSpeciesSummary() {
         if (selectedPeriod === '2025' && yearEndSnapshots['2025']?.bySymbol?.[s]) {
             sum.totalResult = yearEndSnapshots['2025'].bySymbol[s].result;
         }
-        // Para 2026 con baseline: ya calculado arriba, skip
+        // Para 2026 con baseline: calcular desde cierre 2025
         else if (selectedPeriod === '2026' && yearEndSnapshots['2025']?.bySymbol?.[s]) {
-            // Skip - calculado en el bloque de arriba
+            const baseline = yearEndSnapshots['2025'].bySymbol[s];
+            const baselineValue = baseline.quantity * baseline.price;
+            sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - (sum.totalBought + baselineValue);
+        }
+        // Para 2026 SIN baseline: símbolo nuevo, calcular desde operaciones del año
+        else if (selectedPeriod === '2026') {
+            sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
         }
         // Para TODO y otros: cálculo dinámico normal
         else {
             sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
         }
+
+        // Asegurar que totalResult sea un número válido
+        if (isNaN(sum.totalResult) || sum.totalResult === undefined || sum.totalResult === null) {
+            sum.totalResult = 0;
+        }
     });
 
-    // Para 2026: sobrescribir resultado con (valor_actual - valor_cierre)
-    if (selectedPeriod === '2026' && yearEndSnapshots['2025'] && yearEndSnapshots['2025'].bySymbol) {
-        const baselines = yearEndSnapshots['2025'].bySymbol;
-        Object.keys(summary).forEach(symbol => {
-            if (baselines[symbol] && portfolio[symbol]) {
-                const baseline = baselines[symbol];
-                const currentPrice = priceCache[symbol]?.price || baseline.price;
-                const currentValue = portfolio[symbol].quantity * currentPrice;
-                const baselineValue = baseline.quantity * baseline.price;
-                summary[symbol].totalResult = currentValue - baselineValue;
-            }
-        });
-    }
     return summary;
 }
 
