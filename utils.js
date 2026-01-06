@@ -4,6 +4,9 @@
 
 // Formateo de números
 function fmt(num, dec = 0) {
+    if (num === null || num === undefined || isNaN(num)) {
+        return '-';
+    }
     return num.toLocaleString('es-AR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
 }
 

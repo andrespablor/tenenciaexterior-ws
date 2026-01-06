@@ -236,7 +236,7 @@ async function fetchSmaFromApi(symbol, period = 200) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            console.warn(`SMA fetch failed for ${symbol}: ${response.status}`);
+            console.warn(`SMA fetch failed for ${symbol}: ${response.status} - Will use local calculation`);
             return null;
         }
 
@@ -248,10 +248,24 @@ async function fetchSmaFromApi(symbol, period = 200) {
         }
         return null;
     } catch (error) {
-        console.error(`Error fetching SMA for ${symbol}:`, error);
+        console.warn(`SMA API error for ${symbol}, will use local calculation:`, error.message);
         return null;
     }
 }
+
+// ========================================
+// Local SMA Calculation (Fallback)
+// ========================================
+function calculateSmaLocal(closes, period = 200) {
+    if (!closes || closes.length < period) {
+        return null;
+    }
+
+    const recentCloses = closes.slice(-period);
+    const sum = recentCloses.reduce((acc, val) => acc + val, 0);
+    return sum / period;
+}
+
 
 // Función auxiliar para obtener datos históricos de Yahoo (para MACD, etc)
 async function fetchYahooHistoricalData(symbol) {
@@ -411,7 +425,14 @@ async function fetchPrice(symbol) {
 
             if (needsDailyUpdate) {
                 dailyData = results[resultIndex++] || dailyData;
-                sma200 = results[resultIndex++] || sma200;
+                let smaFromApi = results[resultIndex++];
+
+                // Fallback: Calculate SMA locally if API failed
+                if (!smaFromApi && dailyData?.closes && dailyData.closes.length >= 200) {
+                    smaFromApi = calculateSmaLocal(dailyData.closes, 200);
+                }
+
+                sma200 = smaFromApi || sma200;
             }
 
             if (needsIndicatorUpdate) {
