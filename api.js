@@ -128,48 +128,13 @@ async function fetchMacdFromApi(symbol) {
     }
 }
 
-// ========================================
-// Finnhub Stochastic Oscillator
-// ========================================
-async function fetchStochasticFromApi(symbol) {
-    const apiKey = appSettings.finnhubApiKey;
-    if (!apiKey) return null;
-
-    // Pedir últimos 100 días
-    const now = Math.floor(Date.now() / 1000);
-    const from = now - (100 * 24 * 60 * 60);
-
-    // Parámetros estándar: periodK=14, periodD=3, kSmooth=3
-    const url = `https://finnhub.io/api/v1/indicator?symbol=${symbol}&resolution=D&from=${from}&to=${now}&indicator=stoch&indicator_fields={"periodK":14,"periodD":3,"kSmooth":3}&token=${apiKey}`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            console.warn(`Stochastic fetch failed for ${symbol}: ${response.status}`);
-            return null;
-        }
-
-        const data = await response.json();
-        // data = { stochK: [...], stochD: [...], t: [...] }
-
-        if (data.stochK && data.stochK.length > 0) {
-            const lastIndex = data.stochK.length - 1;
-            return {
-                k: data.stochK[lastIndex],
-                d: data.stochD[lastIndex],
-                date: data.t[lastIndex]
-            };
-        }
-        return null;
-    } catch (error) {
-        console.error(`Error fetching Stochastic for ${symbol}:`, error);
-        return null;
-    }
 }
 
 // ========================================
-// Local Stochastic Calculation (Fallback)
+// Local Stochastic Calculation
 // ========================================
+// Note: Finnhub Stochastic API requires Premium plan (returns 401)
+// Using local calculation instead
 function calculateStochasticLocal(highs, lows, closes, periodK = 14, periodD = 3) {
     if (!highs || !lows || !closes || closes.length < periodK) {
         return null;
@@ -420,8 +385,7 @@ async function fetchPrice(symbol) {
         // Indicadores técnicos (cada 5 min)
         if (needsIndicatorUpdate) {
             promises.push(
-                fetchMacdFromApi(symbol),
-                fetchStochasticFromApi(symbol)
+                fetchMacdFromApi(symbol)
             );
         }
 
@@ -441,11 +405,10 @@ async function fetchPrice(symbol) {
 
             if (needsIndicatorUpdate) {
                 const macdData = results[resultIndex++];
-                let stochData = results[resultIndex++];
 
-                // Fallback: Calculate Stochastic locally if API failed
-                if (!stochData && dailyData?.highs && dailyData?.lows && dailyData?.closes) {
-                    console.log(`📊 ${symbol}: Calculating Stochastic locally (Finnhub API unavailable)`);
+                // Calculate Stochastic locally (Finnhub API requires Premium)
+                let stochData = null;
+                if (dailyData?.highs && dailyData?.lows && dailyData?.closes) {
                     stochData = calculateStochasticLocal(
                         dailyData.highs,
                         dailyData.lows,
