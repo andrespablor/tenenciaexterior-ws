@@ -168,6 +168,44 @@ async function fetchStochasticFromApi(symbol) {
 }
 
 // ========================================
+// Local Stochastic Calculation (Fallback)
+// ========================================
+function calculateStochasticLocal(highs, lows, closes, periodK = 14, periodD = 3) {
+    if (!highs || !lows || !closes || closes.length < periodK) {
+        return null;
+    }
+
+    // Calculate %K
+    const kValues = [];
+    for (let i = periodK - 1; i < closes.length; i++) {
+        const periodHigh = Math.max(...highs.slice(i - periodK + 1, i + 1));
+        const periodLow = Math.min(...lows.slice(i - periodK + 1, i + 1));
+        const currentClose = closes[i];
+
+        if (periodHigh === periodLow) {
+            kValues.push(50); // Neutral if no range
+        } else {
+            const k = ((currentClose - periodLow) / (periodHigh - periodLow)) * 100;
+            kValues.push(k);
+        }
+    }
+
+    // Calculate %D (SMA of %K)
+    if (kValues.length < periodD) {
+        return { k: kValues[kValues.length - 1], d: null };
+    }
+
+    const recentK = kValues.slice(-periodD);
+    const d = recentK.reduce((sum, val) => sum + val, 0) / periodD;
+
+    return {
+        k: kValues[kValues.length - 1],
+        d: d
+    };
+}
+
+
+// ========================================
 // Finnhub Daily Data (52-wk Range + Volume)
 // ========================================
 async function fetchDailyDataFromFinnhub(symbol) {
@@ -204,7 +242,11 @@ async function fetchDailyDataFromFinnhub(symbol) {
                 wk52High,
                 wk52Low,
                 volume: currentVolume,
-                avgVolume
+                avgVolume,
+                // Raw data for local Stochastic calculation
+                highs: data.h,
+                lows: data.l,
+                closes: data.c
             };
         }
         return null;
@@ -399,7 +441,18 @@ async function fetchPrice(symbol) {
 
             if (needsIndicatorUpdate) {
                 const macdData = results[resultIndex++];
-                const stochData = results[resultIndex++];
+                let stochData = results[resultIndex++];
+
+                // Fallback: Calculate Stochastic locally if API failed
+                if (!stochData && dailyData?.highs && dailyData?.lows && dailyData?.closes) {
+                    console.log(`📊 ${symbol}: Calculating Stochastic locally (Finnhub API unavailable)`);
+                    stochData = calculateStochasticLocal(
+                        dailyData.highs,
+                        dailyData.lows,
+                        dailyData.closes
+                    );
+                }
+
                 indicators = {
                     macd: macdData?.histogram || null,
                     stochastic: stochData || null
