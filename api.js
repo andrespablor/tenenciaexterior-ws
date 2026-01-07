@@ -393,7 +393,7 @@ async function fetchPrice(symbol) {
                 }
 
                 indicators = {
-                    macd: macdData?.histogram || indicators.macd,
+                    macd: macdData || indicators.macd,
                     stochastic: stochData || indicators.stochastic
                 };
             }
