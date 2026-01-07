@@ -41,7 +41,42 @@
 // ========================================
 // Inicialización
 // ========================================
+
+// Mapa de traducción de sectores (Finnhub English -> Español abreviado)
+const SECTOR_TRANSLATIONS = {
+    "Technology": "Tecnología",
+    "Semiconductors": "Semicond.",
+    "Health Care": "Salud",
+    "Financial Services": "Fin. Serv.",
+    "Financials": "Finanzas",
+    "Energy": "Energía",
+    "Consumer Cyclical": "Cons. Cícl.",
+    "Consumer Defensive": "Cons. Def.",
+    "Communication Services": "Comunic.",
+    "Industrials": "Industria",
+    "Basic Materials": "Materiales",
+    "Utilities": "Serv. Públ.",
+    "Real Estate": "Inmob.",
+    "Retail": "Retail",
+    "Professional Services": "Serv. Prof.",
+    "N/A": "ETF"
+};
+
+// Carga de perfiles estáticos (Sectores/Industrias)
+window.stockProfiles = {};
+async function loadStockProfiles() {
+    try {
+        const res = await fetch('assets/stock-profiles.json');
+        if (res.ok) {
+            window.stockProfiles = await res.json();
+        }
+    } catch (e) {
+        // Ignorar si no existe aún
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+    loadStockProfiles(); // Iniciar carga en paralelo (no await para no bloquear UI)
     loadData(); // Cargar desde localStorage primero
     loadSettings();
 
@@ -1026,9 +1061,28 @@ let watchlistSort = { key: null, asc: true };
 // Helper para obtener la lista actual
 function getCurrentWatchlist() {
     if (!watchlists[currentWatchlistId]) {
-        watchlists[currentWatchlistId] = [];
+        watchlists[currentWatchlistId] = {
+            displayName: currentWatchlistId === 'default' ? 'Mi Watchlist' : currentWatchlistId,
+            icon: '📋',
+            symbols: []
+        };
     }
-    return watchlists[currentWatchlistId];
+
+    const wl = watchlists[currentWatchlistId];
+
+    // Si es el formato nuevo (objeto con .symbols)
+    if (wl.symbols && Array.isArray(wl.symbols)) {
+        return wl.symbols;
+    }
+
+    // Si es el formato viejo (array directo)
+    if (Array.isArray(wl)) {
+        return wl;
+    }
+
+    // Fallback: array vacío
+    console.warn(`⚠️ Watchlist ${currentWatchlistId} tiene formato inválido:`, wl);
+    return [];
 }
 
 function initializeWatchlist() {
@@ -1038,50 +1092,36 @@ function initializeWatchlist() {
     });
 
     // Selector de lista
-    document.getElementById('watchlist-selector').addEventListener('change', (e) => {
+    document.getElementById('watchlist-selector').addEventListener('change', async (e) => {
         currentWatchlistId = e.target.value;
         saveData();
         renderWatchlist();
+
+        // Re-suscribir símbolos al WebSocket
+        if (typeof subscribeToPortfolioAndWatchlist === 'function') {
+            subscribeToPortfolioAndWatchlist();
+        }
+
+        // Fetch precios de símbolos que no tienen cache
+        const list = getCurrentWatchlist();
+        const symbolsWithoutCache = list.filter(symbol => !priceCache[symbol] || !priceCache[symbol].price);
+
+        if (symbolsWithoutCache.length > 0) {
+            console.log(`🔄 Fetching prices for ${symbolsWithoutCache.length} symbols...`);
+
+            // Fetch en paralelo con rate limiting
+            for (let i = 0; i < symbolsWithoutCache.length; i += 5) {
+                const batch = symbolsWithoutCache.slice(i, i + 5);
+                await Promise.all(batch.map(symbol => fetchPrice(symbol)));
+                await new Promise(resolve => setTimeout(resolve, 100)); // Delay entre batches
+            }
+
+            renderWatchlist(); // Re-render con los precios nuevos
+        }
     });
 
-    // Crear nueva lista
-    document.getElementById('add-watchlist-list').addEventListener('click', () => {
-        const name = prompt('Nombre de la nueva lista:');
-        if (!name) return;
-        const id = name.toLowerCase().replace(/\s+/g, '_');
-        if (watchlists[id]) { alert('Ya existe'); return; }
-        watchlists[id] = [];
-        currentWatchlistId = id;
-        saveData();
-        updateWatchlistSelector();
-        renderWatchlist();
-    });
-
-    // Eliminar lista actual
-    document.getElementById('delete-watchlist-list').addEventListener('click', () => {
-        if (currentWatchlistId === 'default') { alert('No podés eliminar la lista por defecto'); return; }
-        if (!confirm('¿Eliminar esta lista?')) return;
-        delete watchlists[currentWatchlistId];
-        currentWatchlistId = 'default';
-        saveData();
-        updateWatchlistSelector();
-        renderWatchlist();
-    });
-
-    // Editar nombre de lista
-    document.getElementById('edit-watchlist-name').addEventListener('click', () => {
-        if (currentWatchlistId === 'default') { alert('No podés renombrar la lista por defecto'); return; }
-        const newName = prompt('Nuevo nombre:', currentWatchlistId);
-        if (!newName) return;
-        const newId = newName.toLowerCase().replace(/\s+/g, '_');
-        if (newId === currentWatchlistId) return;
-        if (watchlists[newId]) { alert('Ya existe una lista con ese nombre'); return; }
-        watchlists[newId] = watchlists[currentWatchlistId];
-        delete watchlists[currentWatchlistId];
-        currentWatchlistId = newId;
-        saveData();
-        updateWatchlistSelector();
-    });
+    // Botón "⚙️" - abre modal
+    document.getElementById('manage-watchlist-btn').addEventListener('click', openWatchlistManager);
 
     // Select all checkbox
     document.getElementById('watchlist-select-all').addEventListener('change', (e) => {
@@ -1115,9 +1155,31 @@ function initializeWatchlist() {
 
 function updateWatchlistSelector() {
     const select = document.getElementById('watchlist-selector');
-    select.innerHTML = Object.keys(watchlists).map(id =>
-        `<option value="${id}" ${id === currentWatchlistId ? 'selected' : ''}>${id === 'default' ? '📋 Mi Watchlist' : '📋 ' + id}</option>`
-    ).join('');
+
+    // Obtener orden guardado o usar Object.keys por defecto
+    const savedOrder = localStorage.getItem('watchlistOrder');
+    let orderedIds = savedOrder ? JSON.parse(savedOrder) : Object.keys(watchlists);
+
+    // Agregar listas nuevas que no estén en el orden guardado
+    Object.keys(watchlists).forEach(id => {
+        if (!orderedIds.includes(id)) {
+            orderedIds.push(id);
+        }
+    });
+
+    // Filtrar IDs que ya no existen
+    orderedIds = orderedIds.filter(id => watchlists[id]);
+
+    select.innerHTML = orderedIds.map(id => {
+        const wl = watchlists[id];
+        const displayName = wl.displayName || (id === 'default' ? 'Mi Watchlist' : id);
+        const icon = wl.icon || '📋';
+        const count = (wl.symbols || wl).length;
+        return `<option value="${id}" ${id === currentWatchlistId ? 'selected' : ''}>${icon} ${displayName} (${count})</option>`;
+    }).join('');
+
+    // Guardar orden actualizado
+    localStorage.setItem('watchlistOrder', JSON.stringify(orderedIds));
 }
 
 async function addToWatchlist() {
@@ -1192,6 +1254,69 @@ function removeFromWatchlist(symbol) {
         renderWatchlist();
     }
 }
+
+// Helper: Obtener logo de empresa desde Finnhub (con caché)
+const logoCache = JSON.parse(localStorage.getItem('logoCache') || '{}');
+
+async function getCompanyLogo(symbol) {
+    // Verificar caché primero
+    if (logoCache[symbol]) {
+        return logoCache[symbol];
+    }
+
+    // Si no está en caché, hacer fetch de Finnhub
+    const apiKey = appSettings.finnhubApiKey;
+    if (!apiKey) {
+        return null;
+    }
+
+    try {
+        const response = await fetch(`https://finnhub.io/api/v1/stock/profile2?symbol=${symbol}&token=${apiKey}`);
+        if (!response.ok) {
+            return null;
+        }
+
+        const data = await response.json();
+        const logoUrl = data.logo || null;
+
+        // Guardar en caché
+        logoCache[symbol] = logoUrl;
+        localStorage.setItem('logoCache', JSON.stringify(logoCache));
+
+        return logoUrl;
+    } catch (error) {
+        console.warn(`Failed to fetch logo for ${symbol}:`, error);
+        return null;
+    }
+}
+
+// Actualizar logo de un símbolo específico (llamado después de renderizar)
+function updateSymbolLogo(symbol) {
+    // Deprecated: Ahora usamos el sistema de eventos onerror en las etiquetas img
+}
+
+// Handler para error de carga de logo (Estrategia híbrida)
+// 1. Intenta cargar assets/logos/SYMBOL.png (definido en el HTML)
+// 2. Si falla, llama a esta función para buscar en Finnhub
+function handleLogoError(img, symbol) {
+    // Evitar loop infinito
+    img.onerror = null;
+
+    // Intentar buscar en Finnhub (cache o API)
+    getCompanyLogo(symbol).then(logoUrl => {
+        if (logoUrl) {
+            img.src = logoUrl;
+            // El onload se encargará de mostrarlo
+        } else {
+            // Si falla Finnhub, asegurar que se muestre el fallback (inicial)
+            img.style.display = 'none';
+            if (img.nextElementSibling) {
+                img.nextElementSibling.style.display = 'flex';
+            }
+        }
+    });
+}
+
 
 function deleteSelectedWatchlist() {
     const checkboxes = document.querySelectorAll('#watchlist-body input[type="checkbox"]:checked');
@@ -1290,8 +1415,33 @@ function renderWatchlist() {
         const smaLabel = price > sma200 ? '↑' : '↓';
 
         // MACD color
-        const macdClass = macd ? (macd > 0 ? 'cell-positive' : 'cell-negative') : '';
-        const macdDisplay = macd ? macd.toFixed(2) : '-';
+        // MACD Signal (C/V) using Histogram
+        let macdDisplay = '-';
+        let macdClass = '';
+        if (macd !== null && macd !== undefined) {
+            if (macd > 0) {
+                macdDisplay = 'C';
+                macdClass = 'cell-positive'; // Verde
+            } else {
+                macdDisplay = 'V';
+                macdClass = 'cell-negative'; // Rojo
+            }
+        }
+
+        // Stochastic desde priceCache
+        const cache = priceCache[symbol] || {};
+        const stoch = cache.stochastic || null;
+        let stochClass = '';
+        let stochDisplay = '-';
+        if (stoch && stoch.k !== null) {
+            const k = stoch.k;
+            stochDisplay = k.toFixed(0); // Mostrar solo %K (sin decimales)
+            if (k > 80) {
+                stochClass = 'cell-positive'; // Sobrecompra (verde)
+            } else if (k < 20) {
+                stochClass = 'cell-negative'; // Sobreventa (rojo)
+            }
+        }
 
         // Volume formatting
         const volDisplay = volume > 1000000 ? (volume / 1000000).toFixed(1) + 'M' : volume > 1000 ? (volume / 1000).toFixed(0) + 'K' : volume.toString();
@@ -1313,7 +1463,18 @@ function renderWatchlist() {
 
         return `<tr data-symbol="${symbol}">
             <td class="col-check"><input type="checkbox" data-symbol="${symbol}" onchange="updateWatchlistDeleteBtn()"></td>
-            <td class="cell-symbol"><a href="${chartUrl}" target="_blank">${symbol} 📈</a></td>
+            <td class="cell-symbol">
+                <div class="symbol-with-logo">
+                    <img src="assets/logos/${symbol}.png" 
+                         class="company-logo" 
+                         alt="${symbol}" 
+                         style="display:none"
+                         onload="this.style.display='block'; this.nextElementSibling.style.display='none'"
+                         onerror="handleLogoError(this, '${symbol}')">
+                    <div class="company-logo-fallback">${symbol.charAt(0)}</div>
+                    <a href="${chartUrl}" target="_blank">${symbol} 📈</a>
+                </div>
+            </td>
             <td class="cell-price">${priceDisplay}</td>
             <td class="cell-change ${dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}">${dailyChange >= 0 ? '+' : ''}${dailyChange.toFixed(2)}%</td>
             <td class="${dailyDiff >= 0 ? 'cell-positive' : 'cell-negative'}">${diffDisplay}</td>
@@ -1343,7 +1504,10 @@ function renderWatchlist() {
             <td>${avgVolDisplay}</td>
             <td class="${macdClass}">${macdDisplay}</td>
             <td class="cell-${smaStatus}" title="SMA 200: $${fmt(sma200, 2)}">${smaLabel} $${fmt(sma200, 0)}</td>
-            <td class="cell-sector">${SECTOR_MAP[symbol] || 'Otro'}</td>
+            <td class="${stochClass}">${stochDisplay}</td>
+            <td class="cell-sector" title="${window.stockProfiles?.[symbol]?.name || ''}">
+                ${window.stockProfiles?.[symbol]?.sector || SECTOR_MAP[symbol] || 'Otro'}
+            </td>
             <td>
                 <button class="btn-alert" onclick="promptPriceAlert('${symbol}', ${price})" title="Crear alerta">🔔</button>
                 <button class="btn-icon" onclick="removeFromWatchlist('${symbol}')" title="Quitar">🗑️</button>
@@ -1355,6 +1519,7 @@ function renderWatchlist() {
 
 window.removeFromWatchlist = removeFromWatchlist;
 window.updateWatchlistDeleteBtn = updateWatchlistDeleteBtn;
+window.handleLogoError = handleLogoError;
 
 // ========================================
 // Price Alerts
@@ -2205,9 +2370,10 @@ window.addEventListener('beforeinstallprompt', function (e) {
     // Optionally save event to trigger install prompt later
     window.deferredPrompt = e;
 
-    if (typeof showToast === 'function') {
-        showToast('💡 Puedes instalar esta app en tu dispositivo!', 'info', 5000);
-    }
+    // Toast desactivado - no molestar al usuario
+    // if (typeof showToast === 'function') {
+    //     showToast('💡 Puedes instalar esta app en tu dispositivo!', 'info', 5000);
+    // }
 });
 
 // PWA: Detect successful install
@@ -2294,13 +2460,9 @@ async function refreshAllPricesFast() {
         }
         saveData(); // Single save after all updates
 
-        // Show result
-        if (typeof showToast === 'function') {
-            if (errorCount === 0) {
-                showToast(successCount + ' precios actualizados', 'success');
-            } else {
-                showToast(successCount + ' OK, ' + errorCount + ' errores', 'warning');
-            }
+        // Show result - solo mostrar si hay errores
+        if (typeof showToast === 'function' && errorCount > 0) {
+            showToast(successCount + ' OK, ' + errorCount + ' errores', 'warning');
         }
 
         console.log('Parallel refresh complete. Success:', successCount, 'Errors:', errorCount);
@@ -2508,7 +2670,7 @@ setTimeout(function () {
                     checkPriceAlerts();
                 }
             }
-            if (typeof showToast === 'function') showToast(ok + ' precios actualizados', 'success');
+            // Toast removido - WebSocket actualiza en tiempo real
         } finally { isRefreshing = false; }
     };
     console.log('Refresh patched OK');
@@ -2970,3 +3132,191 @@ window.addPriceAlert = function (symbol, targetPrice, direction) {
     }
 };
 
+// ========================================
+// WATCHLIST MANAGER MODAL
+// ========================================
+let selectedIcon = '📋';
+
+function openWatchlistManager() {
+    const modal = document.getElementById('watchlist-manager-modal');
+
+    // Poblar selector interno con todas las listas
+    const selector = document.getElementById('wl-manager-selector');
+    selector.innerHTML = Object.keys(watchlists).map(id => {
+        const wl = watchlists[id];
+        const displayName = wl.displayName || (id === 'default' ? 'Mi Watchlist' : id);
+        const icon = wl.icon || '📋';
+        const count = (wl.symbols || wl).length;
+        return `<option value="${id}" ${id === currentWatchlistId ? 'selected' : ''}>${icon} ${displayName} (${count})</option>`;
+    }).join('');
+
+    // Cargar datos de la lista actual
+    loadWatchlistDataInModal(currentWatchlistId);
+
+    modal.style.display = 'flex';
+}
+
+function loadWatchlistDataInModal(id) {
+    const wl = watchlists[id];
+    document.getElementById('wl-manager-name').value = wl?.displayName || id;
+    selectedIcon = wl?.icon || '📋';
+
+    // Marcar icono seleccionado
+    document.querySelectorAll('.icon-option').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.icon === selectedIcon);
+    });
+}
+
+function closeWatchlistManager() {
+    document.getElementById('watchlist-manager-modal').style.display = 'none';
+}
+
+// Event listeners del modal
+document.getElementById('close-watchlist-manager').addEventListener('click', closeWatchlistManager);
+document.getElementById('wl-manager-cancel').addEventListener('click', closeWatchlistManager);
+
+// Cambiar de lista dentro del modal
+document.getElementById('wl-manager-selector').addEventListener('change', (e) => {
+    loadWatchlistDataInModal(e.target.value);
+});
+
+// Botón "Nueva lista" dentro del modal
+document.getElementById('wl-manager-new').addEventListener('click', () => {
+    const name = prompt('Nombre de la nueva lista:');
+    if (!name || !name.trim()) return;
+    const sanitized = name.trim();
+    const id = sanitized.toLowerCase().replace(/\s+/g, '_');
+    if (watchlists[id]) { alert('Ya existe una lista con ese nombre'); return; }
+
+    watchlists[id] = {
+        displayName: sanitized,
+        icon: '📋',
+        symbols: []
+    };
+
+    saveData();
+
+    // Actualizar selector interno
+    const selector = document.getElementById('wl-manager-selector');
+    const newOption = document.createElement('option');
+    newOption.value = id;
+    newOption.selected = true;
+    newOption.textContent = `📋 ${sanitized} (0)`;
+    selector.appendChild(newOption);
+
+    // Cargar datos de la nueva lista
+    loadWatchlistDataInModal(id);
+});
+
+// Botones de reordenamiento ↑↓
+document.getElementById('wl-move-up').addEventListener('click', () => {
+    const selector = document.getElementById('wl-manager-selector');
+    const selectedIndex = selector.selectedIndex;
+
+    if (selectedIndex <= 0) return; // Ya está al principio
+
+    // Intercambiar opciones
+    const selected = selector.options[selectedIndex];
+    const previous = selector.options[selectedIndex - 1];
+    selector.insertBefore(selected, previous);
+
+    saveWatchlistOrder();
+});
+
+document.getElementById('wl-move-down').addEventListener('click', () => {
+    const selector = document.getElementById('wl-manager-selector');
+    const selectedIndex = selector.selectedIndex;
+
+    if (selectedIndex >= selector.options.length - 1) return; // Ya está al final
+
+    // Intercambiar opciones
+    const selected = selector.options[selectedIndex];
+    const next = selector.options[selectedIndex + 2]; // Insertamos ANTES del siguiente (+2)
+
+    if (next) {
+        selector.insertBefore(selected, next);
+    } else {
+        selector.appendChild(selected);
+    }
+
+    saveWatchlistOrder();
+});
+
+function saveWatchlistOrder() {
+    // Guardar el orden actual en localStorage
+    const selector = document.getElementById('wl-manager-selector');
+    const order = Array.from(selector.options).map(opt => opt.value);
+    localStorage.setItem('watchlistOrder', JSON.stringify(order));
+
+    // Actualizar el selector principal también
+    updateWatchlistSelector();
+}
+
+
+// Selector de iconos
+document.querySelectorAll('.icon-option').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        selectedIcon = btn.dataset.icon;
+        document.querySelectorAll('.icon-option').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+    });
+});
+
+// Guardar cambios
+document.getElementById('wl-manager-save').addEventListener('click', () => {
+    const selectedId = document.getElementById('wl-manager-selector').value;
+    const newName = document.getElementById('wl-manager-name').value.trim();
+    if (!newName) {
+        alert('El nombre no puede estar vacío');
+        return;
+    }
+
+    // Actualizar watchlist seleccionada
+    if (!watchlists[selectedId].displayName) {
+        // Migrar formato antiguo
+        watchlists[selectedId] = {
+            displayName: newName,
+            icon: selectedIcon,
+            symbols: watchlists[selectedId]
+        };
+    } else {
+        watchlists[selectedId].displayName = newName;
+        watchlists[selectedId].icon = selectedIcon;
+    }
+
+    saveData();
+    updateWatchlistSelector();
+    closeWatchlistManager();
+});
+
+// Eliminar lista
+document.getElementById('wl-manager-delete').addEventListener('click', () => {
+    const selectedId = document.getElementById('wl-manager-selector').value;
+
+    if (selectedId === 'default') {
+        alert('No podés eliminar la lista por defecto');
+        return;
+    }
+
+    if (!confirm(`¿Eliminar "${watchlists[selectedId].displayName}"?`)) return;
+
+    delete watchlists[selectedId];
+
+    // Si era la lista actual, cambiar a default
+    if (currentWatchlistId === selectedId) {
+        currentWatchlistId = 'default';
+        renderWatchlist();
+    }
+
+    saveData();
+    updateWatchlistSelector();
+
+
+    // Actualizar selector interno del modal
+    document.getElementById('wl-manager-selector').value = 'default';
+    loadWatchlistDataInModal('default');
+});
+
+window.openWatchlistManager = openWatchlistManager;
+window.closeWatchlistManager = closeWatchlistManager;

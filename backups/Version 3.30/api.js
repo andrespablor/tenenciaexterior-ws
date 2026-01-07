@@ -13,59 +13,228 @@ const CORS_PROXIES = [
 ];
 
 // ========================================
-// Finnhub API - Price Fetching
+// Cache Configuration
 // ========================================
-async function fetchPriceFromFinnhub(symbol) {
-    const apiKey = appSettings.finnhubApiKey;
+const CACHE_INTERVALS = {
+    PRICE: 0,                          // WebSocket (tiempo real)
+    DAILY_DATA: 4 * 60 * 60 * 1000,   // 4 horas (en vez de 24h para datos más frescos)
+    INDICATORS: 5 * 60 * 1000          // 5 minutos (MACD, Stochastic)
+};
 
-    if (!apiKey) {
-        return null;
+// Helper: Verificar si el cache necesita actualización
+function needsCacheUpdate(symbol, cacheType) {
+    const cache = priceCache[symbol];
+    if (!cache || !cache.lastUpdate) return true;
+
+    const now = Date.now();
+    const lastUpdate = cache.lastUpdate[cacheType];
+
+    if (!lastUpdate) return true;
+
+    // Para DAILY_DATA: forzar actualización si cambió el día
+    if (cacheType === 'DAILY_DATA') {
+        const lastUpdateDate = new Date(lastUpdate).toDateString();
+        const nowDate = new Date(now).toDateString();
+
+        // Si cambió el día, forzar actualización
+        if (lastUpdateDate !== nowDate) {
+            return true;
+        }
     }
 
-    try {
-        // Fetch quote (current price)
-        const quoteUrl = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`;
-        const quoteRes = await fetch(quoteUrl);
+    const interval = CACHE_INTERVALS[cacheType];
+    return (now - lastUpdate) > interval;
+}
 
-        if (!quoteRes.ok) {
-            throw new Error(`HTTP ${quoteRes.status}`);
+
+// ========================================
+// Server API - Price Fetching
+// ========================================
+async function fetchPriceFromFinnhub(symbol) {
+    try {
+        // Call server endpoint instead of Finnhub directly
+        const url = `${SERVER_API_URL}/price/${symbol}`;
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
         }
 
-        const quoteData = await quoteRes.json();
+        const data = await res.json();
 
-        // Finnhub returns: c (current), pc (previous close), h (high), l (low), o (open), t (timestamp)
-        const price = quoteData.c;
-        const prev = quoteData.pc;
-        const dayHigh = quoteData.h;
-        const dayLow = quoteData.l;
-        const timestamp = quoteData.t; // Unix timestamp in seconds
-
-        if (!price || price === 0) {
+        if (!data.price || data.price === 0) {
             return null;
         }
 
-        const change = prev ? ((price - prev) / prev) * 100 : 0;
-        const dailyDiff = prev ? (price - prev) : 0;
-
         return {
-            price,
-            previousClose: prev,
-            dailyChange: change,
-            dailyDiff,
-            dayHigh,
-            dayLow,
-            marketTime: timestamp,
-            source: 'finnhub'
+            price: data.price,
+            previousClose: data.previousClose,
+            dailyChange: data.dailyChange,
+            dailyDiff: data.dailyDiff,
+            dayHigh: data.dayHigh,
+            dayLow: data.dayLow,
+            marketTime: data.marketTime,
+            source: 'server'
         };
 
     } catch (error) {
-        console.error(`❌ Finnhub error for ${symbol}:`, error.message);
+        console.error(`❌ Server error for ${symbol}:`, error.message);
         return null;
     }
 }
 
+// ========================================
+// Server API - MACD Indicator
+// ========================================
+async function fetchMacdFromApi(symbol) {
+    try {
+        const url = `${SERVER_API_URL}/indicators/${symbol}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            console.warn(`MACD fetch failed for ${symbol}: ${response.status}`);
+            return null;
+        }
+
+        const data = await response.json();
+        return data.macd; // Server returns just the histogram value
+    } catch (error) {
+        console.error(`Error fetching MACD for ${symbol}:`, error);
+        return null;
+    }
+}
+
+
+
+// ========================================
+// Local Stochastic Calculation
+// ========================================
+// Note: Finnhub Stochastic API requires Premium plan (returns 401)
+// Using local calculation instead
+function calculateStochasticLocal(highs, lows, closes, periodK = 14, periodD = 3) {
+    if (!highs || !lows || !closes || closes.length < periodK) {
+        return null;
+    }
+
+    // Calculate %K
+    const kValues = [];
+    for (let i = periodK - 1; i < closes.length; i++) {
+        const periodHigh = Math.max(...highs.slice(i - periodK + 1, i + 1));
+        const periodLow = Math.min(...lows.slice(i - periodK + 1, i + 1));
+        const currentClose = closes[i];
+
+        if (periodHigh === periodLow) {
+            kValues.push(50); // Neutral if no range
+        } else {
+            const k = ((currentClose - periodLow) / (periodHigh - periodLow)) * 100;
+            kValues.push(k);
+        }
+    }
+
+    // Calculate %D (SMA of %K)
+    if (kValues.length < periodD) {
+        return { k: kValues[kValues.length - 1], d: null };
+    }
+
+    const recentK = kValues.slice(-periodD);
+    const d = recentK.reduce((sum, val) => sum + val, 0) / periodD;
+
+    return {
+        k: kValues[kValues.length - 1],
+        d: d
+    };
+}
+
+
+// ========================================
+// Finnhub Daily Data (52-wk Range + Volume)
+// ========================================
+async function fetchDailyDataFromFinnhub(symbol) {
+    try {
+        const url = `${SERVER_API_URL}/daily/${symbol}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            console.warn(`Daily data fetch failed for ${symbol}: ${response.status}`);
+            return null;
+        }
+
+        const data = await response.json();
+
+        return {
+            wk52High: data.wk52High,
+            wk52Low: data.wk52Low,
+            volume: data.volume,
+            avgVolume: data.avgVolume,
+            highs: data.highs,
+            lows: data.lows,
+            closes: data.closes
+        };
+    } catch (error) {
+        console.error(`Error fetching daily data for ${symbol}:`, error);
+        return null;
+    }
+}
+
+// ========================================
+// Finnhub SMA Indicator
+// ========================================
+async function fetchSmaFromApi(symbol, period = 200) {
+    try {
+        const url = `${SERVER_API_URL}/sma/${symbol}?period=${period}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            console.warn(`SMA fetch failed for ${symbol}: ${response.status}`);
+            return null;
+        }
+
+        const data = await response.json();
+        return data.sma;
+    } catch (error) {
+        console.warn(`SMA API error for ${symbol}:`, error.message);
+        return null;
+    }
+}
+
+// ========================================
+// Local SMA Calculation (Fallback)
+// ========================================
+function calculateSmaLocal(closes, period = 200) {
+    if (!closes || closes.length < period) {
+        return null;
+    }
+
+    const recentCloses = closes.slice(-period);
+    const sum = recentCloses.reduce((acc, val) => acc + val, 0);
+    return sum / period;
+}
+
+
 // Función auxiliar para obtener datos históricos de Yahoo (para MACD, etc)
 async function fetchYahooHistoricalData(symbol) {
+    // 1. Intentar obtener MACD real de Finnhub API (indicador 'macd')
+    let finnhubMacd = null;
+    try {
+        const macdData = await fetchMacdFromApi(symbol);
+        if (macdData) {
+            finnhubMacd = macdData.histogram; // Usamos el histograma para señal C/V
+        }
+    } catch (e) {
+        // console.warn('Finnhub MACD fetch error:', e);
+    }
+
+    // 2. Intentar obtener Stochastic de Finnhub API
+    let finnhubStochastic = null;
+    try {
+        const stochData = await fetchStochasticFromApi(symbol);
+        if (stochData) {
+            finnhubStochastic = stochData; // { k, d, date }
+        }
+    } catch (e) {
+        // console.warn('Finnhub Stochastic fetch error:', e);
+    }
+
     const yahooHost = Math.random() > 0.5 ? 'query1.finance.yahoo.com' : 'query2.finance.yahoo.com';
     const url = `https://${yahooHost}/v8/finance/chart/${symbol}?interval=1d&range=2mo`;
 
@@ -84,10 +253,12 @@ async function fetchYahooHistoricalData(symbol) {
             const closes = result.indicators?.quote?.[0]?.close || [];
             const volumes = result.indicators?.quote?.[0]?.volume || [];
 
-            // Calcular MACD
+            // Calcular MACD local si falló la API
             const validCloses = closes.filter(p => p && p > 0);
-            let macd = null;
-            if (validCloses.length >= 26) {
+            let macd = finnhubMacd;
+
+            if (macd === null && validCloses.length >= 26) {
+                // Fallback a cálculo local aproximado (solo si no tenemos el real)
                 const ema12 = calculateEMA(validCloses, 12);
                 const ema26 = calculateEMA(validCloses, 26);
                 macd = ema12 - ema26;
@@ -104,12 +275,22 @@ async function fetchYahooHistoricalData(symbol) {
                 wk52Low: meta.fiftyTwoWeekLow,
                 volume: meta.regularMarketVolume || 0,
                 avgVolume,
-                macd
+                macd,
+                stochastic: finnhubStochastic
             };
 
         } catch (error) {
             continue;
         }
+    }
+
+    // Si falló Yahoo, devolver al menos los indicadores de Finnhub si los conseguimos
+    if (finnhubMacd !== null || finnhubStochastic !== null) {
+        return {
+            wk52High: 0, wk52Low: 0, volume: 0, avgVolume: 0,
+            macd: finnhubMacd,
+            stochastic: finnhubStochastic
+        };
     }
 
     return null;
@@ -124,63 +305,159 @@ async function fetchPrice(symbol) {
     }
 
     // ===========================================
-    // ESTRATEGIA 1: Intentar Finnhub primero
+    // ESTRATEGIA: Finnhub con Caching Inteligente
     // ===========================================
-    if (appSettings.finnhubApiKey) {
-        try {
-            const finnhubData = await fetchPriceFromFinnhub(symbol);
-
-            if (finnhubData) {
-                // Finnhub tiene el precio básico, pero necesitamos datos históricos para MACD
-                // Vamos a Yahoo SOLO para MACD y otros indicadores técnicos
-                const yahooHistorical = await fetchYahooHistoricalData(symbol);
-
-                // Combinar datos de Finnhub (precio actual) con Yahoo (históricos)
-                const newTimestamp = finnhubData.marketTime;
-
-                // Validar timestamp
-                const existingData = priceCache[symbol];
-                if (existingData && existingData.marketTime >= newTimestamp) {
-                    console.log(`⏭️ ${symbol}: Skipping update. Existing data is newer or same`);
-                    return { price: existingData.price, change: existingData.dailyChange };
-                }
-
-                // Actualizar priceCache con datos de Finnhub + indicadores de Yahoo
-                priceCache[symbol] = {
-                    price: finnhubData.price,
-                    dailyChange: finnhubData.dailyChange,
-                    dailyDiff: finnhubData.dailyDiff,
-                    dayHigh: finnhubData.dayHigh,
-                    dayLow: finnhubData.dayLow,
-                    wk52High: yahooHistorical?.wk52High || finnhubData.dayHigh,
-                    wk52Low: yahooHistorical?.wk52Low || finnhubData.dayLow,
-                    volume: yahooHistorical?.volume || 0,
-                    avgVolume: yahooHistorical?.avgVolume || 0,
-                    macd: yahooHistorical?.macd || null,
-                    previousClose: finnhubData.previousClose,
-                    marketTime: newTimestamp,
-                    rating: null,
-                    timestamp: Date.now(),
-                    source: 'finnhub'
-                };
-
-                console.log(`✅ ${symbol}: Updated to $${finnhubData.price.toFixed(2)} from Finnhub at ${new Date(newTimestamp * 1000).toLocaleTimeString()}`);
-                // ⚠️ REMOVED saveData() - will be called once at end of refresh cycle
-                return { price: finnhubData.price, change: finnhubData.dailyChange };
-            }
-        } catch (error) {
-            console.warn(`⚠️ Finnhub failed for ${symbol}, falling back to Yahoo: `, error.message);
-        }
+    if (!appSettings.finnhubApiKey) {
+        console.warn(`⚠️ No Finnhub API key, falling back to Yahoo for ${symbol}`);
+        return await fallbackToYahoo(symbol);
     }
 
-    // ===========================================
-    // ESTRATEGIA 2: Fallback a Yahoo Finance
-    // ===========================================
-    console.log(`📊 Using Yahoo Finance for ${symbol}`);
+    try {
+        const cache = priceCache[symbol];
+        const now = Date.now();
+
+        // 1. SIEMPRE obtener precio actual de Finnhub (WebSocket lo maneja en tiempo real)
+        const finnhubData = await fetchPriceFromFinnhub(symbol);
+        if (!finnhubData) {
+            console.warn(`⚠️ Finnhub price failed for ${symbol}, using Yahoo fallback`);
+            return await fallbackToYahoo(symbol);
+        }
+
+        // 2. Verificar si necesitamos actualizar datos diarios (52-wk, SMA, volume)
+        const needsDailyUpdate = needsCacheUpdate(symbol, 'DAILY_DATA');
+
+        // 3. Verificar si necesitamos actualizar indicadores (MACD, Stochastic)
+        const needsIndicatorUpdate = needsCacheUpdate(symbol, 'INDICATORS');
+
+        // 4. Preparar promesas para llamadas paralelas
+        const promises = [];
+
+        // Datos diarios (1x por día)
+        if (needsDailyUpdate) {
+            promises.push(
+                fetchDailyDataFromFinnhub(symbol),
+                fetchSmaFromApi(symbol, 200)
+            );
+        }
+
+        // Indicadores técnicos (cada 5 min)
+        if (needsIndicatorUpdate) {
+            promises.push(
+                fetchMacdFromApi(symbol)
+            );
+        }
+
+        // 5. Ejecutar todas las llamadas en paralelo
+        let dailyData = {
+            wk52High: cache?.wk52High,
+            wk52Low: cache?.wk52Low,
+            volume: cache?.volume,
+            avgVolume: cache?.avgVolume,
+            highs: cache?.highs,
+            lows: cache?.lows,
+            closes: cache?.closes
+        };
+        let sma200 = cache?.sma200 || 0;
+        let indicators = {
+            macd: cache?.macd,
+            stochastic: cache?.stochastic
+        };
+
+        if (promises.length > 0) {
+            const results = await Promise.all(promises);
+            let resultIndex = 0;
+
+            if (needsDailyUpdate) {
+                dailyData = results[resultIndex++] || dailyData;
+                let smaFromApi = results[resultIndex++];
+
+                // Fallback: Calculate SMA locally if API failed
+                if (!smaFromApi && dailyData?.closes && dailyData.closes.length >= 200) {
+                    smaFromApi = calculateSmaLocal(dailyData.closes, 200);
+                }
+
+                sma200 = smaFromApi || sma200;
+            }
+
+            if (needsIndicatorUpdate) {
+                const macdData = results[resultIndex++];
+
+                // Calculate Stochastic locally (Finnhub API requires Premium)
+                let stochData = null;
+                if (dailyData?.highs && dailyData?.lows && dailyData?.closes) {
+                    stochData = calculateStochasticLocal(
+                        dailyData.highs,
+                        dailyData.lows,
+                        dailyData.closes
+                    );
+                }
+
+                indicators = {
+                    macd: macdData || indicators.macd,
+                    stochastic: stochData || indicators.stochastic
+                };
+            }
+        }
+
+        // 6. Actualizar priceCache con timestamps
+        priceCache[symbol] = {
+            // Precio en tiempo real
+            price: finnhubData.price,
+            dailyChange: finnhubData.dailyChange,
+            dailyDiff: finnhubData.dailyDiff,
+            dayHigh: finnhubData.dayHigh,
+            dayLow: finnhubData.dayLow,
+            previousClose: finnhubData.previousClose,
+            marketTime: finnhubData.marketTime,
+
+            // Datos diarios
+            wk52High: dailyData.wk52High || finnhubData.dayHigh,
+            wk52Low: dailyData.wk52Low || finnhubData.dayLow,
+            volume: dailyData.volume || 0,
+            avgVolume: dailyData.avgVolume || 0,
+            sma200: sma200,
+
+            // Persist raw history for local calculations
+            highs: dailyData.highs,
+            lows: dailyData.lows,
+            closes: dailyData.closes,
+
+            // Indicadores técnicos
+            macd: indicators.macd,
+            stochastic: indicators.stochastic,
+
+            // Timestamps de última actualización
+            lastUpdate: {
+                price: now,
+                DAILY_DATA: needsDailyUpdate ? now : (cache?.lastUpdate?.DAILY_DATA || now),
+                INDICATORS: needsIndicatorUpdate ? now : (cache?.lastUpdate?.INDICATORS || now)
+            },
+
+            // Metadata
+            rating: null,
+            timestamp: now,
+            source: 'finnhub'
+        };
+
+        const updateType = needsDailyUpdate ? '(full update)' : needsIndicatorUpdate ? '(indicators)' : '(price only)';
+        console.log(`✅ ${symbol}: Updated to $${finnhubData.price.toFixed(2)} ${updateType}`);
+
+        return { price: finnhubData.price, change: finnhubData.dailyChange };
+
+    } catch (error) {
+        console.error(`❌ Error in fetchPrice for ${symbol}:`, error);
+        return await fallbackToYahoo(symbol);
+    }
+}
+
+// ===========================================
+// Fallback a Yahoo Finance (Solo Emergencia)
+// ===========================================
+async function fallbackToYahoo(symbol) {
+    console.log(`📊 Using Yahoo Finance fallback for ${symbol}`);
 
     // Alternar entre query1 y query2 de Yahoo para evitar rate limits
     const yahooHost = Math.random() > 0.5 ? 'query1.finance.yahoo.com' : 'query2.finance.yahoo.com';
-    // Usar 2 meses para asegurar 26+ días de trading para MACD
     const url = `https://${yahooHost}/v8/finance/chart/${symbol}?interval=1d&range=2mo`;
 
     let lastError = null;
@@ -298,6 +575,7 @@ async function fetchPrice(symbol) {
     console.error(`❌ Failed to fetch ${symbol}. Keeping old price:`, priceCache[symbol]?.price || 'N/A');
     return null;
 }
+
 
 // Fetch analyst rating (scraping desde Yahoo Finance)
 async function fetchAnalystRating(symbol) {
@@ -425,7 +703,7 @@ function calculateSMA(prices, period) {
 
 // Calculate EMA
 function calculateEMA(prices, period) {
-    if (prices.length < period) return null;
+    if (!prices || prices.length < period) return null;
     const k = 2 / (period + 1);
     let ema = prices.slice(0, period).reduce((a, b) => a + b, 0) / period;
     for (let i = period; i < prices.length; i++) {
@@ -434,9 +712,10 @@ function calculateEMA(prices, period) {
     return ema;
 }
 
-// Calculate MACD
-function calculateMACD(prices) {
-    if (prices.length < 26) return null;
+
+// Helper simple MACD local (solo como fallback)
+function calculateMACDLocal(prices) {
+    if (!prices || prices.length < 26) return null;
     return calculateEMA(prices, 12) - calculateEMA(prices, 26);
 }
 
@@ -454,26 +733,34 @@ function calculateBollingerPct(prices, period = 20) {
     return ((current - lower) / (upper - lower)) * 100;
 }
 
-// Fetch all technical indicators
+// Fetch all technical indicators (Updated to use API)
 async function fetchTechnicalIndicators(symbol) {
     try {
-        const hist = await fetchHistoricalData(symbol);
-        if (!hist) {
-            console.warn(`${symbol}: No historical data available`);
-            return null;
-        }
-        const { closes } = hist;
+        // 1. MACD Oficial de Finnhub
+        const macdData = await fetchMacdFromApi(symbol);
 
-        if (!closes || closes.length < 50) {
-            console.warn(`${symbol}: Insufficient data (${closes?.length || 0} days)`);
-            return null;
+        // 2. Otros indicadores (por ahora mantenemos cálculo local simple para SMA/RSI para no saturar 
+        // o podríamos migrarlos también si querés)
+        const hist = await fetchHistoricalData(symbol);
+
+        let rsi = null;
+        let sma50 = null;
+        let sma200 = null;
+
+        if (hist && hist.closes) {
+            rsi = calculateRSI(hist.closes, 14);
+            sma50 = calculateSMA(hist.closes, 50);
+            sma200 = calculateSMA(hist.closes, 200);
         }
 
         const indicators = {
-            rsi: calculateRSI(closes, 14),
-            sma50: calculateSMA(closes, 50),
-            macd: calculateMACD(closes),
-            bollingerPct: calculateBollingerPct(closes, 20)
+            macd: macdData ? macdData.histogram : (calculateMACDLocal(hist?.closes) || null), // Fallback local si falla API
+            macdSignal: macdData ? macdData.signal : null,
+            rsi: rsi,
+            sma50: sma50,
+            sma200: sma200,
+            // Bollinger % is not included in the new structure, keeping it for now if needed elsewhere
+            bollingerPct: calculateBollingerPct(hist?.closes, 20)
         };
 
         console.log(`${symbol} indicators:`, indicators);

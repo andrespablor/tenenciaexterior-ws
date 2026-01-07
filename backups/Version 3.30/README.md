@@ -1,56 +1,88 @@
-# 📊 Portfolio Tracker - Cartera Exterior
+# Version 3.30 - Server-Side Caching Complete
 
-Aplicación web para seguimiento de inversiones en acciones extranjeras con sincronización en la nube.
+## Fecha: 7 de enero de 2026
 
-## 🚀 Características
+## Cambios Principales
 
-- **Gestión de Portfolio**: Compras, ventas y dividendos
-- **Precios en tiempo real**: Integración con Finnhub API
-- **Sincronización en la nube**: Google Sheets como backend
-- **Watchlist**: Seguimiento de acciones de interés
-- **Alertas de precios**: Notificaciones configurables
-- **Estadísticas**: Gráficos de evolución y distribución por sector
-- **Year-End Reset**: Cierre anual con resultados fijos
+### ✅ Server-Side Caching Implementado
+- **Servidor en Render.com** (`tenenciaexterior-ws.onrender.com`)
+- Cache inteligente con TTL configurables:
+  - Precios: 4 horas
+  - Daily Data (52-wk, volume): 24 horas
+  - Indicadores (MACD): 5 minutos
+  - SMA: 24 horas
 
-## 📁 Estructura del Proyecto
+### ✅ Detección de Cambio de Día
+- Frontend detecta cuando cambió el día y fuerza actualización
+- Server-side cache expira automáticamente cada 4 horas
+- Garantiza datos frescos cada mañana
 
-```
-├── index.html          # Página principal
-├── config.js           # Configuración y estado global
-├── app.js              # Lógica principal
-├── api.js              # Integración con APIs (Finnhub, Yahoo)
-├── calculations.js     # Cálculos de portfolio
-├── charts.js           # Gráficos (Chart.js)
-├── storage.js          # Persistencia (Local/Sheets)
-├── ui.js               # Renderizado de UI
-├── utils.js            # Utilidades
-└── styles.css          # Estilos
-```
+### ✅ MACD Funcionando
+- Endpoint `/api/indicators/:symbol` devuelve MACD
+- Frontend guarda correctamente el valor en priceCache
+- Columna MACD se llena con datos del servidor
 
-## ⚙️ Configuración
+### ✅ Correcciones
+- Previous close correcto (no after-hours)
+- Volumen actualizado diariamente
+- SMA 200 desde servidor
+- 52-week range actualizado
 
-1. Obtén una API key gratuita en [Finnhub](https://finnhub.io/register)
-2. Configura tu Google Apps Script para sincronización (opcional)
-3. Abre `index.html` en tu navegador
+## Archivos del Servidor
 
-## 🔧 Tecnologías
+### Nuevos:
+- `server/cache.js` - Sistema de caché in-memory con TTL
+- `server/finnhub-client.js` - Cliente centralizado de Finnhub API
+- `server/api-routes.js` - Endpoints REST API
+- `server/.env` - Variables de entorno (FINNHUB_API_KEY)
+- `server/.gitignore` - Ignora node_modules y .env
 
-- Vanilla JavaScript (ES6+)
-- Chart.js para gráficos
-- Google Apps Script para backend
-- GitHub Pages para hosting
+### Modificados:
+- `server/server.js` - Integra API routes y CORS
+- `server/package.json` - Agrega node-fetch y dotenv
 
-## 📈 Versión
+## Archivos Frontend
 
-**v3.0** - 02/01/2026
+### Modificados:
+- `config.js` - Agrega SERVER_API_URL
+- `api.js` - Llama a server endpoints en vez de Finnhub directo
+- `service-worker.js` - Versión 3.30
+- `index.html` - Cache-busting en api.js, versión 3.30
+- `calculations.js` - Removidos logs de debug
 
-### Changelog reciente:
-- ✅ Rate limiting para API (evita bloqueos)
-- ✅ Modularización: `charts.js` extraído de `app.js`
-- ✅ Year-end reset 2025 con resultados fijos
-- ✅ 2026 inicia desde $0
-- ✅ Snapshot diario automático
+## Endpoints del Servidor
 
-## 📄 Licencia
+- `GET /api/price/:symbol` - Precio actual y previous close
+- `GET /api/daily/:symbol` - 52-week range, volumen, precio histórico
+- `GET /api/indicators/:symbol` - MACD
+- `GET /api/sma/:symbol?period=200` - SMA
+- `GET /api/cache/stats` - Estadísticas del caché
+- `POST /api/cache/clear` - Limpiar caché
 
-Proyecto personal - Uso privado
+## Deployment
+
+### Render.com
+- **Root Directory**: `server`
+- **Build Command**: `npm install`
+- **Start Command**: `node server.js`
+- **Environment Variables**: 
+  - `FINNHUB_API_KEY`
+  - `PORT=10000`
+
+### GitHub Pages
+- Frontend desplegado en `https://andrespablor.github.io/tenenciaexterior-ws/`
+
+## Próximos Pasos
+
+1. Monitorear performance del servidor en Render
+2. Ajustar TTLs si es necesario
+3. Agregar más indicadores si se requieren
+4. Considerar base de datos para caché persistente (opcional)
+
+## Estado
+
+✅ Todo funcionando correctamente
+✅ CORS resuelto
+✅ Rate limiting resuelto
+✅ MACD funcionando
+✅ Datos frescos diariamente

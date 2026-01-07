@@ -31,13 +31,26 @@ const DEFAULT_DAILY_STATS = [
 ];
 
 let dailyStats = [];
-let watchlists = { default: [] };
+// Nueva estructura de watchlists con metadata
+let watchlists = {
+    default: {
+        displayName: 'Mi Watchlist',
+        icon: '📋',
+        symbols: []
+    }
+};
 let currentWatchlistId = 'default';
 let priceAlerts = [];
 let priceCache = {};
 let selectedPeriod = new Date().getFullYear().toString(); // Default: año actual
 let searchQuery = '';
 let sortConfig = { column: null, direction: 'asc' };
+
+// Server API URL (cambiar a producción cuando se despliegue)
+const SERVER_API_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:8080/api'
+    : 'https://tenenciaexterior-ws.onrender.com/api';
+
 let yearEndSnapshots = {
     '2025': {
         date: '2025-12-31',

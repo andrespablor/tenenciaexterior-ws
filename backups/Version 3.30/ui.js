@@ -30,8 +30,12 @@ function renderPortfolio(portfolio) {
         const wk52High = cache.wk52High || price;
         const wk52Low = cache.wk52Low || price;
 
-        // Sector
-        const sector = SECTOR_MAP[p.symbol] || 'Otros';
+        // Sector desde stock profiles (con traducción)
+        const profile = window.stockProfiles?.[p.symbol.toUpperCase()] || {};
+        const rawSector = profile.sector || SECTOR_MAP[p.symbol] || 'Otro';
+        const sector = (typeof SECTOR_TRANSLATIONS !== 'undefined' && SECTOR_TRANSLATIONS[rawSector])
+            ? SECTOR_TRANSLATIONS[rawSector]
+            : rawSector;
 
         return { ...p, value, dailyValue, result, dayHigh, dayLow, wk52High, wk52Low, sector };
     });
@@ -75,6 +79,20 @@ function renderPortfolio(portfolio) {
         const macdClass = macd ? (macd > 0 ? 'cell-positive' : 'cell-negative') : '';
         const macdDisplay = macd ? macd.toFixed(2) : '-';
 
+        // Stochastic desde priceCache
+        const stoch = cache.stochastic || null;
+        let stochClass = '';
+        let stochDisplay = '-';
+        if (stoch && stoch.k !== null) {
+            const k = stoch.k;
+            stochDisplay = k.toFixed(0); // Mostrar solo %K (sin decimales)
+            if (k > 80) {
+                stochClass = 'cell-positive'; // Sobrecompra (verde)
+            } else if (k < 20) {
+                stochClass = 'cell-negative'; // Sobreventa (rojo)
+            }
+        }
+
         // Previous close
         const previousClose = cache.previousClose || 0;
         const closeDisplay = previousClose ? `$${fmt(previousClose, 2)}` : '-';
@@ -117,7 +135,8 @@ function renderPortfolio(portfolio) {
             <td>${closeDisplay}</td>
             <td class="cell-time">${timeDisplay}</td>
             <td class="${macdClass}">${macdDisplay}</td>
-            <td class="cell-sector">${sector}</td>
+            <td class="${stochClass}">${stochDisplay}</td>
+            <td class="cell-sector" title="${window.stockProfiles?.[p.symbol.toUpperCase()]?.name || p.sector}">${p.sector.toUpperCase()}</td>
             <td class="col-personal">${fmt(p.quantity)}</td>
             <td class="cell-value">$${fmt(p.value, 2)}</td>
             <td class="cell-daily ${p.dailyValue >= 0 ? 'cell-positive' : 'cell-negative'}">${p.dailyValue >= 0 ? '+' : ''}$${fmt(Math.abs(p.dailyValue), 2)}</td>
