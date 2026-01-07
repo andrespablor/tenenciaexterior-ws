@@ -3,9 +3,12 @@
 // Permite múltiples clientes compartir una conexión Finnhub
 // ========================================
 
+require('dotenv').config();
+
 const WebSocket = require('ws');
 const express = require('express');
 const http = require('http');
+const apiRoutes = require('./api-routes');
 
 // Configuración
 const PORT = process.env.PORT || 8080;
@@ -25,6 +28,21 @@ const priceCache = new Map(); // symbol -> last price data
 
 const app = express();
 
+// JSON parsing middleware
+app.use(express.json());
+
+// CORS headers
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
+
+// API routes (REST endpoints con caché)
+app.use('/api', apiRoutes);
+
+// Health check routes
 app.get('/', (req, res) => {
     res.json({
         status: 'online',
@@ -37,12 +55,6 @@ app.get('/', (req, res) => {
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok' });
-});
-
-// CORS headers para WebSocket
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
 });
 
 const server = http.createServer(app);

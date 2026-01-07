@@ -37,91 +37,56 @@ function needsCacheUpdate(symbol, cacheType) {
 
 
 // ========================================
-// Finnhub API - Price Fetching
+// Server API - Price Fetching
 // ========================================
 async function fetchPriceFromFinnhub(symbol) {
-    const apiKey = appSettings.finnhubApiKey;
-
-    if (!apiKey) {
-        return null;
-    }
-
     try {
-        // Fetch quote (current price)
-        const quoteUrl = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`;
-        const quoteRes = await fetch(quoteUrl);
+        // Call server endpoint instead of Finnhub directly
+        const url = `${SERVER_API_URL}/price/${symbol}`;
+        const res = await fetch(url);
 
-        if (!quoteRes.ok) {
-            throw new Error(`HTTP ${quoteRes.status}`);
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
         }
 
-        const quoteData = await quoteRes.json();
+        const data = await res.json();
 
-        // Finnhub returns: c (current), pc (previous close), h (high), l (low), o (open), t (timestamp)
-        const price = quoteData.c;
-        const prev = quoteData.pc;
-        const dayHigh = quoteData.h;
-        const dayLow = quoteData.l;
-        const timestamp = quoteData.t; // Unix timestamp in seconds
-
-        if (!price || price === 0) {
+        if (!data.price || data.price === 0) {
             return null;
         }
 
-        // Calcular % y DIF desde Finnhub (fuente única de verdad)
-        const change = prev ? ((price - prev) / prev) * 100 : 0;
-        const dailyDiff = prev ? (price - prev) : 0;
-
         return {
-            price,
-            previousClose: prev,
-            dailyChange: change,
-            dailyDiff,
-            dayHigh,
-            dayLow,
-            marketTime: timestamp,
-            source: 'finnhub'
+            price: data.price,
+            previousClose: data.previousClose,
+            dailyChange: data.dailyChange,
+            dailyDiff: data.dailyDiff,
+            dayHigh: data.dayHigh,
+            dayLow: data.dayLow,
+            marketTime: data.marketTime,
+            source: 'server'
         };
 
     } catch (error) {
-        console.error(`❌ Finnhub error for ${symbol}:`, error.message);
+        console.error(`❌ Server error for ${symbol}:`, error.message);
         return null;
     }
 }
 
 // ========================================
-// Finnhub MACD Indicator
+// Server API - MACD Indicator
 // ========================================
 async function fetchMacdFromApi(symbol) {
-    const apiKey = appSettings.finnhubApiKey;
-    if (!apiKey) return null;
-
-    // Pedir últimos 200 días para asegurar buen cálculo
-    const now = Math.floor(Date.now() / 1000);
-    const from = now - (200 * 24 * 60 * 60);
-
-    const url = `https://finnhub.io/api/v1/indicator?symbol=${symbol}&resolution=D&from=${from}&to=${now}&indicator=macd&token=${apiKey}`;
-
     try {
+        const url = `${SERVER_API_URL}/indicators/${symbol}`;
         const response = await fetch(url);
+
         if (!response.ok) {
             console.warn(`MACD fetch failed for ${symbol}: ${response.status}`);
             return null;
         }
 
         const data = await response.json();
-        // data = { macd: [...], macdSignal: [...], macdHist: [...], t: [...] }
-
-        if (data.macd && data.macd.length > 0) {
-            const lastIndex = data.macd.length - 1;
-            return {
-                macd: data.macd[lastIndex],
-                signal: data.macdSignal[lastIndex],
-                histogram: data.macdHist[lastIndex],
-                date: data.t[lastIndex]
-            };
-        }
-        return null;
+        return data.macd; // Server returns just the histogram value
     } catch (error) {
         console.error(`Error fetching MACD for ${symbol}:`, error);
         return null;
@@ -174,16 +139,10 @@ function calculateStochasticLocal(highs, lows, closes, periodK = 14, periodD = 3
 // Finnhub Daily Data (52-wk Range + Volume)
 // ========================================
 async function fetchDailyDataFromFinnhub(symbol) {
-    const apiKey = appSettings.finnhubApiKey;
-    if (!apiKey) return null;
-
-    const now = Math.floor(Date.now() / 1000);
-    const oneYearAgo = now - (365 * 24 * 60 * 60);
-
-    const url = `https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=D&from=${oneYearAgo}&to=${now}&token=${apiKey}`;
-
     try {
+        const url = `${SERVER_API_URL}/daily/${symbol}`;
         const response = await fetch(url);
+
         if (!response.ok) {
             console.warn(`Daily data fetch failed for ${symbol}: ${response.status}`);
             return null;
@@ -191,30 +150,15 @@ async function fetchDailyDataFromFinnhub(symbol) {
 
         const data = await response.json();
 
-        if (data.s === 'ok' && data.h && data.l && data.v) {
-            // 52-week range
-            const wk52High = Math.max(...data.h);
-            const wk52Low = Math.min(...data.l);
-
-            // Volume (últimos 60 días para promedio)
-            const recentVolumes = data.v.slice(-60).filter(v => v > 0);
-            const avgVolume = recentVolumes.length > 0
-                ? recentVolumes.reduce((sum, v) => sum + v, 0) / recentVolumes.length
-                : 0;
-            const currentVolume = data.v[data.v.length - 1] || 0;
-
-            return {
-                wk52High,
-                wk52Low,
-                volume: currentVolume,
-                avgVolume,
-                // Raw data for local Stochastic calculation
-                highs: data.h,
-                lows: data.l,
-                closes: data.c
-            };
-        }
-        return null;
+        return {
+            wk52High: data.wk52High,
+            wk52Low: data.wk52Low,
+            volume: data.volume,
+            avgVolume: data.avgVolume,
+            highs: data.highs,
+            lows: data.lows,
+            closes: data.closes
+        };
     } catch (error) {
         console.error(`Error fetching daily data for ${symbol}:`, error);
         return null;
@@ -225,30 +169,19 @@ async function fetchDailyDataFromFinnhub(symbol) {
 // Finnhub SMA Indicator
 // ========================================
 async function fetchSmaFromApi(symbol, period = 200) {
-    const apiKey = appSettings.finnhubApiKey;
-    if (!apiKey) return null;
-
-    const now = Math.floor(Date.now() / 1000);
-    const from = now - (300 * 24 * 60 * 60); // 300 días para asegurar suficientes datos
-
-    const url = `https://finnhub.io/api/v1/indicator?symbol=${symbol}&resolution=D&from=${from}&to=${now}&indicator=sma&indicator_fields={"timeperiod":${period}}&token=${apiKey}`;
-
     try {
+        const url = `${SERVER_API_URL}/sma/${symbol}?period=${period}`;
         const response = await fetch(url);
+
         if (!response.ok) {
-            console.warn(`SMA fetch failed for ${symbol}: ${response.status} - Will use local calculation`);
+            console.warn(`SMA fetch failed for ${symbol}: ${response.status}`);
             return null;
         }
 
         const data = await response.json();
-
-        if (data.sma && data.sma.length > 0) {
-            const lastIndex = data.sma.length - 1;
-            return data.sma[lastIndex];
-        }
-        return null;
+        return data.sma;
     } catch (error) {
-        console.warn(`SMA API error for ${symbol}, will use local calculation:`, error.message);
+        console.warn(`SMA API error for ${symbol}:`, error.message);
         return null;
     }
 }
