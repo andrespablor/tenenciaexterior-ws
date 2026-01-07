@@ -57,6 +57,13 @@ function connectFinnhubWebSocket() {
     }
 
     // URL de conexión
+    // Check if Finnhub is disabled
+    if (typeof USE_FINNHUB !== 'undefined' && !USE_FINNHUB) {
+        console.log('⚠️ Finnhub WebSocket disabled - running in offline mode');
+        updateConnectionStatus('disconnected', 'Desconectado (Finnhub desactivado)');
+        return;
+    }
+
     let wsUrl;
     if (useRelay) {
         wsUrl = WS_CONFIG.relayServer;
