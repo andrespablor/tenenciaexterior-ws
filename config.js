@@ -46,6 +46,9 @@ let selectedPeriod = new Date().getFullYear().toString(); // Default: año actua
 let searchQuery = '';
 let sortConfig = { column: null, direction: 'asc' };
 
+// Finnhub API Toggle - Set to false to use Yahoo Finance only
+const USE_FINNHUB = false; // Change to true to re-enable Finnhub
+
 // Server API URL (cambiar a producción cuando se despliegue)
 const SERVER_API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:8080/api'

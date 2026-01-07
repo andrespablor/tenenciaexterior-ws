@@ -305,6 +305,14 @@ async function fetchPrice(symbol) {
     }
 
     // ===========================================
+    // Check if Finnhub is disabled
+    // ===========================================
+    if (!USE_FINNHUB) {
+        console.log(`🔄 Finnhub disabled, using Yahoo Finance for ${symbol}`);
+        return await fallbackToYahoo(symbol);
+    }
+
+    // ===========================================
     // ESTRATEGIA: Finnhub con Caching Inteligente
     // ===========================================
     if (!appSettings.finnhubApiKey) {
