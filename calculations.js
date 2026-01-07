@@ -125,27 +125,20 @@ function calculateSpeciesSummary() {
         // Para 2026 SIN baseline: símbolo nuevo, calcular desde operaciones del año
         else if (selectedPeriod === '2026') {
             sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
-            totalSold: sum.totalSold,
-                currentValue: sum.currentValue,
-                    totalDividends: sum.totalDividends,
-                        totalBought: sum.totalBought,
-                            result: sum.totalResult
-        });
-}
         }
         // Para TODO y otros: cálculo dinámico normal
         else {
-    sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
-}
+            sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
+        }
 
-// Asegurar que totalResult sea un número válido
-if (isNaN(sum.totalResult) || sum.totalResult === undefined || sum.totalResult === null) {
-    console.warn(`⚠️ ${s}: totalResult was invalid (${sum.totalResult}), setting to 0`);
-    sum.totalResult = 0;
-}
+        // Asegurar que totalResult sea un número válido
+        if (isNaN(sum.totalResult) || sum.totalResult === undefined || sum.totalResult === null) {
+            console.warn(`⚠️ ${s}: totalResult was invalid (${sum.totalResult}), setting to 0`);
+            sum.totalResult = 0;
+        }
     });
 
-return summary;
+    return summary;
 }
 
 // Exponer globalmente
