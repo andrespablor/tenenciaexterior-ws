@@ -1151,6 +1151,62 @@ function initializeWatchlist() {
 
     updateWatchlistSelector();
     renderWatchlist();
+
+    // ========================================
+    // Drag & Drop Initialization (SortableJS)
+    // ========================================
+
+    // Drag & Drop para COLUMNAS (headers)
+    const theadRow = document.getElementById('watchlist-thead');
+    if (theadRow && typeof Sortable !== 'undefined') {
+        new Sortable(theadRow, {
+            animation: 150,
+            handle: '.draggable-header',
+            draggable: 'th',
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            filter: '.col-check', // No permitir arrastrar checkbox
+            onEnd: function (evt) {
+                // Obtener nuevo orden de columnas
+                const headers = Array.from(theadRow.querySelectorAll('th'));
+                const columnIds = headers.map(th => th.dataset.columnId).filter(id => id);
+
+                // Guardar orden
+                saveColumnOrder(columnIds);
+
+                // Re-renderizar tabla con nuevo orden
+                renderWatchlist();
+
+                console.log('✅ Column order updated:', columnIds);
+            }
+        });
+        console.log('🎯 Column drag & drop initialized');
+    }
+
+    // Drag & Drop para FILAS (tickers)
+    const tbody = document.getElementById('watchlist-body');
+    if (tbody && typeof Sortable !== 'undefined') {
+        new Sortable(tbody, {
+            animation: 150,
+            handle: 'tr', // Toda la fila es arrastrable
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            onEnd: function (evt) {
+                // Obtener nuevo orden de símbolos
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const symbols = rows.map(row => row.dataset.symbol).filter(s => s);
+
+                // Guardar orden
+                saveTickerOrder(symbols);
+
+                // Desactivar sorting automático cuando se arrastra manualmente
+                watchlistSort = { key: null, asc: true };
+
+                console.log('✅ Ticker order updated:', symbols);
+            }
+        });
+        console.log('🎯 Row drag & drop initialized');
+    }
 }
 
 function updateWatchlistSelector() {
@@ -1463,7 +1519,7 @@ function renderWatchlist() {
 
         return `<tr data-symbol="${symbol}">
             <td class="col-check"><input type="checkbox" data-symbol="${symbol}" onchange="updateWatchlistDeleteBtn()"></td>
-            <td class="cell-symbol">
+            <td class="cell-symbol" title="${getCompanyName(symbol)}">
                 <div class="symbol-with-logo">
                     <img src="assets/logos/${symbol}.png" 
                          class="company-logo" 
@@ -1517,9 +1573,54 @@ function renderWatchlist() {
     }).join('');
 }
 
+
 window.removeFromWatchlist = removeFromWatchlist;
 window.updateWatchlistDeleteBtn = updateWatchlistDeleteBtn;
 window.handleLogoError = handleLogoError;
+
+// ========================================
+// Watchlist Drag & Drop - Storage Helpers
+// ========================================
+
+// Guardar orden de columnas (preparado para migración futura a Sheets/Firebase)
+function saveColumnOrder(columnIds) {
+    const key = `watchlist-column-order-${currentWatchlistId}`;
+    localStorage.setItem(key, JSON.stringify(columnIds));
+    console.log(`💾 Column order saved for ${currentWatchlistId}:`, columnIds);
+}
+
+// Cargar orden de columnas personalizado
+function getColumnOrder() {
+    const key = `watchlist-column-order-${currentWatchlistId}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch (e) {
+            console.warn('⚠️ Failed to parse column order, using default');
+            return null;
+        }
+    }
+    return null;
+}
+
+// Guardar orden de tickers en la watchlist
+function saveTickerOrder(symbols) {
+    const wl = watchlists[currentWatchlistId];
+    if (wl && wl.symbols) {
+        wl.symbols = symbols;
+    } else {
+        watchlists[currentWatchlistId] = symbols;
+    }
+    saveData();
+    console.log(`💾 Ticker order saved for ${currentWatchlistId}:`, symbols);
+}
+
+// Obtener nombre de empresa (desde stockProfiles o fallback a símbolo)
+function getCompanyName(symbol) {
+    return window.stockProfiles?.[symbol]?.name || symbol;
+}
+
 
 // ========================================
 // Price Alerts

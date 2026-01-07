@@ -201,23 +201,27 @@
             <div class="table-container">
                 <table class="data-table sortable" id="watchlist-table">
                     <thead>
-                        <tr>
-                            <th class="col-check"><input type="checkbox" id="watchlist-select-all"></th>
-                            <th class="sortable-col" data-sort="symbol">ESPECIE ↕</th>
-                            <th>ÚLTIMO</th>
-                            <th class="sortable-col" data-sort="change">% ↕</th>
-                            <th>DIF</th>
-                            <th>DAY RANGE</th>
-                            <th>52-WK</th>
-                            <th>CIERRE</th>
-                            <th>HORA</th>
-                            <th>VOL</th>
-                            <th>AVG VOL</th>
-                            <th>MACD</th>
-                            <th>SMA 200</th>
-                            <th title="Stochastic %K - Sobrecompra/Sobreventa">SST</th>
-                            <th>SECTOR</th>
-                            <th>ACC</th>
+                        <tr id="watchlist-thead">
+                            <th class="col-check" data-column-id="checkbox"><input type="checkbox"
+                                    id="watchlist-select-all"></th>
+                            <th class="sortable-col draggable-header" data-sort="symbol" data-column-id="symbol">ESPECIE
+                                ↕</th>
+                            <th class="draggable-header" data-column-id="price">ÚLTIMO</th>
+                            <th class="sortable-col draggable-header" data-sort="change" data-column-id="change">% ↕
+                            </th>
+                            <th class="draggable-header" data-column-id="diff">DIF</th>
+                            <th class="draggable-header" data-column-id="dayRange">DAY RANGE</th>
+                            <th class="draggable-header" data-column-id="wk52">52-WK</th>
+                            <th class="draggable-header" data-column-id="close">CIERRE</th>
+                            <th class="draggable-header" data-column-id="time">HORA</th>
+                            <th class="draggable-header" data-column-id="volume">VOL</th>
+                            <th class="draggable-header" data-column-id="avgVolume">AVG VOL</th>
+                            <th class="draggable-header" data-column-id="macd">MACD</th>
+                            <th class="draggable-header" data-column-id="sma200">SMA 200</th>
+                            <th class="draggable-header" data-column-id="stochastic"
+                                title="Stochastic %K - Sobrecompra/Sobreventa">SST</th>
+                            <th class="draggable-header" data-column-id="sector">SECTOR</th>
+                            <th data-column-id="actions">ACC</th>
                         </tr>
                     </thead>
                     <tbody id="watchlist-body"></tbody>
@@ -519,6 +523,7 @@
     <script src="api.js?v=3.30"></script>
     <script src="ui.js"></script>
     <script src="charts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="finnhub-ws.js"></script>
     <script src="app.js"></script>
 </body>

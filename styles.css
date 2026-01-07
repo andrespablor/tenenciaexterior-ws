@@ -1869,6 +1869,34 @@ form {
             display: none;
         }
 
+        /* ===== DRAG & DROP STYLES ===== */
+        .sortable-ghost {
+            opacity: 0.4;
+            background: var(--primary);
+        }
+
+        .sortable-drag {
+            opacity: 0.8;
+            cursor: grabbing !important;
+        }
+
+        .draggable-header {
+            cursor: grab;
+            user-select: none;
+        }
+
+        .draggable-header:active {
+            cursor: grabbing;
+        }
+
+        #watchlist-body tr {
+            cursor: grab;
+        }
+
+        #watchlist-body tr:active {
+            cursor: grabbing;
+        }
+
         /* ===== HISTORIAL ===== */
         #history .data-table th:nth-child(1),
         #history .data-table td:nth-child(1),
