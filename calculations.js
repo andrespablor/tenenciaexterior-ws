@@ -117,52 +117,35 @@ function calculateSpeciesSummary() {
             // Validar que el baseline tenga datos válidos
             if (isNaN(baselineValue) || baselineValue === undefined || baselineValue === null) {
                 // Baseline corrupto - tratar como símbolo nuevo
-                console.warn(`⚠️ ${s}: Baseline de 2025 tiene datos inválidos (quantity: ${baseline.quantity}, price: ${baseline.price}). Calculando como símbolo nuevo.`);
                 sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
             } else {
                 sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - (sum.totalBought + baselineValue);
-            }
-
-            // Debug para símbolos con baseline
-            if (s === 'UNH' || s === 'MELI') {
-                console.log(`🔍 ${s} (con baseline):`, {
-                    totalSold: sum.totalSold,
-                    currentValue: sum.currentValue,
-                    totalDividends: sum.totalDividends,
-                    totalBought: sum.totalBought,
-                    baselineValue,
-                    result: sum.totalResult
-                });
             }
         }
         // Para 2026 SIN baseline: símbolo nuevo, calcular desde operaciones del año
         else if (selectedPeriod === '2026') {
             sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
-
-            // Debug para símbolos sin baseline
-            if (s === 'UNH' || s === 'MELI') {
-                console.log(`🔍 ${s} (sin baseline):`, {
-                    totalSold: sum.totalSold,
-                    currentValue: sum.currentValue,
+            totalSold: sum.totalSold,
+                currentValue: sum.currentValue,
                     totalDividends: sum.totalDividends,
-                    totalBought: sum.totalBought,
-                    result: sum.totalResult
-                });
-            }
+                        totalBought: sum.totalBought,
+                            result: sum.totalResult
+        });
+}
         }
         // Para TODO y otros: cálculo dinámico normal
         else {
-            sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
-        }
+    sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
+}
 
-        // Asegurar que totalResult sea un número válido
-        if (isNaN(sum.totalResult) || sum.totalResult === undefined || sum.totalResult === null) {
-            console.warn(`⚠️ ${s}: totalResult was invalid (${sum.totalResult}), setting to 0`);
-            sum.totalResult = 0;
-        }
+// Asegurar que totalResult sea un número válido
+if (isNaN(sum.totalResult) || sum.totalResult === undefined || sum.totalResult === null) {
+    console.warn(`⚠️ ${s}: totalResult was invalid (${sum.totalResult}), setting to 0`);
+    sum.totalResult = 0;
+}
     });
 
-    return summary;
+return summary;
 }
 
 // Exponer globalmente
