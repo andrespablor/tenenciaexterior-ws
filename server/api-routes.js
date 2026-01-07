@@ -27,7 +27,7 @@ router.get('/price/:symbol', async (req, res) => {
 
         // Fetch from Finnhub
         const data = await finnhub.getQuote(symbol);
-        cache.set(cacheKey, data, 0); // No expiry - updated by WebSocket
+        cache.set(cacheKey, data, 4 * 60 * 60 * 1000); // 4 hours (refresh on day change)
         res.json(data);
     } catch (error) {
         console.error(`Error fetching price for ${symbol}:`, error.message);
