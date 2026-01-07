@@ -1448,12 +1448,21 @@ function renderWatchlist() {
             } else if (watchlistSort.key === 'change') {
                 valA = a.dailyChange;
                 valB = b.dailyChange;
+            } else if (watchlistSort.key === 'sector') {
+                valA = window.stockProfiles?.[a.symbol]?.sector || SECTOR_MAP[a.symbol] || 'Otro';
+                valB = window.stockProfiles?.[b.symbol]?.sector || SECTOR_MAP[b.symbol] || 'Otro';
             }
             if (valA < valB) return watchlistSort.asc ? -1 : 1;
             if (valA > valB) return watchlistSort.asc ? 1 : -1;
             return 0;
         });
     }
+
+    // Get current column order
+    const columnOrder = getColumnOrder() || [
+        'checkbox', 'symbol', 'price', 'change', 'diff', 'dayRange', 'wk52',
+        'close', 'time', 'volume', 'avgVolume', 'macd', 'sma200', 'stochastic', 'sector', 'actions'
+    ];
 
     tbody.innerHTML = items.map(item => {
         const { symbol, price, dailyChange, dailyDiff, dayHigh, dayLow, wk52High, wk52Low, volume, avgVolume, macd, previousClose, marketTime, sma200 } = item;
@@ -1471,16 +1480,15 @@ function renderWatchlist() {
         const smaLabel = price > sma200 ? '↑' : '↓';
 
         // MACD color
-        // MACD Signal (C/V) using Histogram
         let macdDisplay = '-';
         let macdClass = '';
         if (macd !== null && macd !== undefined) {
             if (macd > 0) {
                 macdDisplay = 'C';
-                macdClass = 'cell-positive'; // Verde
+                macdClass = 'cell-positive';
             } else {
                 macdDisplay = 'V';
-                macdClass = 'cell-negative'; // Rojo
+                macdClass = 'cell-negative';
             }
         }
 
@@ -1491,11 +1499,11 @@ function renderWatchlist() {
         let stochDisplay = '-';
         if (stoch && stoch.k !== null) {
             const k = stoch.k;
-            stochDisplay = k.toFixed(0); // Mostrar solo %K (sin decimales)
+            stochDisplay = k.toFixed(0);
             if (k > 80) {
-                stochClass = 'cell-positive'; // Sobrecompra (verde)
+                stochClass = 'cell-positive';
             } else if (k < 20) {
-                stochClass = 'cell-negative'; // Sobreventa (rojo)
+                stochClass = 'cell-negative';
             }
         }
 
@@ -1508,33 +1516,33 @@ function renderWatchlist() {
         const diffDisplay = dailyDiff >= 0 ? `+$${fmt(dailyDiff, 2)}` : `-$${fmt(Math.abs(dailyDiff), 2)}`;
         const closeDisplay = previousClose ? `$${fmt(previousClose, 2)}` : '-';
 
-        // Formatear hora - convertir timestamp unix a hora local
+        // Formatear hora
         let timeDisplay = '-';
         if (marketTime) {
-            const date = new Date(marketTime * 1000); // Convertir de segundos a milisegundos
+            const date = new Date(marketTime * 1000);
             const dateStr = date.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
             const timeStr = date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
             timeDisplay = `${dateStr} ${timeStr}`;
         }
 
-        return `<tr data-symbol="${symbol}">
-            <td class="col-check"><input type="checkbox" data-symbol="${symbol}" onchange="updateWatchlistDeleteBtn()"></td>
-            <td class="cell-symbol" title="${getCompanyName(symbol)}">
+        // Column map - defines the HTML for each column
+        const columnMap = {
+            'checkbox': `<td class="col-check"><input type="checkbox" data-symbol="${symbol}" onchange="updateWatchlistDeleteBtn()"></td>`,
+            'symbol': `<td class="cell-symbol" title="${getCompanyName(symbol)}">
                 <div class="symbol-with-logo">
                     <img src="assets/logos/${symbol}.png" 
                          class="company-logo" 
                          alt="${symbol}" 
                          style="display:none"
                          onload="this.style.display='block'; this.nextElementSibling.style.display='none'"
-                         onerror="handleLogoError(this, '${symbol}')">
-                    <div class="company-logo-fallback">${symbol.charAt(0)}</div>
+                         onerror="handleLogoError(this, '${symbol}')"><div class="company-logo-fallback">${symbol.charAt(0)}</div>
                     <a href="${chartUrl}" target="_blank">${symbol} 📈</a>
                 </div>
-            </td>
-            <td class="cell-price">${priceDisplay}</td>
-            <td class="cell-change ${dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}">${dailyChange >= 0 ? '+' : ''}${dailyChange.toFixed(2)}%</td>
-            <td class="${dailyDiff >= 0 ? 'cell-positive' : 'cell-negative'}">${diffDisplay}</td>
-            <td class="range-cell">
+            </td>`,
+            'price': `<td class="cell-price">${priceDisplay}</td>`,
+            'change': `<td class="cell-change ${dailyChange >= 0 ? 'cell-positive' : 'cell-negative'}">${dailyChange >= 0 ? '+' : ''}${dailyChange.toFixed(2)}%</td>`,
+            'diff': `<td class="${dailyDiff >= 0 ? 'cell-positive' : 'cell-negative'}">${diffDisplay}</td>`,
+            'dayRange': `<td class="range-cell">
                 <div class="range-bar">
                     <span class="range-min">${fmt(dayLow, 2)}</span>
                     <div class="range-track">
@@ -1543,8 +1551,8 @@ function renderWatchlist() {
                     </div>
                     <span class="range-max">${fmt(dayHigh, 2)}</span>
                 </div>
-            </td>
-            <td class="range-cell">
+            </td>`,
+            'wk52': `<td class="range-cell">
                 <div class="range-bar">
                     <span class="range-min">${fmt(wk52Low, 2)}</span>
                     <div class="range-track">
@@ -1553,22 +1561,26 @@ function renderWatchlist() {
                     </div>
                     <span class="range-max">${fmt(wk52High, 2)}</span>
                 </div>
-            </td>
-            <td>${closeDisplay}</td>
-            <td class="cell-time">${timeDisplay}</td>
-            <td>${volDisplay}</td>
-            <td>${avgVolDisplay}</td>
-            <td class="${macdClass}">${macdDisplay}</td>
-            <td class="cell-${smaStatus}" title="SMA 200: $${fmt(sma200, 2)}">${smaLabel} $${fmt(sma200, 0)}</td>
-            <td class="${stochClass}">${stochDisplay}</td>
-            <td class="cell-sector" title="${window.stockProfiles?.[symbol]?.name || ''}">
+            </td>`,
+            'close': `<td>${closeDisplay}</td>`,
+            'time': `<td class="cell-time">${timeDisplay}</td>`,
+            'volume': `<td>${volDisplay}</td>`,
+            'avgVolume': `<td>${avgVolDisplay}</td>`,
+            'macd': `<td class="${macdClass}">${macdDisplay}</td>`,
+            'sma200': `<td class="cell-${smaStatus}" title="SMA 200: $${fmt(sma200, 2)}">${smaLabel} $${fmt(sma200, 0)}</td>`,
+            'stochastic': `<td class="${stochClass}">${stochDisplay}</td>`,
+            'sector': `<td class="cell-sector" title="${window.stockProfiles?.[symbol]?.name || ''}">
                 ${window.stockProfiles?.[symbol]?.sector || SECTOR_MAP[symbol] || 'Otro'}
-            </td>
-            <td>
+            </td>`,
+            'actions': `<td>
                 <button class="btn-alert" onclick="promptPriceAlert('${symbol}', ${price})" title="Crear alerta">🔔</button>
                 <button class="btn-icon" onclick="removeFromWatchlist('${symbol}')" title="Quitar">🗑️</button>
-            </td>
-        </tr>`;
+            </td>`
+        };
+
+        // Build row with columns in custom order
+        const cells = columnOrder.map(colId => columnMap[colId] || '').join('');
+        return `<tr data-symbol="${symbol}">${cells}</tr>`;
 
     }).join('');
 }
