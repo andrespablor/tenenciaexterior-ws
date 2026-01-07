@@ -49,7 +49,7 @@ let sortConfig = { column: null, direction: 'asc' };
 // Server API URL (cambiar a producción cuando se despliegue)
 const SERVER_API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:8080/api'
-    : 'https://tenenciaexterior-ws.fly.dev/api';
+    : 'https://tenenciaexterior-ws.onrender.com/api';
 
 let yearEndSnapshots = {
     '2025': {
