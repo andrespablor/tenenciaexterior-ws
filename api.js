@@ -17,7 +17,7 @@ const CORS_PROXIES = [
 // ========================================
 const CACHE_INTERVALS = {
     PRICE: 0,                          // WebSocket (tiempo real)
-    DAILY_DATA: 24 * 60 * 60 * 1000,  // 24 horas (52-wk, SMA, volume)
+    DAILY_DATA: 4 * 60 * 60 * 1000,   // 4 horas (en vez de 24h para datos más frescos)
     INDICATORS: 5 * 60 * 1000          // 5 minutos (MACD, Stochastic)
 };
 
@@ -30,6 +30,17 @@ function needsCacheUpdate(symbol, cacheType) {
     const lastUpdate = cache.lastUpdate[cacheType];
 
     if (!lastUpdate) return true;
+
+    // Para DAILY_DATA: forzar actualización si cambió el día
+    if (cacheType === 'DAILY_DATA') {
+        const lastUpdateDate = new Date(lastUpdate).toDateString();
+        const nowDate = new Date(now).toDateString();
+
+        // Si cambió el día, forzar actualización
+        if (lastUpdateDate !== nowDate) {
+            return true;
+        }
+    }
 
     const interval = CACHE_INTERVALS[cacheType];
     return (now - lastUpdate) > interval;
