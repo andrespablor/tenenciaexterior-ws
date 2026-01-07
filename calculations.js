@@ -113,7 +113,15 @@ function calculateSpeciesSummary() {
         else if (selectedPeriod === '2026' && yearEndSnapshots['2025']?.bySymbol?.[s]) {
             const baseline = yearEndSnapshots['2025'].bySymbol[s];
             const baselineValue = baseline.quantity * baseline.price;
-            sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - (sum.totalBought + baselineValue);
+
+            // Validar que el baseline tenga datos válidos
+            if (isNaN(baselineValue) || baselineValue === undefined || baselineValue === null) {
+                // Baseline corrupto - tratar como símbolo nuevo
+                console.warn(`⚠️ ${s}: Baseline de 2025 tiene datos inválidos (quantity: ${baseline.quantity}, price: ${baseline.price}). Calculando como símbolo nuevo.`);
+                sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - sum.totalBought;
+            } else {
+                sum.totalResult = (sum.totalSold + sum.currentValue + sum.totalDividends) - (sum.totalBought + baselineValue);
+            }
 
             // Debug para símbolos con baseline
             if (s === 'UNH' || s === 'MELI') {
