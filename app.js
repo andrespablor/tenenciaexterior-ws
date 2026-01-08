@@ -564,13 +564,15 @@ function initializeSettings() {
     const themeBtns = document.querySelectorAll('.theme-btn');
 
     // Abrir modal
-    settingsBtn.addEventListener('click', () => {
-        nameInput.value = appSettings.appName;
-        themeBtns.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.theme === appSettings.theme);
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+            nameInput.value = appSettings.appName;
+            themeBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === appSettings.theme);
+            });
+            settingsModal.classList.add('show');
         });
-        settingsModal.classList.add('show');
-    });
+    }
 
     // Cerrar
     closeBtn.addEventListener('click', closeModal);
@@ -1086,42 +1088,55 @@ function getCurrentWatchlist() {
 }
 
 function initializeWatchlist() {
-    document.getElementById('add-watchlist-btn').addEventListener('click', addToWatchlist);
-    document.getElementById('watchlist-symbol').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addToWatchlist();
-    });
+    const addBtn = document.getElementById('add-watchlist-btn');
+    const symbolInput = document.getElementById('watchlist-symbol');
 
-    // Selector de lista
-    document.getElementById('watchlist-selector').addEventListener('change', async (e) => {
-        currentWatchlistId = e.target.value;
-        saveData();
-        renderWatchlist();
+    if (addBtn) {
+        addBtn.addEventListener('click', addToWatchlist);
+    }
+    if (symbolInput) {
+        symbolInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addToWatchlist();
+        });
+    }
 
-        // Re-suscribir símbolos al WebSocket
-        if (typeof subscribeToPortfolioAndWatchlist === 'function') {
-            subscribeToPortfolioAndWatchlist();
-        }
+    // Selector de lista (legacy - now handled by watchlist-tabs.js)
+    const watchlistSelectorEl = document.getElementById('watchlist-selector');
+    if (watchlistSelectorEl) {
+        watchlistSelectorEl.addEventListener('change', async (e) => {
+            currentWatchlistId = e.target.value;
+            saveData();
+            renderWatchlist();
 
-        // Fetch precios de símbolos que no tienen cache
-        const list = getCurrentWatchlist();
-        const symbolsWithoutCache = list.filter(symbol => !priceCache[symbol] || !priceCache[symbol].price);
-
-        if (symbolsWithoutCache.length > 0) {
-            console.log(`🔄 Fetching prices for ${symbolsWithoutCache.length} symbols...`);
-
-            // Fetch en paralelo con rate limiting
-            for (let i = 0; i < symbolsWithoutCache.length; i += 5) {
-                const batch = symbolsWithoutCache.slice(i, i + 5);
-                await Promise.all(batch.map(symbol => fetchPrice(symbol)));
-                await new Promise(resolve => setTimeout(resolve, 100)); // Delay entre batches
+            // Re-suscribir símbolos al WebSocket
+            if (typeof subscribeToPortfolioAndWatchlist === 'function') {
+                subscribeToPortfolioAndWatchlist();
             }
 
-            renderWatchlist(); // Re-render con los precios nuevos
-        }
-    });
+            // Fetch precios de símbolos que no tienen cache
+            const list = getCurrentWatchlist();
+            const symbolsWithoutCache = list.filter(symbol => !priceCache[symbol] || !priceCache[symbol].price);
 
-    // Botón "⚙️" - abre modal
-    document.getElementById('manage-watchlist-btn').addEventListener('click', openWatchlistManager);
+            if (symbolsWithoutCache.length > 0) {
+                console.log(`🔄 Fetching prices for ${symbolsWithoutCache.length} symbols...`);
+
+                // Fetch en paralelo con rate limiting
+                for (let i = 0; i < symbolsWithoutCache.length; i += 5) {
+                    const batch = symbolsWithoutCache.slice(i, i + 5);
+                    await Promise.all(batch.map(symbol => fetchPrice(symbol)));
+                    await new Promise(resolve => setTimeout(resolve, 100)); // Delay entre batches
+                }
+
+                renderWatchlist(); // Re-render con los precios nuevos
+            }
+        });
+    }
+
+    // Botón "⚙️" - abre modal (legacy - now removed)
+    const manageBtn = document.getElementById('manage-watchlist-btn');
+    if (manageBtn) {
+        manageBtn.addEventListener('click', openWatchlistManager);
+    }
 
     // Select all checkbox
     document.getElementById('watchlist-select-all').addEventListener('change', (e) => {
@@ -1211,6 +1226,9 @@ function initializeWatchlist() {
 
 function updateWatchlistSelector() {
     const select = document.getElementById('watchlist-selector');
+
+    // Legacy selector removed - now handled by watchlist-tabs.js
+    if (!select) return;
 
     // Obtener orden guardado o usar Object.keys por defecto
     const savedOrder = localStorage.getItem('watchlistOrder');
@@ -1456,6 +1474,27 @@ function renderWatchlist() {
             if (valA > valB) return watchlistSort.asc ? 1 : -1;
             return 0;
         });
+
+        // Actualizar indicadores visuales en headers
+        const headers = document.querySelectorAll('#watchlist-table th.sortable-col');
+        if (headers.length > 0) {
+            headers.forEach(th => {
+                const key = th.dataset.sort;
+                // Obtener texto base sin flechas
+                let text = th.innerText;
+                if (text.includes(' ↑')) text = text.replace(' ↑', '');
+                else if (text.includes(' ↓')) text = text.replace(' ↓', '');
+                else if (text.includes(' ↕')) text = text.replace(' ↕', '');
+
+                if (key === watchlistSort.key) {
+                    th.innerText = text + (watchlistSort.asc ? ' ↑' : ' ↓');
+                    th.style.color = '#3b82f6';
+                } else {
+                    th.innerText = text + ' ↕';
+                    th.style.color = '';
+                }
+            });
+        }
     }
 
     // Get current column order
