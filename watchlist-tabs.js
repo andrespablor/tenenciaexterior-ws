@@ -377,14 +377,24 @@ function updateEditSection() {
     const nameInput = document.getElementById('watchlist-edit-name');
     const deleteBtn = document.getElementById('watchlist-btn-delete-header');
 
+    console.log('🔍 updateEditSection called. Selected:', selectedWatchlistForEdit, 'Delete btn:', deleteBtn);
+
     if (!selectedWatchlistForEdit) {
         editSection.style.display = 'none';
-        if (deleteBtn) deleteBtn.style.display = 'none';
+        if (deleteBtn) {
+            deleteBtn.style.display = 'none';
+            console.log('❌ Hiding delete button - no selection');
+        }
         return;
     }
 
     editSection.style.display = 'block';
-    if (deleteBtn) deleteBtn.style.display = 'flex'; // Show delete button
+    if (deleteBtn) {
+        deleteBtn.style.display = 'flex';
+        console.log('✅ Showing delete button for:', selectedWatchlistForEdit);
+    } else {
+        console.error('❌ Delete button not found in DOM!');
+    }
 
     // Populate Name
     const displayName = selectedWatchlistForEdit === 'default' ? 'Mi Watchlist' : selectedWatchlistForEdit;
