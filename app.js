@@ -3544,7 +3544,6 @@ if (wlManagerDeleteBtn) {
         loadWatchlistDataInModal('default');
     });
 }
-});
 
 window.openWatchlistManager = openWatchlistManager;
 window.closeWatchlistManager = closeWatchlistManager;
