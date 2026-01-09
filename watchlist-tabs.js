@@ -95,8 +95,12 @@ function migrateWatchlistsToNewFormat() {
 function initWatchlistTabs() {
     console.log('🎯 Initializing watchlist tabs...');
 
-    // CRITICAL: Migrate data to new format FIRST
-    migrateWatchlistsToNewFormat();
+    // CRITICAL: Migrate data to new format FIRST (only if needed)
+    const migrationVersion = localStorage.getItem('watchlistMigrationVersion');
+    if (migrationVersion !== '1') {
+        migrateWatchlistsToNewFormat();
+        localStorage.setItem('watchlistMigrationVersion', '1');
+    }
 
     const mercadoTabsNav = document.getElementById('mercado-tabs');
     if (!mercadoTabsNav) return;
@@ -371,13 +375,16 @@ function renderManagerList() {
 function updateEditSection() {
     const editSection = document.getElementById('watchlist-edit-section');
     const nameInput = document.getElementById('watchlist-edit-name');
+    const deleteBtn = document.getElementById('watchlist-btn-delete-header');
 
     if (!selectedWatchlistForEdit) {
         editSection.style.display = 'none';
+        if (deleteBtn) deleteBtn.style.display = 'none';
         return;
     }
 
     editSection.style.display = 'block';
+    if (deleteBtn) deleteBtn.style.display = 'flex'; // Show delete button
 
     // Populate Name
     const displayName = selectedWatchlistForEdit === 'default' ? 'Mi Watchlist' : selectedWatchlistForEdit;
@@ -392,6 +399,17 @@ function saveCurrentWatchlist() {
 
     if (!newName) {
         alert('El nombre no puede estar vacío');
+        return;
+    }
+
+    // Validation
+    if (newName.length > 20) {
+        alert('El nombre debe tener máximo 20 caracteres');
+        return;
+    }
+
+    if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]+$/.test(newName)) {
+        alert('El nombre solo puede contener letras, números y espacios');
         return;
     }
 
@@ -473,6 +491,18 @@ function createNewWatchlistPrompt() {
     const name = prompt('Nombre de la nueva lista:');
     if (name && name.trim()) {
         const cleanName = name.trim();
+
+        // Validation
+        if (cleanName.length > 20) {
+            alert('El nombre debe tener máximo 20 caracteres');
+            return;
+        }
+
+        if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]+$/.test(cleanName)) {
+            alert('El nombre solo puede contener letras, números y espacios');
+            return;
+        }
+
         const watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
 
         if (watchlists[cleanName]) {

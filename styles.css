@@ -3428,6 +3428,44 @@ th.col-status {
     gap: 8px;
 }
 
+.modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-icon-small {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #374151;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+}
+
+.btn-icon-small:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #4b5563;
+    color: #fff;
+}
+
+.btn-delete-icon {
+    color: #ef4444;
+}
+
+.btn-delete-icon:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
 .close-modal-btn {
     background: none;
     border: none;

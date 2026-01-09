@@ -429,12 +429,26 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>⚙️ Gestionar Watchlists</h3>
-                    <button class="close-modal-btn" onclick="closeWatchlistManager()"><svg width="24" height="24"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg></button>
+                    <div class="modal-header-actions">
+                        <button class="btn-icon-small" id="watchlist-btn-add-new-header"
+                            onclick="createNewWatchlistPrompt()" title="Crear nueva lista">
+                            +
+                        </button>
+                        <button class="btn-icon-small" id="watchlist-btn-edit-header" onclick="toggleEditMode()"
+                            title="Editar nombre">
+                            ✏️
+                        </button>
+                        <button class="btn-icon-small btn-delete-icon" id="watchlist-btn-delete-header"
+                            onclick="deleteCurrentWatchlist()" title="Eliminar lista" style="display:none;">
+                            🗑️
+                        </button>
+                        <button class="close-modal-btn" onclick="closeWatchlistManager()"><svg width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg></button>
+                    </div>
                 </div>
                 <div class="modal-body">
 
@@ -451,19 +465,10 @@
                         </div>
                     </div>
 
-                    <button class="btn-add-new" id="watchlist-btn-add-new" onclick="createNewWatchlistPrompt()"
-                        style="display: block; margin-top: 10px;">
-                        + Crear Nueva Lista
-                    </button>
-
                     <div class="modal-footer-custom">
-                        <button class="btn-modal btn-delete" id="watchlist-btn-delete"
-                            onclick="deleteCurrentWatchlist()">Eliminar</button>
-                        <div style="display:flex; gap:8px;">
-                            <button class="btn-modal btn-cancel" onclick="closeWatchlistManager()">Cancelar</button>
-                            <button class="btn-modal btn-save" id="watchlist-btn-save"
-                                onclick="saveCurrentWatchlist()">Guardar</button>
-                        </div>
+                        <button class="btn-modal btn-cancel" onclick="closeWatchlistManager()">Cancelar</button>
+                        <button class="btn-modal btn-save" id="watchlist-btn-save"
+                            onclick="saveCurrentWatchlist()">Guardar</button>
                     </div>
 
                 </div>
@@ -487,7 +492,7 @@
         </div>
 
         <footer class="app-footer">
-            <span>v3.58</span>
+            <span>v3.59</span>
             <span>•</span>
             <span>08/01/2026</span>
         </footer>
