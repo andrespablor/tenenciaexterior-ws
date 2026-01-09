@@ -196,6 +196,9 @@ function initWatchlistTabs() {
         <button class="btn-icon" id="edit-watchlists-btn" title="Editar Listas">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
         </button>
+        <button class="btn-icon" id="delete-selected-symbols-btn" title="Eliminar seleccionados" style="color: var(--danger); display: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </button>
     `;
     mercadoTabsNav.appendChild(controlsDiv);
 
@@ -256,6 +259,9 @@ function initWatchlistTabs() {
             console.warn('InitializeWatchlist partial error:', e);
         }
     }
+
+    // Setup delete selected symbols button
+    setupDeleteSelectedButton();
 }
 
 // Load specific watchlist
@@ -548,6 +554,72 @@ window.closeWatchlistManager = closeWatchlistManager;
 window.saveCurrentWatchlist = saveCurrentWatchlist;
 window.deleteCurrentWatchlist = deleteCurrentWatchlist;
 window.createNewWatchlistPrompt = createNewWatchlistPrompt;
+
+// ========================================
+// DELETE SELECTED SYMBOLS FUNCTIONALITY
+// ========================================
+function setupDeleteSelectedButton() {
+    const deleteBtn = document.getElementById('delete-selected-symbols-btn');
+    if (!deleteBtn) return;
+
+    // Monitor checkbox changes
+    function updateDeleteButtonVisibility() {
+        const table = document.getElementById('watchlist-table');
+        if (!table) return;
+
+        const checkedBoxes = table.querySelectorAll('tbody input[type="checkbox"]:checked');
+        if (checkedBoxes.length > 0) {
+            deleteBtn.style.display = 'flex';
+        } else {
+            deleteBtn.style.display = 'none';
+        }
+    }
+
+    // Listen for checkbox changes using event delegation
+    document.addEventListener('change', (e) => {
+        if (e.target.type === 'checkbox' && e.target.closest('#watchlist-table')) {
+            updateDeleteButtonVisibility();
+        }
+    });
+
+    // Delete button click handler
+    deleteBtn.addEventListener('click', () => {
+        const table = document.getElementById('watchlist-table');
+        if (!table) return;
+
+        const checkedBoxes = table.querySelectorAll('tbody input[type="checkbox"]:checked');
+        if (checkedBoxes.length === 0) return;
+
+        const symbolsToDelete = Array.from(checkedBoxes).map(cb => {
+            const row = cb.closest('tr');
+            return row.querySelector('[data-symbol]')?.dataset.symbol ||
+                row.cells[1]?.textContent.trim(); // Fallback to second column
+        }).filter(Boolean);
+
+        if (!confirm(`¿Eliminar ${symbolsToDelete.length} símbolo(s) de la watchlist?`)) return;
+
+        // Get current watchlist
+        const watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
+        const currentId = window.currentWatchlistId || 'default';
+        const wl = watchlists[currentId];
+
+        if (!wl || !wl.symbols) return;
+
+        // Remove symbols
+        wl.symbols = wl.symbols.filter(s => !symbolsToDelete.includes(s));
+        localStorage.setItem('watchlists', JSON.stringify(watchlists));
+
+        // Refresh display
+        if (typeof renderWatchlist === 'function') {
+            renderWatchlist();
+        }
+
+        // Hide button
+        deleteBtn.style.display = 'none';
+
+        console.log(`✅ Deleted ${symbolsToDelete.length} symbols from watchlist`);
+    });
+}
 
 // Initialize
 if (document.readyState === 'loading') {
