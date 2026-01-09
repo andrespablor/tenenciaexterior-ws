@@ -1177,8 +1177,11 @@ function initializeWatchlist() {
         updateWatchlistDeleteBtn();
     });
 
-    // Delete selected button
-    document.getElementById('delete-watchlist-selected').addEventListener('click', deleteSelectedWatchlist);
+    // Delete selected button (legacy - now handled by watchlist-tabs.js)
+    const deleteWatchlistBtn = document.getElementById('delete-watchlist-selected');
+    if (deleteWatchlistBtn) {
+        deleteWatchlistBtn.addEventListener('click', deleteSelectedWatchlist);
+    }
 
     // Sorting click handlers
     document.querySelectorAll('#watchlist-table th.sortable-col').forEach(th => {
