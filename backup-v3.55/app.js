@@ -3373,95 +3373,76 @@ function closeWatchlistManager() {
     document.getElementById('watchlist-manager-modal').style.display = 'none';
 }
 
-// Legacy modal event listeners - check if elements exist
-const closeWatchlistManagerBtn = document.getElementById('close-watchlist-manager');
-if (closeWatchlistManagerBtn) {
-    closeWatchlistManagerBtn.addEventListener('click', closeWatchlistManager);
-}
-
-const wlManagerCancelBtn = document.getElementById('wl-manager-cancel');
-if (wlManagerCancelBtn) {
-    wlManagerCancelBtn.addEventListener('click', closeWatchlistManager);
-}
+// Event listeners del modal
+document.getElementById('close-watchlist-manager').addEventListener('click', closeWatchlistManager);
+document.getElementById('wl-manager-cancel').addEventListener('click', closeWatchlistManager);
 
 // Cambiar de lista dentro del modal
-const wlManagerSelector = document.getElementById('wl-manager-selector');
-if (wlManagerSelector) {
-    wlManagerSelector.addEventListener('change', (e) => {
-        loadWatchlistDataInModal(e.target.value);
-    });
-}
+document.getElementById('wl-manager-selector').addEventListener('change', (e) => {
+    loadWatchlistDataInModal(e.target.value);
+});
 
 // Botón "Nueva lista" dentro del modal
-const wlManagerNewBtn = document.getElementById('wl-manager-new');
-if (wlManagerNewBtn) {
-    wlManagerNewBtn.addEventListener('click', () => {
-        const name = prompt('Nombre de la nueva lista:');
-        if (!name || !name.trim()) return;
-        const sanitized = name.trim();
-        const id = sanitized.toLowerCase().replace(/\s+/g, '_');
-        if (watchlists[id]) { alert('Ya existe una lista con ese nombre'); return; }
+document.getElementById('wl-manager-new').addEventListener('click', () => {
+    const name = prompt('Nombre de la nueva lista:');
+    if (!name || !name.trim()) return;
+    const sanitized = name.trim();
+    const id = sanitized.toLowerCase().replace(/\s+/g, '_');
+    if (watchlists[id]) { alert('Ya existe una lista con ese nombre'); return; }
 
-        watchlists[id] = {
-            displayName: sanitized,
-            icon: '📋',
-            symbols: []
-        };
+    watchlists[id] = {
+        displayName: sanitized,
+        icon: '📋',
+        symbols: []
+    };
 
-        saveData();
+    saveData();
 
-        // Actualizar selector interno
-        const selector = document.getElementById('wl-manager-selector');
-        const newOption = document.createElement('option');
-        newOption.value = id;
-        newOption.selected = true;
-        newOption.textContent = `📋 ${sanitized} (0)`;
-        selector.appendChild(newOption);
+    // Actualizar selector interno
+    const selector = document.getElementById('wl-manager-selector');
+    const newOption = document.createElement('option');
+    newOption.value = id;
+    newOption.selected = true;
+    newOption.textContent = `📋 ${sanitized} (0)`;
+    selector.appendChild(newOption);
 
-        // Cargar datos de la nueva lista
-        loadWatchlistDataInModal(id);
-    });
-}
+    // Cargar datos de la nueva lista
+    loadWatchlistDataInModal(id);
+});
 
 // Botones de reordenamiento ↑↓
-const wlMoveUpBtn = document.getElementById('wl-move-up');
-if (wlMoveUpBtn) {
-    wlMoveUpBtn.addEventListener('click', () => {
-        const selector = document.getElementById('wl-manager-selector');
-        const selectedIndex = selector.selectedIndex;
+document.getElementById('wl-move-up').addEventListener('click', () => {
+    const selector = document.getElementById('wl-manager-selector');
+    const selectedIndex = selector.selectedIndex;
 
-        if (selectedIndex <= 0) return; // Ya está al principio
+    if (selectedIndex <= 0) return; // Ya está al principio
 
-        // Intercambiar opciones
-        const selected = selector.options[selectedIndex];
-        const previous = selector.options[selectedIndex - 1];
-        selector.insertBefore(selected, previous);
+    // Intercambiar opciones
+    const selected = selector.options[selectedIndex];
+    const previous = selector.options[selectedIndex - 1];
+    selector.insertBefore(selected, previous);
 
-        saveWatchlistOrder();
-    });
-}
+    saveWatchlistOrder();
+});
 
-const wlMoveDownBtn = document.getElementById('wl-move-down');
-if (wlMoveDownBtn) {
-    wlMoveDownBtn.addEventListener('click', () => {
-        const selector = document.getElementById('wl-manager-selector');
-        const selectedIndex = selector.selectedIndex;
+document.getElementById('wl-move-down').addEventListener('click', () => {
+    const selector = document.getElementById('wl-manager-selector');
+    const selectedIndex = selector.selectedIndex;
 
-        if (selectedIndex >= selector.options.length - 1) return; // Ya está al final
+    if (selectedIndex >= selector.options.length - 1) return; // Ya está al final
 
-        // Intercambiar opciones
-        const selected = selector.options[selectedIndex];
-        const next = selector.options[selectedIndex + 2]; // Insertamos ANTES del siguiente (+2)
+    // Intercambiar opciones
+    const selected = selector.options[selectedIndex];
+    const next = selector.options[selectedIndex + 2]; // Insertamos ANTES del siguiente (+2)
 
-        if (next) {
-            selector.insertBefore(selected, next);
-        } else {
-            selector.appendChild(selected);
-        }
+    if (next) {
+        selector.insertBefore(selected, next);
+    } else {
+        selector.appendChild(selected);
+    }
 
-        saveWatchlistOrder();
-    });
-}
+    saveWatchlistOrder();
+});
 
 function saveWatchlistOrder() {
     // Guardar el orden actual en localStorage
@@ -3485,65 +3466,58 @@ document.querySelectorAll('.icon-option').forEach(btn => {
 });
 
 // Guardar cambios
-const wlManagerSaveBtn = document.getElementById('wl-manager-save');
-if (wlManagerSaveBtn) {
-    wlManagerSaveBtn.addEventListener('click', () => {
-        const selectedId = document.getElementById('wl-manager-selector').value;
-        const newName = document.getElementById('wl-manager-name').value.trim();
-        if (!newName) {
-            alert('El nombre no puede estar vacío');
-            return;
-        }
+document.getElementById('wl-manager-save').addEventListener('click', () => {
+    const selectedId = document.getElementById('wl-manager-selector').value;
+    const newName = document.getElementById('wl-manager-name').value.trim();
+    if (!newName) {
+        alert('El nombre no puede estar vacío');
+        return;
+    }
 
-        // Actualizar watchlist seleccionada
-        if (!watchlists[selectedId].displayName) {
-            // Migrar formato antiguo
-            watchlists[selectedId] = {
-                displayName: newName,
-                icon: selectedIcon,
-                symbols: watchlists[selectedId]
-            };
-        } else {
-            watchlists[selectedId].displayName = newName;
-            watchlists[selectedId].icon = selectedIcon;
-        }
+    // Actualizar watchlist seleccionada
+    if (!watchlists[selectedId].displayName) {
+        // Migrar formato antiguo
+        watchlists[selectedId] = {
+            displayName: newName,
+            icon: selectedIcon,
+            symbols: watchlists[selectedId]
+        };
+    } else {
+        watchlists[selectedId].displayName = newName;
+        watchlists[selectedId].icon = selectedIcon;
+    }
 
-        saveData();
-        updateWatchlistSelector();
-        closeWatchlistManager();
-    });
-}
+    saveData();
+    updateWatchlistSelector();
+    closeWatchlistManager();
+});
 
 // Eliminar lista
-const wlManagerDeleteBtn = document.getElementById('wl-manager-delete');
-if (wlManagerDeleteBtn) {
-    wlManagerDeleteBtn.addEventListener('click', () => {
-        const selectedId = document.getElementById('wl-manager-selector').value;
+document.getElementById('wl-manager-delete').addEventListener('click', () => {
+    const selectedId = document.getElementById('wl-manager-selector').value;
 
-        if (selectedId === 'default') {
-            alert('No podés eliminar la lista por defecto');
-            return;
-        }
+    if (selectedId === 'default') {
+        alert('No podés eliminar la lista por defecto');
+        return;
+    }
 
-        if (!confirm(`¿Eliminar "${watchlists[selectedId].displayName}"?`)) return;
+    if (!confirm(`¿Eliminar "${watchlists[selectedId].displayName}"?`)) return;
 
-        delete watchlists[selectedId];
+    delete watchlists[selectedId];
 
-        // Si era la lista actual, cambiar a default
-        if (currentWatchlistId === selectedId) {
-            currentWatchlistId = 'default';
-            renderWatchlist();
-        }
+    // Si era la lista actual, cambiar a default
+    if (currentWatchlistId === selectedId) {
+        currentWatchlistId = 'default';
+        renderWatchlist();
+    }
 
-        saveData();
-        updateWatchlistSelector();
+    saveData();
+    updateWatchlistSelector();
 
 
-        // Actualizar selector interno del modal
-        document.getElementById('wl-manager-selector').value = 'default';
-        loadWatchlistDataInModal('default');
-    });
-}
+    // Actualizar selector interno del modal
+    document.getElementById('wl-manager-selector').value = 'default';
+    loadWatchlistDataInModal('default');
 });
 
 window.openWatchlistManager = openWatchlistManager;
