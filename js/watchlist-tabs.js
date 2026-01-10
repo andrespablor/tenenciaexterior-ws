@@ -77,6 +77,8 @@ function initWatchlistTabs() {
     let watchlistNames = Object.keys(wlData);
 
     // If no watchlists, create default in global variable
+    // NOTE: Do NOT save here - data might not be loaded from Supabase yet
+    // This is just a fallback for UI rendering
     if (watchlistNames.length === 0) {
         watchlists.default = {
             displayName: 'Mi Watchlist',
@@ -84,10 +86,8 @@ function initWatchlistTabs() {
             symbols: []
         };
         watchlistNames = ['default'];
-        // Save to Supabase
-        if (typeof saveData === 'function') {
-            saveData();
-        }
+        // DO NOT call saveData() here - it would overwrite Supabase data!
+        console.log('⚠️ No watchlists found, using default (NOT saving yet)');
     }
 
     // Clear existing tabs
@@ -220,10 +220,8 @@ function loadWatchlist(name) {
     if (typeof currentWatchlistId !== 'undefined') {
         currentWatchlistId = name;
     }
-    // Save current watchlist selection to Supabase
-    if (typeof saveData === 'function') {
-        saveData();
-    }
+    // NOTE: Do NOT save here - just updating the current selection
+    // Save only happens when user explicitly modifies data
     if (typeof renderWatchlist === 'function') {
         renderWatchlist();
     }
