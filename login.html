@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Portfolio Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #e2e8f0;
+        }
+
+        .login-container {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .switch-mode {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .switch-mode button {
+            background: none;
+            border: none;
+            color: #6366f1;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .switch-mode button:hover {
+            text-decoration: underline;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>📈 Portfolio Tracker</h1>
+            <p id="mode-text">Ingresá a tu cuenta</p>
+        </div>
+
+        <div class="error-message" id="error-msg"></div>
+        <div class="success-message" id="success-msg"></div>
+
+        <form id="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="tu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="••••••••" minlength="6" required>
+            </div>
+            <button type="submit" class="btn-primary" id="submit-btn">Ingresar</button>
+        </form>
+
+        <div class="switch-mode">
+            <span id="switch-text">¿No tenés cuenta?</span>
+            <button type="button" id="switch-btn">Registrate</button>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Config
+        const SUPABASE_URL = 'https://wqjnjewadakatnpwfcpf.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxam5qZXdhZGFrYXRucHdmY3BmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgwMDAwNDEsImV4cCI6MjA4MzU3NjA0MX0.qTJrBdJoS0yWhhpCf0RjUI7v-eHKLPu9S90aQ7HQFi4';
+
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let isLoginMode = true;
+
+        // Elements
+        const form = document.getElementById('auth-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const submitBtn = document.getElementById('submit-btn');
+        const switchBtn = document.getElementById('switch-btn');
+        const switchText = document.getElementById('switch-text');
+        const modeText = document.getElementById('mode-text');
+        const errorMsg = document.getElementById('error-msg');
+        const successMsg = document.getElementById('success-msg');
+
+        // Check if already logged in
+        async function checkSession() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session?.user) {
+                // Redirect to main app
+                window.location.href = 'index.html';
+            }
+        }
+        checkSession();
+
+        // Switch mode
+        switchBtn.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            hideMessages();
+
+            if (isLoginMode) {
+                modeText.textContent = 'Ingresá a tu cuenta';
+                submitBtn.textContent = 'Ingresar';
+                switchText.textContent = '¿No tenés cuenta?';
+                switchBtn.textContent = 'Registrate';
+            } else {
+                modeText.textContent = 'Creá tu cuenta';
+                submitBtn.textContent = 'Registrarse';
+                switchText.textContent = '¿Ya tenés cuenta?';
+                switchBtn.textContent = 'Iniciá sesión';
+            }
+        });
+
+        // Form submit
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessages();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                showError('Por favor completá todos los campos');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Procesando...';
+
+            try {
+                let result;
+                if (isLoginMode) {
+                    result = await _supabase.auth.signInWithPassword({ email, password });
+                } else {
+                    result = await _supabase.auth.signUp({ email, password });
+                }
+
+                if (result.error) {
+                    showError(translateError(result.error.message));
+                    resetButton();
+                    return;
+                }
+
+                if (!isLoginMode && !result.data.session) {
+                    showSuccess('✅ Cuenta creada! Revisá tu email para confirmar.');
+                    resetButton();
+                    return;
+                }
+
+                // Success - redirect
+                showSuccess('✅ Bienvenido! Redirigiendo...');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+
+            } catch (error) {
+                showError('Error inesperado. Intentá de nuevo.');
+                resetButton();
+            }
+        });
+
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.style.display = 'block';
+            successMsg.style.display = 'none';
+        }
+
+        function showSuccess(msg) {
+            successMsg.textContent = msg;
+            successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+        }
+
+        function hideMessages() {
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+        }
+
+        function resetButton() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = isLoginMode ? 'Ingresar' : 'Registrarse';
+        }
+
+        function translateError(error) {
+            const translations = {
+                'Invalid login credentials': 'Email o contraseña incorrectos',
+                'Email not confirmed': 'Necesitás confirmar tu email primero',
+                'User already registered': 'Este email ya está registrado',
+                'Password should be at least 6 characters': 'La contraseña debe tener al menos 6 caracteres',
+                'Unable to validate email address: invalid format': 'Formato de email inválido',
+                'Email rate limit exceeded': 'Demasiados intentos. Esperá un momento.',
+                'Signup requires a valid password': 'Ingresá una contraseña válida'
+            };
+            return translations[error] || error || 'Error desconocido';
+        }
+    </script>
+</body>
+
+</html>

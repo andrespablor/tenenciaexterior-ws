@@ -616,46 +616,6 @@
         </div>
         <!-- End main-wrapper -->
 
-        <!-- Auth Modal (Login/Register) - Fuera del main-wrapper para ser siempre visible -->
-        <div class="modal" id="auth-modal"
-            style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center;">
-            <div class="modal-content auth-modal-content">
-                <div class="modal-header">
-                    <h3 id="auth-modal-title">🔐 Iniciar Sesión</h3>
-                    <button class="modal-close" id="close-auth-modal">&times;</button>
-                </div>
-                <div class="auth-modal-body">
-                    <form id="auth-form">
-                        <div class="form-group">
-                            <label for="auth-email">Email</label>
-                            <input type="email" id="auth-email" required placeholder="tu@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="auth-password">Contraseña</label>
-                            <input type="password" id="auth-password" required placeholder="••••••••" minlength="6">
-                        </div>
-                        <div class="auth-error" id="auth-error" style="display: none;"></div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary btn-full"
-                                id="auth-submit-btn">Ingresar</button>
-                        </div>
-                    </form>
-                    <div class="auth-switch">
-                        <span id="auth-switch-text">¿No tenés cuenta?</span>
-                        <button type="button" class="btn-link" id="auth-switch-btn">Registrate</button>
-                    </div>
-                    <div class="auth-user-info" id="auth-user-info" style="display: none;">
-                        <div class="user-avatar">👤</div>
-                        <div class="user-details">
-                            <span class="user-email" id="logged-user-email"></span>
-                            <span class="user-status">Conectado ✓</span>
-                        </div>
-                        <button class="btn btn-outline btn-small" id="logout-btn">Cerrar Sesión</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
 </body>
 
 </html>
