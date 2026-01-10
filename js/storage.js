@@ -30,9 +30,11 @@ async function loadData() {
 // ========================================
 // Settings (solo para tema y nombre de app)
 // ========================================
-function saveSettings() {
+async function saveSettings() {
     // Los settings ahora se guardan en Supabase
-    saveData();
+    console.log('💾 Guardando settings en Supabase...');
+    await saveData();
+    console.log('✅ Settings guardados');
 }
 
 function loadSettings() {

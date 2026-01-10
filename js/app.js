@@ -667,14 +667,18 @@ function initializeSettings() {
     });
 
     // Guardar
-    saveBtn.addEventListener('click', () => {
+    saveBtn.addEventListener('click', async () => {
         appSettings.appName = nameInput.value.trim() || 'Portfolio Tracker';
         const activeTheme = document.querySelector('.theme-btn.active');
         appSettings.theme = activeTheme ? activeTheme.dataset.theme : 'dark';
 
-        saveSettings();
+        await saveSettings();
         applySettings();
         closeModal();
+
+        if (typeof showToast === 'function') {
+            showToast('✅ Configuración guardada', 'success');
+        }
     });
 }
 
