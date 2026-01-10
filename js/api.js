@@ -221,19 +221,11 @@ async function fetchYahooHistoricalData(symbol) {
             finnhubMacd = macdData.histogram; // Usamos el histograma para señal C/V
         }
     } catch (e) {
-        // console.warn('Finnhub MACD fetch error:', e);
+        // Silently fail - will use local calculation
     }
 
-    // 2. Intentar obtener Stochastic de Finnhub API
-    let finnhubStochastic = null;
-    try {
-        const stochData = await fetchStochasticFromApi(symbol);
-        if (stochData) {
-            finnhubStochastic = stochData; // { k, d, date }
-        }
-    } catch (e) {
-        // console.warn('Finnhub Stochastic fetch error:', e);
-    }
+    // Note: Stochastic from Finnhub API requires Premium plan (returns 401)
+    // Using local calculation instead (calculateStochasticLocal)
 
     const yahooHost = Math.random() > 0.5 ? 'query1.finance.yahoo.com' : 'query2.finance.yahoo.com';
     const url = `https://${yahooHost}/v8/finance/chart/${symbol}?interval=1d&range=2mo`;
@@ -251,10 +243,14 @@ async function fetchYahooHistoricalData(symbol) {
 
             const meta = result.meta;
             const closes = result.indicators?.quote?.[0]?.close || [];
+            const highs = result.indicators?.quote?.[0]?.high || [];
+            const lows = result.indicators?.quote?.[0]?.low || [];
             const volumes = result.indicators?.quote?.[0]?.volume || [];
 
             // Calcular MACD local si falló la API
             const validCloses = closes.filter(p => p && p > 0);
+            const validHighs = highs.filter(p => p && p > 0);
+            const validLows = lows.filter(p => p && p > 0);
             let macd = finnhubMacd;
 
             if (macd === null && validCloses.length >= 26) {
@@ -263,6 +259,9 @@ async function fetchYahooHistoricalData(symbol) {
                 const ema26 = calculateEMA(validCloses, 26);
                 macd = ema12 - ema26;
             }
+
+            // Calcular Stochastic local (ya que Finnhub API requiere Premium)
+            const stochastic = calculateStochasticLocal(validHighs, validLows, validCloses, 14, 3);
 
             // Calcular avgVolume
             const validVolumes = volumes.filter(v => v && v > 0);
@@ -276,21 +275,12 @@ async function fetchYahooHistoricalData(symbol) {
                 volume: meta.regularMarketVolume || 0,
                 avgVolume,
                 macd,
-                stochastic: finnhubStochastic
+                stochastic
             };
 
         } catch (error) {
             continue;
         }
-    }
-
-    // Si falló Yahoo, devolver al menos los indicadores de Finnhub si los conseguimos
-    if (finnhubMacd !== null || finnhubStochastic !== null) {
-        return {
-            wk52High: 0, wk52Low: 0, volume: 0, avgVolume: 0,
-            macd: finnhubMacd,
-            stochastic: finnhubStochastic
-        };
     }
 
     return null;
@@ -312,7 +302,7 @@ async function fetchPrice(symbol) {
 // Fallback a Yahoo Finance (Solo Emergencia)
 // ===========================================
 async function fallbackToYahoo(symbol) {
-    console.log(`📊 Using Yahoo Finance fallback for ${symbol}`);
+    debugLog(`📊 Using Yahoo Finance fallback for ${symbol}`);
 
     // Alternar entre query1 y query2 de Yahoo para evitar rate limits
     const yahooHost = Math.random() > 0.5 ? 'query1.finance.yahoo.com' : 'query2.finance.yahoo.com';
@@ -382,10 +372,10 @@ async function fallbackToYahoo(symbol) {
             try {
                 const closes = result.indicators?.quote?.[0]?.close || [];
                 const validCloses = closes.filter(p => p && p > 0);
-                console.log(`${symbol} - Got ${validCloses.length} closes for MACD`);
+                debugLog(`${symbol} - Got ${validCloses.length} closes for MACD`);
                 if (validCloses.length >= 26) {
                     macd = calculateMACDLocal(validCloses);
-                    console.log(`${symbol} - MACD calculated: ${macd}`);
+                    debugLog(`${symbol} - MACD calculated: ${macd}`);
                 } else {
                     console.warn(`${symbol} - Insufficient data for MACD (need 26, got ${validCloses.length})`);
                 }
@@ -398,7 +388,7 @@ async function fallbackToYahoo(symbol) {
             // Solo actualizar si NO hay datos previos O si los nuevos datos son más recientes
             const existingData = priceCache[symbol];
             if (existingData && existingData.marketTime >= newTimestamp) {
-                console.log(`⏭️ ${symbol}: Skipping update. Existing data is newer or same (${new Date(existingData.marketTime * 1000).toLocaleTimeString()} >= ${new Date(newTimestamp * 1000).toLocaleTimeString()})`);
+                debugLog(`⏭️ ${symbol}: Skipping update. Existing data is newer or same`);
                 return { price: existingData.price, change: existingData.dailyChange };
             }
 
@@ -418,7 +408,7 @@ async function fallbackToYahoo(symbol) {
                 rating: null,
                 timestamp: Date.now()
             };
-            console.log(`✅ ${symbol}: Updated to $${price.toFixed(2)} at ${new Date(newTimestamp * 1000).toLocaleTimeString()}`);
+            debugLog(`✅ ${symbol}: Updated to $${price.toFixed(2)}`);
             // ⚠️ REMOVED saveData() - will be called once at end of refresh cycle
             return { price, change };
 

@@ -1,6 +1,20 @@
 ﻿// ========================================
 // CONFIG.JS - Estado Global y Constantes
 // ========================================
+
+// Debug mode - set to false for production (silences verbose logs)
+const DEBUG_MODE = false;
+
+// Conditional logging - only logs when DEBUG_MODE is true
+function debugLog(...args) {
+    if (DEBUG_MODE) {
+        console.log(...args);
+    }
+}
+
+// Expose globally
+window.debugLog = debugLog;
+window.DEBUG_MODE = DEBUG_MODE;
 let movements = [];
 
 const DEFAULT_DAILY_STATS = [

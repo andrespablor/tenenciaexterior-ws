@@ -67,7 +67,7 @@ function ensureWatchlistFormat(wl, name) {
 // ========================================
 
 function initWatchlistTabs() {
-    console.log('🎯 Initializing watchlist tabs...');
+    debugLog('🎯 Initializing watchlist tabs...');
 
     const mercadoTabsNav = document.getElementById('mercado-tabs');
     if (!mercadoTabsNav) return;
@@ -87,7 +87,7 @@ function initWatchlistTabs() {
         };
         watchlistNames = ['default'];
         // DO NOT call saveData() here - it would overwrite Supabase data!
-        console.log('⚠️ No watchlists found, using default (NOT saving yet)');
+        debugLog('⚠️ No watchlists found, using default (NOT saving yet)');
     }
 
     // Clear existing tabs
@@ -204,7 +204,7 @@ function initWatchlistTabs() {
 
     // Initialize watchlist from app.js
     if (typeof initializeWatchlist === 'function') {
-        console.log('🔧 Calling initializeWatchlist from watchlist-tabs.js');
+        debugLog('🔧 Calling initializeWatchlist from watchlist-tabs.js');
         try {
             initializeWatchlist();
         } catch (e) {
@@ -429,8 +429,8 @@ async function createNewWatchlistPrompt() {
         }
 
         // Add to global watchlists
-        console.log('📝 Creating new watchlist:', id, 'with name:', cleanName);
-        console.log('📝 Current watchlists before add:', JSON.stringify(Object.keys(watchlists)));
+        debugLog('📝 Creating new watchlist:', id, 'with name:', cleanName);
+        debugLog('📝 Current watchlists before add:', JSON.stringify(Object.keys(watchlists)));
 
         watchlists[id] = {
             displayName: cleanName,
@@ -438,7 +438,7 @@ async function createNewWatchlistPrompt() {
             symbols: []
         };
 
-        console.log('📝 Watchlists after add:', JSON.stringify(Object.keys(watchlists)));
+        debugLog('📝 Watchlists after add:', JSON.stringify(Object.keys(watchlists)));
 
         // Save to Supabase
         console.log('💾 Saving new watchlist to Supabase...');
@@ -538,12 +538,12 @@ function setupDeleteSelectedButton() {
             return;
         }
 
-        console.log('🗑️ Deleting symbols:', symbolsToDelete);
-        console.log('📋 Before:', [...wl.symbols]);
+        debugLog('🗑️ Deleting symbols:', symbolsToDelete);
+        debugLog('📋 Before:', [...wl.symbols]);
 
         wl.symbols = wl.symbols.filter(s => !symbolsToDelete.includes(s));
 
-        console.log('📋 After:', wl.symbols);
+        debugLog('📋 After:', wl.symbols);
 
         // Save to Supabase
         console.log('💾 Saving to Supabase...');

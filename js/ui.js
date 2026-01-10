@@ -7,7 +7,7 @@
 // Render Portfolio
 // ========================================
 function renderPortfolio(portfolio) {
-    console.log('🔄 renderPortfolio called. PriceCache symbols:', Object.keys(priceCache));
+    debugLog('🔄 renderPortfolio called. PriceCache symbols:', Object.keys(priceCache));
     const tbody = document.getElementById('portfolio-body');
     const empty = document.getElementById('portfolio-empty');
     const container = document.querySelector('#portfolio .table-container');

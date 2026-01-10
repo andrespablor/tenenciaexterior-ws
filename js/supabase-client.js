@@ -229,7 +229,7 @@ async function saveWatchlistsSupabase(watchlistsData, currentId) {
             symbols: wl.symbols || []
         }));
 
-        console.log('💾 Saving watchlists:', formattedData.map(w => ({ id: w.watchlist_id, name: w.display_name, symbols: w.symbols.length })));
+        debugLog('💾 Saving watchlists:', formattedData.map(w => ({ id: w.watchlist_id, name: w.display_name, symbols: w.symbols.length })));
 
         if (formattedData.length > 0) {
             // Usar UPSERT en lugar de delete+insert para evitar race conditions
@@ -377,7 +377,7 @@ async function saveAppSettingsSupabase(settingsData, currentWatchlistIdParam) {
             updated_at: new Date().toISOString()
         };
 
-        console.log('💾 Saving app settings:', dataToSave);
+        debugLog('💾 Saving app settings:', dataToSave);
 
         const { error } = await _sb
             .from('app_settings')
@@ -489,7 +489,7 @@ async function saveAllDataSupabase() {
     }
 
     try {
-        console.log('📊 Guardando en Supabase...');
+        debugLog('📊 Guardando en Supabase...');
 
         // First save all data in parallel (except app settings to avoid race conditions)
         await Promise.all([
@@ -520,7 +520,7 @@ async function loadAllDataSupabase() {
     }
 
     try {
-        console.log('📊 Cargando desde Supabase...');
+        debugLog('📊 Cargando desde Supabase...');
 
         const [
             loadedMovements,

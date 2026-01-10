@@ -13,7 +13,7 @@ window.currentModule = 'mercado';
 
 // Initialize sidebar navigation
 function initSidebarNavigation() {
-    console.log('🎯 Initializing sidebar navigation...');
+    debugLog('🎯 Initializing sidebar navigation...');
 
     // Sidebar buttons
     document.querySelectorAll('.sidebar-btn[data-module]').forEach(btn => {
@@ -59,7 +59,7 @@ function initSidebarNavigation() {
 
 // Switch between modules
 function switchModule(moduleName) {
-    console.log(`📂 Switching to module: ${moduleName}`);
+    debugLog(`📂 Switching to module: ${moduleName}`);
     window.currentModule = moduleName;
 
     // Update sidebar button states
@@ -174,7 +174,7 @@ function updateMarketLabels() {
     if (!toggle) return;
 
     // Los estilos visuales se manejan automáticamente con :checked en CSS
-    console.log(`Market switch: ${toggle.checked ? '🇦🇷 ARG' : '🇺🇸 USA'}`);
+    debugLog(`Market switch: ${toggle.checked ? '🇦🇷 ARG' : '🇺🇸 USA'}`);
 }
 
 // Initialize market toggle handler
@@ -189,7 +189,7 @@ function initMarketToggle() {
 
         if (e.target.checked) {
             // Switch to Argentina
-            console.log('🇦🇷 Switching to Argentina market');
+            debugLog('🇦🇷 Switching to Argentina market');
             if (watchlistSection) {
                 watchlistSection.classList.remove('active');
                 watchlistSection.style.display = 'none';
@@ -207,7 +207,7 @@ function initMarketToggle() {
             }
         } else {
             // Switch to USA
-            console.log('🇺🇸 Switching to USA market');
+            debugLog('🇺🇸 Switching to USA market');
             if (argentinaSection) {
                 argentinaSection.classList.remove('active');
                 argentinaSection.style.display = 'none';

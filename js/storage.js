@@ -20,7 +20,7 @@ async function saveData() {
 
     // Si ya hay un guardado en progreso, marcar como pendiente
     if (_saveInProgress) {
-        console.log('⏳ Guardado en progreso, encolando...');
+        debugLog('⏳ Guardado en progreso, encolando...');
         _pendingSave = true;
         return;
     }
@@ -35,7 +35,7 @@ async function saveData() {
         // Si hubo cambios mientras guardábamos, guardar de nuevo
         if (_pendingSave) {
             _pendingSave = false;
-            console.log('🔄 Procesando guardado pendiente...');
+            debugLog('🔄 Procesando guardado pendiente...');
             await saveData();
         }
     }
@@ -57,9 +57,9 @@ async function loadData() {
 // ========================================
 async function saveSettings() {
     // Los settings ahora se guardan en Supabase
-    console.log('💾 Guardando settings en Supabase...');
+    debugLog('💾 Guardando settings en Supabase...');
     await saveData();
-    console.log('✅ Settings guardados');
+    debugLog('✅ Settings guardados');
 }
 
 function loadSettings() {

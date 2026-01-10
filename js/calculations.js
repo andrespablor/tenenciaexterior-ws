@@ -3,7 +3,7 @@
 // ========================================
 
 function calculatePortfolio() {
-    console.log('📊 calculatePortfolio: Using priceCache with', Object.keys(priceCache).length, 'symbols');
+    debugLog('📊 calculatePortfolio: Using priceCache with', Object.keys(priceCache).length, 'symbols');
     const holdings = {};
     const sorted = [...movements].sort((a, b) => new Date(a.date) - new Date(b.date));
 
