@@ -1367,7 +1367,13 @@ async function addToWatchlist(symbolArg) {
         value = input.value.trim().toUpperCase();
     }
 
-    const list = getCurrentWatchlist();
+    const currentList = watchlists[currentWatchlistId];
+    if (!currentList || !currentList.symbols) {
+        console.error('Invalid watchlist structure');
+        return;
+    }
+
+    const list = currentList.symbols;
 
     if (!value) return;
 
@@ -1434,11 +1440,12 @@ async function addToWatchlist(symbolArg) {
 const addToWatchlistWithSymbol = addToWatchlist;
 
 function removeFromWatchlist(symbol) {
-    const list = getCurrentWatchlist();
-    const idx = list.indexOf(symbol);
+    const currentList = watchlists[currentWatchlistId];
+    if (!currentList || !currentList.symbols) return;
+
+    const idx = currentList.symbols.indexOf(symbol);
     if (idx > -1) {
-        list.splice(idx, 1);
-        watchlists[currentWatchlistId] = list;
+        currentList.symbols.splice(idx, 1);
         saveData();
 
         // Limpiar del priceCache si NO está en el resumen del portfolio
