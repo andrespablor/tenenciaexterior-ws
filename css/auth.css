@@ -38,7 +38,7 @@ body.auth-required .main-wrapper {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
+    background-image:
         radial-gradient(circle at 20% 50%, rgba(14, 165, 233, 0.03) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.03) 0%, transparent 50%);
     pointer-events: none;
@@ -72,7 +72,7 @@ body.auth-required .main-wrapper {
     width: 90%;
     background: linear-gradient(145deg, #1a1f2e 0%, #151b26 100%);
     border-radius: 24px;
-    box-shadow: 
+    box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.5),
         0 0 0 1px rgba(255, 255, 255, 0.05),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -89,30 +89,30 @@ body.auth-required .main-wrapper {
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(14, 165, 233, 0.5) 50%, 
-        transparent 100%);
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(14, 165, 233, 0.5) 50%,
+            transparent 100%);
 }
 
 /* Logo y Header */
 .auth-header {
     text-align: center;
-    padding: 48px 32px 32px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 56px 32px 40px;
+    border-bottom: none;
 }
 
 .auth-logo {
-    width: 96px;
-    height: 96px;
-    margin: 0 auto 24px;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 32px;
     background: linear-gradient(145deg, #1e2938 0%, #151b26 100%);
-    border-radius: 24px;
+    border-radius: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.3),
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     position: relative;
 }
@@ -122,7 +122,7 @@ body.auth-required .main-wrapper {
     position: absolute;
     inset: -2px;
     background: linear-gradient(135deg, rgba(14, 165, 233, 0.3), rgba(6, 182, 212, 0.3));
-    border-radius: 26px;
+    border-radius: 34px;
     z-index: -1;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -133,53 +133,37 @@ body.auth-required .main-wrapper {
 }
 
 .auth-logo img {
-    width: 72px;
-    height: 72px;
+    width: 120px;
+    height: 120px;
     object-fit: contain;
 }
 
-.auth-title {
-    font-size: 28px;
-    font-weight: 700;
-    background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-}
-
 .auth-subtitle {
-    font-size: 14px;
+    font-size: 15px;
     color: #64748b;
     font-weight: 400;
+    margin-top: 8px;
 }
 
 /* Auth Body */
 .auth-modal-body {
-    padding: 32px;
+    padding: 40px 40px 32px;
 }
 
 .auth-modal-body .form-group {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .auth-modal-body .form-group label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 600;
-    color: #cbd5e1;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    display: none;
 }
 
 .auth-modal-body .form-group input {
     width: 100%;
-    padding: 14px 18px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    background: rgba(0, 0, 0, 0.3);
+    padding: 16px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.25);
     color: #e2e8f0;
     font-size: 15px;
     transition: all 0.3s ease;
@@ -189,14 +173,15 @@ body.auth-required .main-wrapper {
 .auth-modal-body .form-group input:focus {
     outline: none;
     border-color: #0ea5e9;
-    background: rgba(0, 0, 0, 0.4);
-    box-shadow: 
-        0 0 0 3px rgba(14, 165, 233, 0.15),
-        0 4px 12px rgba(14, 165, 233, 0.1);
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow:
+        0 0 0 3px rgba(14, 165, 233, 0.12),
+        0 4px 16px rgba(14, 165, 233, 0.08);
 }
 
 .auth-modal-body .form-group input::placeholder {
     color: #475569;
+    font-weight: 400;
 }
 
 /* Auth Error/Success Messages */
@@ -215,6 +200,7 @@ body.auth-required .main-wrapper {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -236,19 +222,20 @@ body.auth-required .main-wrapper {
 /* Auth Submit Button */
 .btn-full {
     width: 100%;
-    padding: 16px 24px;
-    font-size: 15px;
+    padding: 17px 24px;
+    font-size: 14px;
     font-weight: 700;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
     transition: all 0.3s ease;
     background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
     border: none;
     color: #ffffff;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     position: relative;
     overflow: hidden;
+    margin-top: 8px;
 }
 
 .btn-full::before {
@@ -268,7 +255,7 @@ body.auth-required .main-wrapper {
 
 .btn-full:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
         0 12px 28px rgba(14, 165, 233, 0.4),
         0 0 0 1px rgba(14, 165, 233, 0.5);
 }
@@ -363,7 +350,7 @@ body.auth-required .main-wrapper {
     align-items: center;
     justify-content: center;
     font-size: 36px;
-    box-shadow: 
+    box-shadow:
         0 12px 32px rgba(14, 165, 233, 0.4),
         0 0 0 4px rgba(14, 165, 233, 0.1);
     position: relative;
@@ -477,25 +464,25 @@ body.auth-required .main-wrapper {
     }
 
     .auth-header {
-        padding: 36px 24px 24px;
+        padding: 40px 24px 32px;
     }
 
     .auth-logo {
-        width: 80px;
-        height: 80px;
+        width: 140px;
+        height: 140px;
     }
 
     .auth-logo img {
-        width: 60px;
-        height: 60px;
+        width: 100px;
+        height: 100px;
     }
 
-    .auth-title {
-        font-size: 24px;
+    .auth-subtitle {
+        font-size: 14px;
     }
 
     .auth-modal-body {
-        padding: 24px;
+        padding: 32px 24px 24px;
     }
 }
 
@@ -506,7 +493,7 @@ body.auth-required .main-wrapper {
 
 .light-theme .auth-modal-content {
     background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-    box-shadow: 
+    box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.15),
         0 0 0 1px rgba(0, 0, 0, 0.05);
 }
