@@ -429,18 +429,30 @@ async function createNewWatchlistPrompt() {
         }
 
         // Add to global watchlists
+        console.log('📝 Creating new watchlist:', id, 'with name:', cleanName);
+        console.log('📝 Current watchlists before add:', JSON.stringify(Object.keys(watchlists)));
+
         watchlists[id] = {
             displayName: cleanName,
             icon: getDefaultWatchlistIcon(id),
             symbols: []
         };
 
+        console.log('📝 Watchlists after add:', JSON.stringify(Object.keys(watchlists)));
+
         // Save to Supabase
+        console.log('💾 Saving new watchlist to Supabase...');
         await saveData();
+        console.log('✅ New watchlist saved');
 
         selectedWatchlistForEdit = id;
         renderManagerList();
         updateEditSection();
+
+        // Show success toast
+        if (typeof showToast === 'function') {
+            showToast('✅ Lista creada correctamente', 'success');
+        }
     }
 }
 

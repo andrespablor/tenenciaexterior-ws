@@ -1,4 +1,4 @@
-# Contexto de Desarrollo - Portfolio Tracker v3.97
+# Contexto de Desarrollo - Portfolio Tracker v3.98
 
 Este documento sirve como memoria técnica para la transición de la persistencia de datos y el sistema de autenticación.
 
@@ -6,7 +6,13 @@ Este documento sirve como memoria técnica para la transición de la persistenci
 
 La aplicación ha migrado exitosamente de un modelo de persistencia híbrido (LocalStorage/Google Sheets) a un modelo de persistencia centralizado en **Supabase Cloud**. Se ha implementado un sistema de autenticación obligatorio para asegurar la privacidad de los datos por usuario.
 
-### 🛠️ Cambios Realizados (v3.86 - v3.90)
+### 🛠️ Cambios Realizados (v3.86 - v3.98)
+
+#### v3.98 - Correcciones de Persistencia en Supabase
+1.  **Fix: Race Condition en Settings**: Se corrigió un problema donde `saveWatchlistsSupabase()` llamaba a `saveAppSettingsSupabase()` internamente, causando que el nombre de la app (appName) se sobrescribiera con el valor por defecto "Portfolio Tracker".
+2.  **Fix: Guardado Secuencial de Settings**: En `saveAllDataSupabase()`, ahora los settings se guardan DESPUÉS del `Promise.all` de los demás datos, evitando race conditions.
+3.  **Fix: Reconstrucción de Tabs**: Se añadió llamada a `initWatchlistTabs()` en `renderAll()` para asegurar que los tabs de watchlist se reconstruyan correctamente con los datos cargados desde Supabase.
+4.  **Mejora: Logging detallado**: Se añadió logging en las funciones de guardado y carga para facilitar el debugging de problemas de persistencia.
 
 #### v3.90 - Limpieza de localStorage Residual
 1.  **Eliminación de localStorage**: Se eliminaron todos los usos residuales de `localStorage` que quedaron de la arquitectura anterior:
@@ -47,9 +53,10 @@ La aplicación ha migrado exitosamente de un modelo de persistencia híbrido (Lo
 *   `index.html`: Se movió el orden de botones del sidebar y se limpió el modal de auth.
 *   `js/auth-ui.js`: Controla el flujo de sesión y la inicialización de la carga de datos.
 *   `js/storage.js`: Simplificado a un despachador exclusivo de Supabase.
-*   `js/supabase-client.js`: Motor CRUD para la base de datos PostgreSQL.
+*   `js/supabase-client.js`: Motor CRUD para la base de datos PostgreSQL. Actualizado en v3.98 para corregir race conditions.
 *   `js/navigation.js`: Configurado para iniciar en 'mercado' y manejar el cambio de módulos.
-*   `js/app.js`: Lógica de negocio actualizada para manejar la nueva estructura de datos y persistencia de orden.
+*   `js/app.js`: Lógica de negocio actualizada para manejar la nueva estructura de datos y persistencia de orden. Actualizado en v3.98 para reconstruir tabs de watchlist.
+*   `js/watchlist-tabs.js`: Administrador de tabs de watchlist. Actualizado en v3.98 con logging mejorado.
 
 ### 🔑 Configuración de Base de Datos (Supabase)
 

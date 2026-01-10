@@ -357,6 +357,11 @@ function renderAll() {
     updateHeaderStats(portfolio, summary);
     renderCharts(portfolio);
 
+    // CRITICAL: Rebuild watchlist tabs with data from Supabase
+    if (typeof initWatchlistTabs === 'function') {
+        initWatchlistTabs();
+    }
+
     // CRITICAL: También renderizar watchlist
     if (typeof renderWatchlist === 'function') {
         renderWatchlist();

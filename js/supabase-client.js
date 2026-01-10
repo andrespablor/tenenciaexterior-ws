@@ -229,6 +229,8 @@ async function saveWatchlistsSupabase(watchlistsData, currentId) {
             symbols: wl.symbols || []
         }));
 
+        console.log('💾 Saving watchlists:', formattedData.map(w => ({ id: w.watchlist_id, name: w.display_name, symbols: w.symbols.length })));
+
         if (formattedData.length > 0) {
             // Usar UPSERT en lugar de delete+insert para evitar race conditions
             const { error } = await _sb
@@ -261,8 +263,8 @@ async function saveWatchlistsSupabase(watchlistsData, currentId) {
             }
         }
 
-        // Guardar current watchlist en settings
-        await saveAppSettingsSupabase({ current_watchlist_id: currentId });
+        // NOTE: Don't save settings here - it causes race conditions with saveAllDataSupabase
+        // currentWatchlistId is saved explicitly in saveAllDataSupabase
 
         return { success: true };
     } catch (error) {
@@ -361,20 +363,25 @@ async function loadPriceAlertsSupabase() {
 }
 
 // --- APP SETTINGS ---
-async function saveAppSettingsSupabase(settingsData) {
+async function saveAppSettingsSupabase(settingsData, currentWatchlistIdParam) {
     const user = await getCurrentUser();
     if (!user) return { success: false, error: 'No autenticado' };
 
     try {
+        // Always save complete settings object to ensure consistency
+        const dataToSave = {
+            user_id: user.id,
+            app_name: settingsData.appName || settingsData.app_name || 'Portfolio Tracker',
+            theme: settingsData.theme || 'dark',
+            current_watchlist_id: currentWatchlistIdParam || settingsData.currentWatchlistId || settingsData.current_watchlist_id || 'default',
+            updated_at: new Date().toISOString()
+        };
+
+        console.log('💾 Saving app settings:', dataToSave);
+
         const { error } = await _sb
             .from('app_settings')
-            .upsert({
-                user_id: user.id,
-                app_name: settingsData.appName || settingsData.app_name || 'Portfolio Tracker',
-                theme: settingsData.theme || 'dark',
-                current_watchlist_id: settingsData.currentWatchlistId || settingsData.current_watchlist_id || 'default',
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'user_id' });
+            .upsert(dataToSave, { onConflict: 'user_id' });
 
         if (error) throw error;
         return { success: true };
@@ -484,14 +491,17 @@ async function saveAllDataSupabase() {
     try {
         console.log('📊 Guardando en Supabase...');
 
+        // First save all data in parallel (except app settings to avoid race conditions)
         await Promise.all([
             saveMovementsSupabase(movements),
             saveDailyStatsSupabase(dailyStats),
             saveWatchlistsSupabase(watchlists, currentWatchlistId),
             savePriceAlertsSupabase(priceAlerts),
-            saveAppSettingsSupabase(appSettings),
             saveYearEndSnapshotsSupabase(yearEndSnapshots)
         ]);
+
+        // Then save app settings LAST with currentWatchlistId to avoid race conditions
+        await saveAppSettingsSupabase(appSettings, currentWatchlistId);
 
         console.log('✅ Datos guardados en Supabase');
 
@@ -561,7 +571,11 @@ async function loadAllDataSupabase() {
         });
         yearEndSnapshots = baseSnapshots;
 
-        console.log('✅ Datos cargados desde Supabase');
+        console.log('✅ Datos cargados desde Supabase:');
+        console.log('   - Movements:', movements.length);
+        console.log('   - Watchlists:', Object.keys(watchlists));
+        console.log('   - Current Watchlist ID:', currentWatchlistId);
+        console.log('   - App Settings:', appSettings);
         return true;
     } catch (error) {
         console.error('❌ Error cargando desde Supabase:', error);
