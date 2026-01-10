@@ -16,6 +16,17 @@ async function saveData() {
     }
 }
 
+async function loadData() {
+    // Delegar a Supabase si hay usuario autenticado
+    const user = typeof getCurrentUser === 'function' ? await getCurrentUser() : null;
+
+    if (user) {
+        await loadAllDataSupabase();
+    } else {
+        console.warn('⚠️ No hay usuario autenticado - datos no cargados');
+    }
+}
+
 // ========================================
 // Settings (solo para tema y nombre de app)
 // ========================================
@@ -43,6 +54,7 @@ function applySettings() {
 
 // Exponer globalmente
 window.saveData = saveData;
+window.loadData = loadData;
 window.saveSettings = saveSettings;
 window.loadSettings = loadSettings;
 window.applySettings = applySettings;

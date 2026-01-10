@@ -1,75 +1,61 @@
-# CONTEXTO_IA - Portfolio Tracker v3.86
-Fecha: 09/01/2026
+# Contexto de Desarrollo - Portfolio Tracker v3.89
 
-Este documento sirve como resumen técnico detallado para retomar el proyecto. La aplicación es un tracker de portafolio financiero profesional con integración de mercados de Argentina (BYMA) y USA.
+Este documento sirve como memoria técnica para la transición de la persistencia de datos y el sistema de autenticación.
 
-## 🚀 Estado Actual: v3.86
+## 🚀 Estado Actual: Migración Completa a Supabase
 
-### ⭐ NUEVA FEATURE: Autenticación Obligatoria con Supabase
-Se ha completado la integración completa con **Supabase** como único backend de persistencia con autenticación obligatoria.
+La aplicación ha migrado exitosamente de un modelo de persistencia híbrido (LocalStorage/Google Sheets) a un modelo de persistencia centralizado en **Supabase Cloud**. Se ha implementado un sistema de autenticación obligatorio para asegurar la privacidad de los datos por usuario.
 
-### 1. Cambios en v3.86 (Muy Importante)
-- **Login Obligatorio:**
-    - La app NO se muestra hasta que el usuario se loguee.
-    - Al cargar, se muestra el modal de login automáticamente.
-    - No se puede cerrar el modal sin autenticarse.
-    
-- **Backend Único: Supabase**
-    - Se eliminaron las opciones de LocalStorage y Google Sheets.
-    - Todos los datos se guardan en Supabase Cloud.
-    - Cada usuario tiene sus propios datos aislados (RLS).
+### 🛠️ Cambios Realizados (v3.86 - v3.89)
 
-- **Archivos de Supabase:**
-    - `js/supabase-config.js` - Credenciales.
-    - `js/supabase-client.js` - Cliente con Auth y CRUD.
-    - `js/auth-ui.js` - Modal de login con lógica de ocultación de app.
-    - `css/auth.css` - Estilos del modal + estado auth-required.
+#### v3.89 - Correcciones de Estabilidad
+1.  **Fix: Función `loadData` faltante**: Se agregó la función en `storage.js` como wrapper de `loadAllDataSupabase()`, resolviendo el error "Módulos faltantes".
+2.  **Fix: Loop de eventos `SIGNED_IN`**: Se implementó flag `_authDataLoaded` en `auth-ui.js` para evitar múltiples recargas de datos cuando Supabase dispara eventos de autenticación repetidos.
 
-- **Credenciales de Supabase:**
-    - URL: `https://wqjnjewadakatnpwfcpf.supabase.co`
-    - Las tablas ya están creadas en la DB.
+1.  **Persistencia 100% Cloud**:
+    *   Se eliminó completamente el motor de `localStorage` y `Google Sheets` de `js/storage.js`.
+    *   Supabase es ahora el único backend. Todos los datos (movimientos, stats, watchlists, alertas, settings) se sincronizan en tiempo real.
 
-### 2. Estructura de Tablas en Supabase
-```sql
-- movements (id, user_id, symbol, type, quantity, price, date, notes)
-- daily_stats (id, user_id, date, invested, result)
-- watchlists (id, user_id, watchlist_id, display_name, icon, symbols)
-- price_alerts (id, user_id, symbol, target_price, condition, is_active)
-- app_settings (id, user_id, app_name, theme, current_watchlist_id)
-- year_end_snapshots (id, user_id, year, date, invested, result, by_symbol)
-```
-Todas las tablas tienen **RLS** (Row Level Security) habilitado.
+2.  **Sistema de Autenticación**:
+    *   **Mandatory Auth**: La aplicación ya no es accesible sin iniciar sesión.
+    *   **Página de Login Separada**: Se creó `login.html` como una página dedicada para evitar conflictos de CSS/JS con la app principal.
+    *   **Redirect Flow**: `index.html` detecta la falta de sesión y redirige a `login.html`. Una vez autenticado, el usuario vuelve a la app principal.
 
-### 3. Estructura de Archivos Actualizada
-- `index.html`: Estructura principal + modal de auth obligatorio.
-- `/js/config.js`: Variables globales (sin storageBackend).
-- `/js/supabase-config.js`: Credenciales (URL + anon key).
-- `/js/supabase-client.js`: Cliente Supabase con auth y CRUD.
-- `/js/auth-ui.js`: Login obligatorio, oculta app hasta autenticarse.
-- `/js/storage.js`: Simplificado, solo guarda en Supabase.
-- `/js/navigation.js`: Navegación de módulos.
-- `/js/api.js`: Fetch de precios (Yahoo Finance).
-- `/js/app.js`: Orquestación principal.
-- `/css/auth.css`: Estilos de auth + body.auth-required.
+3.  **Correcciones Técnicas Críticas**:
+    *   **Nombre del Cliente**: Se renombró la variable local `supabase` a `_sb` en `js/supabase-client.js` para evitar conflictos con el objeto global `window.supabase` del SDK oficial.
+    *   **Estructura de Watchlist**: Se corrigió un bug donde las funciones `add/remove` trataban a la watchlist como un array simple. Ahora respetan el objeto metadata: `{ displayName, icon, symbols }`.
+    *   **Persistencia de Orden**: Se implementó el guardado del orden de los tickers tras realizar Drag & Drop en la watchlist.
 
-### 4. Flujo de Autenticación
-1. Usuario abre la app → App oculta, modal de login visible.
-2. Usuario se registra o loguea.
-3. Al autenticarse → Modal se cierra, app se muestra, datos se cargan.
-4. Al cerrar sesión → App se oculta, modal de login reaparece.
+4.  **Ajustes de UI/UX**:
+    *   **Foco en Mercado**: La aplicación ahora inicia por defecto en el módulo "Mercado" y este aparece primero en el menú lateral.
+    *   **Silenciar Guardado**: Se eliminaron los mensajes (toasts) de "Guardado en Supabase" para los procesos automáticos, manteniendo la UI limpia.
+    *   **Carga Síncrona**: El flujo de inicio espera la respuesta de Supabase antes de renderizar, evitando parpadeos o pantallas vacías.
 
-### 5. Preparación de Supabase
-**IMPORTANTE:** Para que el registro funcione inmediatamente:
-1. Dashboard de Supabase → **Authentication** → **Providers** → **Email**
-2. **Deshabilitar** "Confirm email"
-3. Click en **Save**
+### 📂 Archivos Clave Modificados
 
-### 6. Para Testear
-1. Refrescar la app (F5).
-2. Debería aparecer el modal de login (app oculta detrás).
-3. Registrar un usuario nuevo con email/password.
-4. La app debería mostrarse y cargar datos.
-5. Cerrar sesión → Vuelve al modal de login.
+*   `login.html`: Nueva página de entrada con diseño premium.
+*   `index.html`: Se movió el orden de botones del sidebar y se limpió el modal de auth.
+*   `js/auth-ui.js`: Controla el flujo de sesión y la inicialización de la carga de datos.
+*   `js/storage.js`: Simplificado a un despachador exclusivo de Supabase.
+*   `js/supabase-client.js`: Motor CRUD para la base de datos PostgreSQL.
+*   `js/navigation.js`: Configurado para iniciar en 'mercado' y manejar el cambio de módulos.
+*   `js/app.js`: Lógica de negocio actualizada para manejar la nueva estructura de datos y persistencia de orden.
+
+### 🔑 Configuración de Base de Datos (Supabase)
+
+Tablas creadas y vinculadas por `user_id`:
+*   `movements`: Historial de operaciones.
+*   `daily_stats`: Registro de valor de cartera diario.
+*   `watchlists`: Listas de seguimiento (JSON de símbolos).
+*   `price_alerts`: Alertas configuradas.
+*   `app_settings`: Nombre de la app, tema, etc.
+*   `year_end_snapshots`: Datos históricos de cierre de año.
 
 ---
-**v3.86 - Supabase Only + Mandatory Auth**
+
+## ➡️ Próximos Pasos Recomendados
+
+1.  **Row Level Security (RLS)**: Verificar en el dashboard de Supabase que las políticas de seguridad estén activas para que ningún usuario pueda leer datos de otro (select/insert/update/delete WHERE user_id = auth.uid()).
+2.  **Confirmación de Email**: Actualmente está desactivada para facilitar pruebas. Se recomienda reactivarla antes de lanzar a producción/usuarios finales.
+3.  **Backup Automático**: Aunque Supabase gestiona la base de datos, se sugiere implementar una función de "Exportar a JSON" en la configuración como backup preventivo manual para el usuario.
+4.  **Optimización BYMA**: Validar que la integración del WebSocket de RAVA/BYMA no tenga conflictos con el estado de autenticación cuando se cambia al mercado argentino.

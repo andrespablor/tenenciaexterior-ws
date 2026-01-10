@@ -3,6 +3,9 @@
 // Versión simplificada: redirige a login.html
 // ========================================
 
+// Flag para evitar múltiples cargas de datos
+let _authDataLoaded = false;
+
 function initAuthUI() {
     // Inicializar Supabase
     if (!initSupabase()) {
@@ -32,11 +35,14 @@ function initAuthUI() {
         console.log('🔐 Auth event:', event);
 
         if (event === 'SIGNED_OUT') {
-            // Redirigir a login
+            // Reset flag y redirigir a login
+            _authDataLoaded = false;
             window.location.href = 'login.html';
-        } else if (event === 'SIGNED_IN' && session?.user) {
-            // Cargar datos desde Supabase
+        } else if (event === 'INITIAL_SESSION' && session?.user && !_authDataLoaded) {
+            // Solo cargar datos en INITIAL_SESSION (evita loop)
+            _authDataLoaded = true;
             updateAuthButton(session.user);
+            console.log('📊 Cargando datos desde Supabase (initial session)...');
             await loadAllDataSupabase();
             if (typeof applySettings === 'function') {
                 applySettings();
@@ -44,6 +50,10 @@ function initAuthUI() {
             if (typeof renderAll === 'function') {
                 renderAll();
             }
+            console.log('✅ Datos cargados correctamente');
+        } else if (event === 'SIGNED_IN' && session?.user) {
+            // Solo actualizar botón, datos ya cargados por checkSession o INITIAL_SESSION
+            updateAuthButton(session.user);
         }
     });
 
@@ -58,22 +68,25 @@ async function checkSession() {
         console.log('🔐 Sesión activa:', session.user.email);
         updateAuthButton(session.user);
 
-        // Cargar datos desde Supabase
-        console.log('📊 Cargando datos desde Supabase...');
-        await loadAllDataSupabase();
+        // Solo cargar si no se cargaron datos aún
+        if (!_authDataLoaded) {
+            _authDataLoaded = true;
+            console.log('📊 Cargando datos desde Supabase...');
+            await loadAllDataSupabase();
 
-        // Aplicar settings
-        if (typeof applySettings === 'function') {
-            applySettings();
+            // Aplicar settings
+            if (typeof applySettings === 'function') {
+                applySettings();
+            }
+
+            // Renderizar todo
+            if (typeof renderAll === 'function') {
+                console.log('🎨 Renderizando interfaz...');
+                renderAll();
+            }
+
+            console.log('✅ App inicializada correctamente');
         }
-
-        // Renderizar todo
-        if (typeof renderAll === 'function') {
-            console.log('🎨 Renderizando interfaz...');
-            renderAll();
-        }
-
-        console.log('✅ App inicializada correctamente');
     } else {
         console.log('🔐 No hay sesión - redirigiendo a login');
         window.location.href = 'login.html';
