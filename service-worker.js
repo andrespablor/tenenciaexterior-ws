@@ -1,6 +1,6 @@
 // Service Worker for Portfolio Tracker PWA
-// Version: 3.90 (auto-updates)
-const VERSION = '3.90';
+// Version: 3.91 (auto-updates)
+const VERSION = '3.91';
 const CACHE_NAME = `portfolio-tracker-${VERSION}`;
 
 // Archivos críticos para caché

@@ -612,7 +612,7 @@ function setupDeleteSelectedButton() {
     });
 
     // Delete button click handler
-    deleteBtn.addEventListener('click', () => {
+    deleteBtn.addEventListener('click', async () => {
         const table = document.getElementById('watchlist-table');
         if (!table) return;
 
@@ -631,15 +631,13 @@ function setupDeleteSelectedButton() {
 
         if (!confirm(`¿Eliminar ${symbolsToDelete.length} símbolo(s) de la watchlist?`)) return;
 
-        // Get current watchlist
-        let watchlistsData = JSON.parse(localStorage.getItem('watchlists') || '{}');
-        const currentId = window.currentWatchlistId || 'default';
+        // CRITICAL: Use global watchlists variable (loaded from Supabase), NOT localStorage
+        const currentId = window.currentWatchlistId || currentWatchlistId || 'default';
 
-        console.log('🔍 window.currentWatchlistId:', window.currentWatchlistId);
         console.log('🔍 Using currentId:', currentId);
-        console.log('🔍 Available watchlists:', Object.keys(watchlistsData));
+        console.log('🔍 Available watchlists:', Object.keys(watchlists));
 
-        const wl = watchlistsData[currentId];
+        const wl = watchlists[currentId];
 
         if (!wl || !wl.symbols) {
             console.error('❌ Watchlist not found or has no symbols array');
@@ -649,17 +647,21 @@ function setupDeleteSelectedButton() {
         }
 
         console.log('🗑️ Deleting symbols:', symbolsToDelete);
-        console.log('📋 Current watchlist symbols:', wl.symbols);
+        console.log('📋 Current watchlist symbols BEFORE:', [...wl.symbols]);
 
-        // Remove symbols
+        // Remove symbols from global watchlists
         wl.symbols = wl.symbols.filter(s => !symbolsToDelete.includes(s));
-        watchlistsData[currentId] = wl;
-        localStorage.setItem('watchlists', JSON.stringify(watchlistsData));
 
-        // CRITICAL: Update GLOBAL watchlists variable (not window.watchlists)
-        watchlists = watchlistsData;
+        console.log('📋 Current watchlist symbols AFTER:', wl.symbols);
 
-        console.log('📋 Updated watchlist symbols:', wl.symbols);
+        // CRITICAL: Save to Supabase via saveData()
+        console.log('💾 Saving to Supabase...');
+        if (typeof saveData === 'function') {
+            await saveData();
+            console.log('✅ Saved to Supabase');
+        } else {
+            console.error('❌ saveData function not available!');
+        }
 
         // Refresh display
         console.log('🔄 Calling renderWatchlist...');
