@@ -450,6 +450,19 @@ function renderAll() {
     renderHistory();
     updateHeaderStats(portfolio, summary);
     renderCharts(portfolio);
+
+    // CRITICAL: También renderizar watchlist
+    if (typeof renderWatchlist === 'function') {
+        renderWatchlist();
+    }
+
+    // Si hay símbolos en watchlist sin precio, fetchearlos
+    const watchlistSymbols = getCurrentWatchlist();
+    const symbolsWithoutCache = watchlistSymbols.filter(s => !priceCache[s] || !priceCache[s].price);
+    if (symbolsWithoutCache.length > 0) {
+        console.log(`🔄 Fetching ${symbolsWithoutCache.length} watchlist prices...`);
+        refreshWatchlistPrices();
+    }
 }
 
 // ========================================
@@ -1500,25 +1513,21 @@ function deleteSelectedWatchlist() {
 
     if (toDelete.length === 0) return;
 
-    // Get watchlists from localStorage
-    let watchlistsData = JSON.parse(localStorage.getItem('watchlists') || '{}');
     const currentId = currentWatchlistId || 'default';
-    const wl = watchlistsData[currentId];
+    const currentList = watchlists[currentId];
 
-    if (!wl || !wl.symbols) {
-        console.error('❌ Watchlist not found');
+    if (!currentList || !currentList.symbols) {
+        console.error('❌ Watchlist not found:', currentId);
         return;
     }
 
-    console.log('🗑️ Deleting symbols (app.js):', toDelete);
+    console.log('🗑️ Deleting symbols:', toDelete);
 
-    // Remove symbols
-    wl.symbols = wl.symbols.filter(s => !toDelete.includes(s));
-    watchlistsData[currentId] = wl;
-    localStorage.setItem('watchlists', JSON.stringify(watchlistsData));
+    // Remove symbols from global watchlists
+    currentList.symbols = currentList.symbols.filter(s => !toDelete.includes(s));
 
-    // CRITICAL: Update GLOBAL watchlists variable (not window.watchlists)
-    watchlists = watchlistsData;
+    // Save to Supabase
+    saveData();
 
     // Uncheck select-all
     const selectAll = document.getElementById('watchlist-select-all');
