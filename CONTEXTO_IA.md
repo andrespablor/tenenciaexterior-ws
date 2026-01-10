@@ -1,84 +1,56 @@
-# Contexto de Desarrollo - Portfolio Tracker v3.99
+# Contexto de Desarrollo - Portfolio Tracker v3.99.01
 
-Este documento sirve como memoria técnica para la transición de la persistencia de datos y el sistema de autenticación.
+Este documento sirve como memoria técnica detallada de la arquitectura actual, los cambios realizados durante la fase de auditoría y los pasos a seguir.
 
-## 🚀 Estado Actual: Migración Completa a Supabase
+## 🚀 Estado de la Aplicación: Post-Auditoría (v3.99.01)
 
-La aplicación ha migrado exitosamente de un modelo de persistencia híbrido (LocalStorage/Google Sheets) a un modelo de persistencia centralizado en **Supabase Cloud**. Se ha implementado un sistema de autenticación obligatorio para asegurar la privacidad de los datos por usuario.
-
-### 🛠️ Cambios Realizados (v3.86 - v3.99)
-
-#### v3.99 - Auditoría y Optimización de Código
-*   **Limpieza de Duplicados:** Eliminadas funciones duplicadas `showToast`, `isValidSymbol` y `exportDailyStatsCSV` en `app.js`.
-*   **Remoción de Código Obsoleto:** Eliminado el botón y la lógica de migración a JSONBin (ahora solo usamos Supabase).
-*   **Auditoría de Seguridad:** Verificado el estado de RLS en Supabase (está activo y con políticas correctas).
-*   **Cache Busting:** Actualizada la versión global a v3.99 en todos los archivos.
-
-#### v3.98 - Correcciones de Persistencia en Supabase
-1.  **Fix: Race Condition en Settings**: Se corrigió un problema donde `saveWatchlistsSupabase()` llamaba a `saveAppSettingsSupabase()` internamente, causando que el nombre de la app (appName) se sobrescribiera con el valor por defecto "Portfolio Tracker".
-2.  **Fix: Guardado Secuencial de Settings**: En `saveAllDataSupabase()`, ahora los settings se guardan DESPUÉS del `Promise.all` de los demás datos, evitando race conditions.
-3.  **Fix: Reconstrucción de Tabs**: Se añadió llamada a `initWatchlistTabs()` en `renderAll()` para asegurar que los tabs de watchlist se reconstruyan correctamente con los datos cargados desde Supabase.
-4.  **Mejora: Logging detallado**: Se añadió logging en las funciones de guardado y carga para facilitar el debugging de problemas de persistencia.
-
-#### v3.90 - Limpieza de localStorage Residual
-1.  **Eliminación de localStorage**: Se eliminaron todos los usos residuales de `localStorage` que quedaron de la arquitectura anterior:
-    *   Comentarios obsoletos actualizados (`// Save to Supabase`).
-    *   Funciones `saveColumnOrder()` y `getColumnOrder()` simplificadas (orden de columnas es solo UI transiente).
-    *   Cache de logos (`logoCache`) eliminado - ya no se usa Finnhub, los logos son archivos locales.
-    *   Función `saveWatchlistOrder()` limpiada.
-2.  **Usos de localStorage MANTENIDOS** (son apropiados para UI local):
-    *   `lastYearCheck`: Flag para detectar cambio de año (disparar snapshot).
-    *   `pwa-installed`: Flag para notificación de instalación PWA.
-
-#### v3.89 - Correcciones de Estabilidad
-1.  **Fix: Función `loadData` faltante**: Se agregó la función en `storage.js` como wrapper de `loadAllDataSupabase()`, resolviendo el error "Módulos faltantes".
-2.  **Fix: Loop de eventos `SIGNED_IN`**: Se implementó flag `_authDataLoaded` en `auth-ui.js` para evitar múltiples recargas de datos cuando Supabase dispara eventos de autenticación repetidos.
-
-1.  **Persistencia 100% Cloud**:
-    *   Se eliminó completamente el motor de `localStorage` y `Google Sheets` de `js/storage.js`.
-    *   Supabase es ahora el único backend. Todos los datos (movimientos, stats, watchlists, alertas, settings) se sincronizan en tiempo real.
-
-2.  **Sistema de Autenticación**:
-    *   **Mandatory Auth**: La aplicación ya no es accesible sin iniciar sesión.
-    *   **Página de Login Separada**: Se creó `login.html` como una página dedicada para evitar conflictos de CSS/JS con la app principal.
-    *   **Redirect Flow**: `index.html` detecta la falta de sesión y redirige a `login.html`. Una vez autenticado, el usuario vuelve a la app principal.
-
-3.  **Correcciones Técnicas Críticas**:
-    *   **Nombre del Cliente**: Se renombró la variable local `supabase` a `_sb` en `js/supabase-client.js` para evitar conflictos con el objeto global `window.supabase` del SDK oficial.
-    *   **Estructura de Watchlist**: Se corrigió un bug donde las funciones `add/remove` trataban a la watchlist como un array simple. Ahora respetan el objeto metadata: `{ displayName, icon, symbols }`.
-    *   **Persistencia de Orden**: Se implementó el guardado del orden de los tickers tras realizar Drag & Drop en la watchlist.
-
-4.  **Ajustes de UI/UX**:
-    *   **Foco en Mercado**: La aplicación ahora inicia por defecto en el módulo "Mercado" y este aparece primero en el menú lateral.
-    *   **Silenciar Guardado**: Se eliminaron los mensajes (toasts) de "Guardado en Supabase" para los procesos automáticos, manteniendo la UI limpia.
-    *   **Carga Síncrona**: El flujo de inicio espera la respuesta de Supabase antes de renderizar, evitando parpadeos o pantallas vacías.
-
-### 📂 Archivos Clave Modificados
-
-*   `login.html`: Nueva página de entrada con diseño premium.
-*   `index.html`: Se movió el orden de botones del sidebar y se limpió el modal de auth.
-*   `js/auth-ui.js`: Controla el flujo de sesión y la inicialización de la carga de datos.
-*   `js/storage.js`: Simplificado a un despachador exclusivo de Supabase.
-*   `js/supabase-client.js`: Motor CRUD para la base de datos PostgreSQL. Actualizado en v3.98 para corregir race conditions.
-*   `js/navigation.js`: Configurado para iniciar en 'mercado' y manejar el cambio de módulos.
-*   `js/app.js`: Lógica de negocio actualizada para manejar la nueva estructura de datos y persistencia de orden. Actualizado en v3.98 para reconstruir tabs de watchlist.
-*   `js/watchlist-tabs.js`: Administrador de tabs de watchlist. Actualizado en v3.98 con logging mejorado.
-
-### 🔑 Configuración de Base de Datos (Supabase)
-
-Tablas creadas y vinculadas por `user_id`:
-*   `movements`: Historial de operaciones.
-*   `daily_stats`: Registro de valor de cartera diario.
-*   `watchlists`: Listas de seguimiento (JSON de símbolos).
-*   `price_alerts`: Alertas configuradas.
-*   `app_settings`: Nombre de la app, tema, etc.
-*   `year_end_snapshots`: Datos históricos de cierre de año.
+La aplicación ha completado su transición a **Supabase Cloud** como motor único de persistencia y autenticación. Tras una fase de auditoría técnica, el código ha sido optimizado para eliminar redundancias y asegurar la integridad de los datos por usuario.
 
 ---
 
-## ➡️ Próximos Pasos Recomendados
+## 🛠️ Cambios Realizados en la Última Sesión (v3.99.01)
 
-1.  **Row Level Security (RLS)**: Verificar en el dashboard de Supabase que las políticas de seguridad estén activas para que ningún usuario pueda leer datos de otro (select/insert/update/delete WHERE user_id = auth.uid()).
-2.  **Confirmación de Email**: Actualmente está desactivada para facilitar pruebas. Se recomienda reactivarla antes de lanzar a producción/usuarios finales.
-3.  **Backup Automático**: Aunque Supabase gestiona la base de datos, se sugiere implementar una función de "Exportar a JSON" en la configuración como backup preventivo manual para el usuario.
-4.  **Optimización BYMA**: Validar que la integración del WebSocket de RAVA/BYMA no tenga conflictos con el estado de autenticación cuando se cambia al mercado argentino.
+### 1. Corrección de Encoding UTF-8 (CRÍTICO)
+*   **Problema:** El archivo `index.html` tenía caracteres corruptos (`????`, `�`, `?`) debido a un problema de encoding en una sesión anterior.
+*   **Síntomas:** Los emojis de banderas (🇦🇷, 🇺🇸), iconos (📈, 🔔, ↕), y caracteres acentuados (í, ó, ñ, á) se mostraban como signos de interrogación.
+*   **Solución:** Se restauró el archivo `index.html` con encoding UTF-8 correcto, manteniendo toda la estructura y funcionalidad de v3.99 (Supabase auth, botón auth-btn, CSS de auth, orden de scripts, etc.).
+
+### 2. Cache Busting - Actualización a v3.99.01
+*   Se incrementó la versión a **v3.99.01** en:
+    *   `index.html` (todas las referencias CSS y JS).
+    *   `service-worker.js` (para forzar la actualización del PWA).
+    *   Footer y Modal de configuración.
+
+### 3. Auditoría Previa Completada (v3.99)
+*   **RLS verificado** en Supabase (políticas `ALL` con `auth.uid() = user_id`).
+*   **Código limpiado** de funciones duplicadas (`showToast`, `isValidSymbol`, CSV exports).
+*   **JSONBin eliminado** (migración legacy removida).
+*   **`getCurrentUser()` consolidado** - optimizado en funciones de guardado.
+*   **`lastYearCheck`** - migrado de localStorage a Supabase.
+
+---
+
+## 📂 Archivos Modificados
+
+| Archivo | Rol en v3.99.01 |
+| :--- | :--- |
+| `index.html` | Restauración de caracteres UTF-8 + versión actualizada. |
+| `service-worker.js` | Actualización de versión para cache bust. |
+| `CONTEXTO_IA.md` | Crónica de desarrollo actualizada. |
+
+---
+
+## 🎯 Siguiente Paso: Accesibilidad (Aria-Labels)
+
+El punto pendiente identificado en la auditoría:
+
+### Accesibilidad (Prioridad Baja)
+*   **Problema:** Botones de acción rápida (`✏️`, `🗑️`) no tienen etiquetas descriptivas para lectores de pantalla.
+*   **Acción:** Agregar atributos `aria-label` a los botones generados dinámicamente en:
+    *   `js/ui.js` (botones de editar/eliminar en tabla de historial)
+    *   `js/watchlist-tabs.js` (botón de eliminar símbolos)
+    *   `js/app.js` (renderWatchlist - botones de alerta y eliminar)
+
+---
+
+**Nota Técnica de Cierre:** La aplicación se encuentra en estado estable bajo la versión 3.99.01 con todos los caracteres UTF-8 correctamente renderizados.
