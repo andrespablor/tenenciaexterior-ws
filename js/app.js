@@ -147,15 +147,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (settingsBtn) {
         settingsBtn.addEventListener('click', () => {
-            appNameInput.value = appSettings.appName || 'Cartera exterior';
+            appNameInput.value = appSettings.appName || 'Portfolio Tracker';
             alertEmailInput.value = appSettings.alertEmail || '';
-
-            // Set active storage backend
-            const backend = appSettings.storageBackend || 'local';
-            document.querySelectorAll('input[name="storage-backend"]').forEach(radio => {
-                radio.checked = radio.value === backend;
-            });
-
             settingsModal.style.display = 'flex';
         });
     }
@@ -164,15 +157,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const settingsSidebarBtn = document.getElementById('settings-sidebar-btn');
     if (settingsSidebarBtn) {
         settingsSidebarBtn.addEventListener('click', () => {
-            appNameInput.value = appSettings.appName || 'Cartera exterior';
+            appNameInput.value = appSettings.appName || 'Portfolio Tracker';
             alertEmailInput.value = appSettings.alertEmail || '';
-
-            // Set active storage backend
-            const backend = appSettings.storageBackend || 'local';
-            document.querySelectorAll('input[name="storage-backend"]').forEach(radio => {
-                radio.checked = radio.value === backend;
-            });
-
             settingsModal.style.display = 'flex';
         });
     }
@@ -189,115 +175,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // SIMPLIFIED: Only save app name and theme to Supabase
     if (saveSettingsBtn) {
         saveSettingsBtn.addEventListener('click', async () => {
-            appSettings.appName = appNameInput.value.trim();
-            appSettings.alertEmail = alertEmailInput.value.trim();
+            // Get values from form
+            const newAppName = appNameInput.value.trim() || 'Portfolio Tracker';
+            const newAlertEmail = alertEmailInput.value.trim();
 
-            // Guardar backend seleccionado
-            const selectedBackend = document.querySelector('input[name="storage-backend"]:checked')?.value || 'local';
-            const oldBackend = appSettings.storageBackend;
+            // Update appSettings
+            appSettings.appName = newAppName;
+            appSettings.alertEmail = newAlertEmail;
 
-            // Si cambias de Local a Sheets
-            if (oldBackend === 'local' && selectedBackend === 'sheets') {
-                appSettings.storageBackend = selectedBackend;
-                saveSettings();
+            // Update UI immediately
+            const titleEl = document.getElementById('app-title');
+            if (titleEl) titleEl.textContent = '📊 ' + newAppName;
+            document.title = '📈 ' + newAppName;
+            const h1 = document.querySelector('h1');
+            if (h1) h1.textContent = newAppName;
 
-                // Solo migrar si local tiene datos
-                const hasLocalData = movements.length > 0 || Object.keys(watchlists).length > 1;
+            // Save to Supabase
+            console.log('💾 Saving settings to Supabase...');
+            await saveSettings();
+            console.log('✅ Settings saved');
 
-                if (hasLocalData) {
-                    // Migrar datos de Local a Sheets
-                    showToast('📤 Migrando datos a Google Sheets...', 'info');
-                    await saveData();
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                }
-
-                // Cargar datos desde Sheets
-                await loadDataSheets();
-                const portfolio = calculatePortfolio();
-                renderPortfolio(portfolio);
-                renderDailyChart();
-                renderHistory();
-                renderWatchlist();
-
-                settingsModal.classList.remove('show');
-                const msg = hasLocalData ? '✅ Datos migrados a Google Sheets' : '✅ Sincronizado con Google Sheets';
-                showToast(msg, 'success');
-                return;
-            }
-
-            // Si cambias a Supabase
-            if (selectedBackend === 'supabase') {
-                // Verificar si hay sesión activa
-                const user = typeof getCurrentUser === 'function' ? await getCurrentUser() : null;
-
-                if (!user) {
-                    // No hay sesión, mostrar modal de login
-                    showToast('🔐 Necesitás iniciar sesión para usar Supabase', 'info');
-                    if (typeof openAuthModal === 'function') {
-                        openAuthModal();
-                    }
-                    // No cambiar backend aún
-                    return;
-                }
-
-                // Hay sesión, cambiar a Supabase
-                appSettings.storageBackend = selectedBackend;
-                saveSettings();
-
-                // Solo migrar si hay datos locales
-                const hasLocalData = movements.length > 0 || Object.keys(watchlists).length > 1;
-
-                if (hasLocalData && oldBackend !== 'supabase') {
-                    showToast('☁️ Migrando datos a Supabase...', 'info');
-                    await saveAllDataSupabase();
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                }
-
-                // Cargar datos desde Supabase
-                await loadAllDataSupabase();
-                renderAll();
-
-                settingsModal.style.display = 'none';
-                const msg = hasLocalData ? '✅ Datos migrados a Supabase' : '✅ Sincronizado con Supabase';
-                showToast(msg, 'success');
-                return;
-            }
-
-            appSettings.storageBackend = selectedBackend;
-
-            // Actualizar título
-            document.querySelector('h1').textContent = appSettings.appName;
-
-            // CRÍTICO: Guardar settings en localStorage siempre (para persistir backend)
-            saveSettings();
-
-            // Luego guardar datos completos en el backend seleccionado
-            await saveData();
-
-            // Si está en Sheets, recargar datos
-            if (selectedBackend === 'sheets') {
-                await loadDataSheets();
-                const portfolio = calculatePortfolio();
-                renderPortfolio(portfolio);
-                renderDailyChart();
-                renderHistory();
-                renderWatchlist();
-            }
-
+            // Close modal
             settingsModal.style.display = 'none';
 
-            if (oldBackend !== selectedBackend) {
-                const backendNames = {
-                    'sheets': '📊 Google Sheets',
-                    'local': '💾 LocalStorage',
-                    'supabase': '☁️ Supabase'
-                };
-                showToast(`✅ Backend cambiado a: ${backendNames[selectedBackend]}`, 'success');
-            } else {
-                showToast('✅ Configuración guardada!', 'success');
-            }
+            // Show confirmation
+            showToast('✅ Configuración guardada', 'success');
         });
     }
 
