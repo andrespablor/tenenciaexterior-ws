@@ -1,31 +1,27 @@
-# Contexto de Desarrollo - Portfolio Tracker v3.99.01
+# Contexto de Desarrollo - Portfolio Tracker v3.99.02
 
 Este documento sirve como memoria técnica detallada de la arquitectura actual, los cambios realizados durante la fase de auditoría y los pasos a seguir.
 
-## 🚀 Estado de la Aplicación: Post-Auditoría (v3.99.01)
+## 🚀 Estado de la Aplicación: Post-Auditoría (v3.99.02)
 
-La aplicación ha completado su transición a **Supabase Cloud** como motor único de persistencia y autenticación. Tras una fase de auditoría técnica, el código ha sido optimizado para eliminar redundancias y asegurar la integridad de los datos por usuario.
+La aplicación ha completado su transición a **Supabase Cloud** como motor único de persistencia y autenticación. Tras una fase de auditoría técnica, el código ha sido optimizado para eliminar redundancias, mejorar accesibilidad, y asegurar la integridad de los datos por usuario.
 
 ---
 
-## 🛠️ Cambios Realizados en la Última Sesión (v3.99.01)
+## 🛠️ Cambios Realizados en la Última Sesión (v3.99.02)
 
-### 1. Corrección de Encoding UTF-8 (CRÍTICO - RESUELTO)
-*   **Problema:** El archivo `index.html` tenía caracteres corruptos (`????`, `�`, `?`).
-*   **Solución:** Se restauró el archivo con encoding UTF-8 correcto, manteniendo funcionalidades de v3.99.
+### 1. Aria-Labels para Accesibilidad (NUEVO)
+*   **Problema:** Botones de acción rápida (`✏️`, `🗑️`, `🔔`) no tenían etiquetas descriptivas para lectores de pantalla.
+*   **Solución:** Se agregaron atributos `aria-label` descriptivos a:
+    *   `js/ui.js` - Botones de editar/eliminar en tabla de historial de movimientos
+    *   `js/app.js` - Botones de alerta y eliminar en tabla de watchlist
+*   **Ejemplos:** 
+    *   `aria-label="Editar movimiento de AAPL"`
+    *   `aria-label="Crear alerta de precio para GOOGL"`
+    *   `aria-label="Quitar MSFT de la watchlist"`
 
-### 2. Fix: `fetchStochasticFromApi` (BUG CRÍTICO - RESUELTO)
-*   **Problema:** La función `fetchStochasticFromApi` se llamaba en `api.js` pero no existía, causando error en runtime.
-*   **Solución:** Se eliminó la llamada a la API (Finnhub Stochastic requiere plan Premium) y se usa `calculateStochasticLocal()` como alternativa.
-*   **Archivo modificado:** `js/api.js`
-
-### 3. Cleanup de console.logs para Producción (RESUELTO)
-*   **Problema:** Exceso de console.log verbose que genera ruido en la consola.
-*   **Solución:** 
-    *   Se agregó flag `DEBUG_MODE = false` en `config.js`
-    *   Se creó función `debugLog()` que solo loguea cuando `DEBUG_MODE` es `true`
-    *   Se reemplazaron los logs más verbosos en: `api.js`, `supabase-client.js`, `storage.js`, `navigation.js`, `watchlist-tabs.js`, `ui.js`, `calculations.js`
-    *   Los `console.error` se mantienen para errores críticos
+### 2. Cleanup Adicional de console.logs
+*   Se convirtieron más `console.log` verbose a `debugLog` en `app.js` (función `renderWatchlist`).
 
 ---
 
@@ -41,15 +37,19 @@ La aplicación ha completado su transición a **Supabase Cloud** como motor úni
 | 6 | Eliminar migración JSONBin | ✅ Completado |
 | 7 | Migrar `lastYearCheck` a Supabase | ✅ Completado |
 | 8 | Cleanup de console.logs | ✅ Completado |
+| 9 | Aria-Labels para Accesibilidad | ✅ Completado |
 
 ---
 
-## 🎯 Siguiente Paso: Accesibilidad (Opcional)
+## 📂 Archivos Modificados en v3.99.02
 
-### Aria-Labels (Prioridad Baja)
-*   **Problema:** Botones de acción rápida (`✏️`, `🗑️`) no tienen etiquetas descriptivas para lectores de pantalla.
-*   **Acción:** Agregar atributos `aria-label` a los botones generados dinámicamente.
+| Archivo | Cambio |
+| :--- | :--- |
+| `js/ui.js` | Aria-labels en botones de historial |
+| `js/app.js` | Aria-labels en botones de watchlist + más debugLog |
+| `index.html` | Actualización de versión a v3.99.02 |
+| `service-worker.js` | Actualización de versión para cache bust |
 
 ---
 
-**Nota Técnica:** La aplicación se encuentra en estado estable bajo la versión 3.99.01 con todos los puntos de la auditoría resueltos.
+**Nota Técnica:** La aplicación se encuentra en estado estable bajo la versión 3.99.02 con todos los puntos de la auditoría resueltos, incluyendo mejoras de accesibilidad.

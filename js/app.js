@@ -1437,13 +1437,13 @@ function renderWatchlist() {
     const container = document.querySelector('#watchlist .table-container');
     const list = getCurrentWatchlist();
 
-    console.log('🎨 renderWatchlist called. Current list:', list);
-    console.log('🎨 Current watchlistId:', currentWatchlistId);
+    debugLog('🎨 renderWatchlist called. Current list:', list);
+    debugLog('🎨 Current watchlistId:', currentWatchlistId);
 
     if (!list.length) {
         container.style.display = 'none';
         empty.classList.add('show');
-        console.log('📭 Watchlist is empty, showing empty state');
+        debugLog('📭 Watchlist is empty, showing empty state');
         return;
     }
 
@@ -1623,8 +1623,8 @@ function renderWatchlist() {
                 ${window.stockProfiles?.[symbol]?.sector || SECTOR_MAP[symbol] || 'Otro'}
             </td>`,
             'actions': `<td>
-                <button class="btn-alert" onclick="promptPriceAlert('${symbol}', ${price})" title="Crear alerta">🔔</button>
-                <button class="btn-icon" onclick="removeFromWatchlist('${symbol}')" title="Quitar">🗑️</button>
+                <button class="btn-alert" onclick="promptPriceAlert('${symbol}', ${price})" title="Crear alerta" aria-label="Crear alerta de precio para ${symbol}">🔔</button>
+                <button class="btn-icon" onclick="removeFromWatchlist('${symbol}')" title="Quitar" aria-label="Quitar ${symbol} de la watchlist">🗑️</button>
             </td>`
         };
 

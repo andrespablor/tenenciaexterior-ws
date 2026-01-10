@@ -278,8 +278,8 @@ function renderHistory() {
             <td>$${fmt(m.price, 2)}</td>
             <td class="${m.importe >= 0 ? 'cell-positive' : 'cell-negative'}">${m.importe >= 0 ? '+' : ''}$${fmt(m.importe, 2)}</td>
             <td>
-                <button class="btn-icon btn-edit" onclick="editMovement(${idx})" title="Editar">✏️</button>
-                <button class="btn-icon" onclick="deleteMovement(${idx})" title="Eliminar">🗑</button>
+                <button class="btn-icon btn-edit" onclick="editMovement(${idx})" title="Editar" aria-label="Editar movimiento de ${m.symbol}">✏️</button>
+                <button class="btn-icon" onclick="deleteMovement(${idx})" title="Eliminar" aria-label="Eliminar movimiento de ${m.symbol}">🗑</button>
             </td>
         </tr>`;
     }).join('');
