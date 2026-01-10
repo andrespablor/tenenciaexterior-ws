@@ -1450,14 +1450,26 @@ async function addToWatchlist(symbolArg) {
 // Alias for compatibility
 const addToWatchlistWithSymbol = addToWatchlist;
 
-function removeFromWatchlist(symbol) {
+async function removeFromWatchlist(symbol) {
+    console.log('🗑️ removeFromWatchlist called for:', symbol);
+
     const currentList = watchlists[currentWatchlistId];
-    if (!currentList || !currentList.symbols) return;
+    if (!currentList || !currentList.symbols) {
+        console.error('❌ No current watchlist found');
+        return;
+    }
+
+    console.log('📋 Current symbols before removal:', currentList.symbols);
 
     const idx = currentList.symbols.indexOf(symbol);
     if (idx > -1) {
         currentList.symbols.splice(idx, 1);
-        saveData();
+        console.log('📋 Symbols after removal:', currentList.symbols);
+
+        // CRITICAL: Await saveData to ensure persistence
+        console.log('💾 Saving to Supabase...');
+        await saveData();
+        console.log('✅ Saved to Supabase');
 
         // Limpiar del priceCache si NO está en el resumen del portfolio
         const speciesSummary = calculateSpeciesSummary();
@@ -1467,6 +1479,8 @@ function removeFromWatchlist(symbol) {
         }
 
         renderWatchlist();
+    } else {
+        console.warn('⚠️ Symbol not found in watchlist:', symbol);
     }
 }
 
@@ -1507,7 +1521,7 @@ function handleLogoError(img, symbol) {
 }
 
 
-function deleteSelectedWatchlist() {
+async function deleteSelectedWatchlist() {
     const checkboxes = document.querySelectorAll('#watchlist-body input[type="checkbox"]:checked');
     const toDelete = Array.from(checkboxes).map(cb => cb.dataset.symbol).filter(Boolean);
 
@@ -1522,12 +1536,16 @@ function deleteSelectedWatchlist() {
     }
 
     console.log('🗑️ Deleting symbols:', toDelete);
+    console.log('📋 Before:', currentList.symbols);
 
     // Remove symbols from global watchlists
     currentList.symbols = currentList.symbols.filter(s => !toDelete.includes(s));
+    console.log('📋 After:', currentList.symbols);
 
-    // Save to Supabase
-    saveData();
+    // Save to Supabase (await to ensure persistence)
+    console.log('💾 Saving to Supabase...');
+    await saveData();
+    console.log('✅ Saved');
 
     // Uncheck select-all
     const selectAll = document.getElementById('watchlist-select-all');
