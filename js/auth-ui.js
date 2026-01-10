@@ -41,9 +41,6 @@ function initAuthUI() {
             if (typeof renderAll === 'function') {
                 renderAll();
             }
-            if (typeof showToast === 'function') {
-                showToast(`✅ Datos sincronizados`, 'success');
-            }
         }
     });
 

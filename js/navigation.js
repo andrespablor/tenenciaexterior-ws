@@ -9,7 +9,7 @@ const MODULE_TABS = {
 };
 
 // Global variable to track current module
-window.currentModule = 'comitente';
+window.currentModule = 'mercado';
 
 // Initialize sidebar navigation
 function initSidebarNavigation() {
@@ -53,8 +53,8 @@ function initSidebarNavigation() {
         observer.observe(headerBadge, { childList: true, characterData: true, subtree: true });
     }
 
-    // Initialize with comitente module
-    switchModule('comitente');
+    // Initialize with mercado module
+    switchModule('mercado');
 }
 
 // Switch between modules

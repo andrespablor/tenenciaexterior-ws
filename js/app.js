@@ -1303,6 +1303,27 @@ function initializeWatchlist() {
     }
 }
 
+// Guardar orden de tickers después de drag & drop
+function saveTickerOrder(symbols) {
+    const currentList = watchlists[currentWatchlistId];
+    if (currentList) {
+        // Actualizar el orden de los símbolos
+        currentList.symbols = symbols;
+
+        // Guardar en Supabase/storage
+        saveData();
+
+        console.log('💾 Ticker order saved:', symbols);
+    }
+}
+
+// Guardar orden de columnas después de drag & drop
+function saveColumnOrder(columnIds) {
+    // Guardar en localStorage (esto ya está implementado en otro lugar)
+    localStorage.setItem('watchlistColumnOrder', JSON.stringify(columnIds));
+    console.log('💾 Column order saved:', columnIds);
+}
+
 function updateWatchlistSelector() {
     const select = document.getElementById('watchlist-selector');
 

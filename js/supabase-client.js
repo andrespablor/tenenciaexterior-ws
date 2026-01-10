@@ -478,9 +478,6 @@ async function saveAllDataSupabase() {
         return true;
     } catch (error) {
         console.error('❌ Error guardando en Supabase:', error);
-        if (typeof showToast === 'function') {
-            showToast('❌ Error al guardar', 'error');
-        }
         return false;
     }
 }
