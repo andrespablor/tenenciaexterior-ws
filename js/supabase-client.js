@@ -471,10 +471,6 @@ async function saveAllDataSupabase() {
 
         console.log('✅ Datos guardados en Supabase');
 
-        if (typeof showToast === 'function') {
-            showToast('☁️ Guardado en Supabase', 'success');
-        }
-
         return true;
     } catch (error) {
         console.error('❌ Error guardando en Supabase:', error);

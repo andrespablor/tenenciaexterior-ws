@@ -38,6 +38,9 @@ function initAuthUI() {
             // Cargar datos desde Supabase
             updateAuthButton(session.user);
             await loadAllDataSupabase();
+            if (typeof applySettings === 'function') {
+                applySettings();
+            }
             if (typeof renderAll === 'function') {
                 renderAll();
             }
@@ -56,10 +59,21 @@ async function checkSession() {
         updateAuthButton(session.user);
 
         // Cargar datos desde Supabase
+        console.log('📊 Cargando datos desde Supabase...');
         await loadAllDataSupabase();
+
+        // Aplicar settings
+        if (typeof applySettings === 'function') {
+            applySettings();
+        }
+
+        // Renderizar todo
         if (typeof renderAll === 'function') {
+            console.log('🎨 Renderizando interfaz...');
             renderAll();
         }
+
+        console.log('✅ App inicializada correctamente');
     } else {
         console.log('🔐 No hay sesión - redirigiendo a login');
         window.location.href = 'login.html';

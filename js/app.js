@@ -77,8 +77,6 @@ async function loadStockProfiles() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     loadStockProfiles(); // Iniciar carga en paralelo (no await para no bloquear UI)
-    loadData(); // Cargar desde localStorage como fallback inicial
-    loadSettings();
 
     // Inicializar Auth UI (Supabase) - maneja login obligatorio y carga de datos
     if (typeof initAuthUI === 'function') {
