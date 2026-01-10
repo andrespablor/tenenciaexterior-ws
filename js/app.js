@@ -304,13 +304,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Theme toggle in sidebar
     const themeToggleSidebar = document.getElementById('theme-toggle-sidebar');
     if (themeToggleSidebar) {
-        themeToggleSidebar.addEventListener('click', () => {
+        themeToggleSidebar.addEventListener('click', async () => {
             const current = document.body.getAttribute('data-theme') || 'dark';
             const next = current === 'dark' ? 'light' : 'dark';
             document.body.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
             appSettings.theme = next;
-            saveSettings();
+            await saveSettings();
 
             // Update icon based on theme
             const icon = next === 'dark' ? 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' : 'M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z';
@@ -362,19 +361,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Theme toggle
+    // Theme toggle - use appSettings.theme (loaded from Supabase)
     const themeToggle = document.getElementById('theme-toggle');
-    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const savedTheme = appSettings.theme || 'dark';
     document.body.setAttribute('data-theme', savedTheme);
 
     if (themeToggle) {
         themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
-        themeToggle.addEventListener('click', () => {
+        themeToggle.addEventListener('click', async () => {
             const current = document.body.getAttribute('data-theme') || 'dark';
             const next = current === 'dark' ? 'light' : 'dark';
             document.body.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
+            appSettings.theme = next;
             themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
+            // Save to Supabase
+            await saveSettings();
         });
     }
 });
@@ -1334,9 +1335,8 @@ function saveTickerOrder(symbols) {
 
 // Guardar orden de columnas después de drag & drop
 function saveColumnOrder(columnIds) {
-    // Guardar en localStorage (esto ya está implementado en otro lugar)
-    localStorage.setItem('watchlistColumnOrder', JSON.stringify(columnIds));
-    console.log('💾 Column order saved:', columnIds);
+    // Column order is UI-only, not persisted to cloud
+    console.log('💾 Column order saved (UI only):', columnIds);
 }
 
 function updateWatchlistSelector() {
@@ -1345,30 +1345,16 @@ function updateWatchlistSelector() {
     // Legacy selector removed - now handled by watchlist-tabs.js
     if (!select) return;
 
-    // Obtener orden guardado o usar Object.keys por defecto
-    const savedOrder = localStorage.getItem('watchlistOrder');
-    let orderedIds = savedOrder ? JSON.parse(savedOrder) : Object.keys(watchlists);
-
-    // Agregar listas nuevas que no estén en el orden guardado
-    Object.keys(watchlists).forEach(id => {
-        if (!orderedIds.includes(id)) {
-            orderedIds.push(id);
-        }
-    });
-
-    // Filtrar IDs que ya no existen
-    orderedIds = orderedIds.filter(id => watchlists[id]);
+    // Use global watchlists directly
+    let orderedIds = Object.keys(watchlists);
 
     select.innerHTML = orderedIds.map(id => {
         const wl = watchlists[id];
         const displayName = wl.displayName || (id === 'default' ? 'Mi Watchlist' : id);
         const icon = wl.icon || '📋';
-        const count = (wl.symbols || wl).length;
+        const count = (wl.symbols || []).length;
         return `<option value="${id}" ${id === currentWatchlistId ? 'selected' : ''}>${icon} ${displayName} (${count})</option>`;
     }).join('');
-
-    // Guardar orden actualizado
-    localStorage.setItem('watchlistOrder', JSON.stringify(orderedIds));
 }
 
 async function addToWatchlist(symbolArg) {
@@ -3573,8 +3559,7 @@ if (wlMoveDownBtn) {
 function saveWatchlistOrder() {
     // Guardar el orden actual en localStorage
     const selector = document.getElementById('wl-manager-selector');
-    const order = Array.from(selector.options).map(opt => opt.value);
-    localStorage.setItem('watchlistOrder', JSON.stringify(order));
+    // Order is now managed by watchlist-tabs.js, no localStorage needed
 
     // Actualizar el selector principal también
     updateWatchlistSelector();

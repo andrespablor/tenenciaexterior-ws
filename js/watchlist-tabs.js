@@ -1,9 +1,9 @@
 // ========================================
-// WATCHLIST TABS MANAGER
+// WATCHLIST TABS MANAGER - Supabase Only
 // ========================================
 
 // ========================================
-// DATA MIGRATION UTILITIES
+// HELPER FUNCTIONS
 // ========================================
 
 /**
@@ -22,160 +22,116 @@ function getDefaultWatchlistIcon(listName) {
 }
 
 /**
- * Migrate watchlists from old array format to new object format
- * Old: { "default": ["AAPL", "MSFT"] }
- * New: { "default": { displayName: "Mi Watchlist", icon: "📋", symbols: ["AAPL", "MSFT"] } }
+ * Get watchlists data - always use global variable (loaded from Supabase)
  */
-function migrateWatchlistsToNewFormat() {
-    console.log('🔄 Checking watchlist data format...');
+function getWatchlistsData() {
+    // Use global watchlists variable (loaded from Supabase via loadAllDataSupabase)
+    if (typeof watchlists !== 'undefined' && watchlists && Object.keys(watchlists).length > 0) {
+        return watchlists;
+    }
+    // Fallback: create default
+    return { default: { displayName: 'Mi Watchlist', icon: '📋', symbols: [] } };
+}
 
-    const watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
-    let needsMigration = false;
-    let migratedCount = 0;
-
-    Object.keys(watchlists).forEach(key => {
-        // If it's an array, migrate to object format
-        if (Array.isArray(watchlists[key])) {
-            needsMigration = true;
-            migratedCount++;
-            console.log(`  📦 Migrating "${key}" from array to object format`);
-            watchlists[key] = {
-                displayName: key === 'default' ? 'Mi Watchlist' : key,
-                icon: getDefaultWatchlistIcon(key),
-                symbols: watchlists[key] // Preserve the array of symbols
-            };
-        }
-        // If it's an object but missing required properties, fix it
-        else if (typeof watchlists[key] === 'object') {
-            let fixed = false;
-
-            if (!watchlists[key].displayName) {
-                watchlists[key].displayName = key === 'default' ? 'Mi Watchlist' : key;
-                fixed = true;
-            }
-
-            if (!watchlists[key].icon) {
-                watchlists[key].icon = getDefaultWatchlistIcon(key);
-                fixed = true;
-            }
-
-            if (!watchlists[key].symbols) {
-                watchlists[key].symbols = [];
-                fixed = true;
-            }
-
-            if (fixed) {
-                needsMigration = true;
-                migratedCount++;
-                console.log(`  🔧 Fixed missing properties for "${key}"`);
-            }
-        }
-    });
-
-    if (needsMigration) {
-        localStorage.setItem('watchlists', JSON.stringify(watchlists));
-        console.log(`✅ Migration complete! ${migratedCount} watchlist(s) updated to new format`);
-
-        // Also update the global watchlists variable if it exists
-        if (typeof window.watchlists !== 'undefined') {
-            window.watchlists = watchlists;
-        }
-    } else {
-        console.log('✅ All watchlists already in correct format');
+/**
+ * Ensure watchlist has correct format
+ */
+function ensureWatchlistFormat(wl, name) {
+    if (!wl || typeof wl !== 'object') {
+        return {
+            displayName: name === 'default' ? 'Mi Watchlist' : name,
+            icon: getDefaultWatchlistIcon(name),
+            symbols: []
+        };
     }
 
-    return watchlists;
+    // Migrate array format to object
+    if (Array.isArray(wl)) {
+        return {
+            displayName: name === 'default' ? 'Mi Watchlist' : name,
+            icon: getDefaultWatchlistIcon(name),
+            symbols: wl
+        };
+    }
+
+    // Ensure all properties exist
+    return {
+        displayName: wl.displayName || (name === 'default' ? 'Mi Watchlist' : name),
+        icon: wl.icon || getDefaultWatchlistIcon(name),
+        symbols: wl.symbols || []
+    };
 }
 
 // ========================================
 // WATCHLIST TABS INITIALIZATION
 // ========================================
 
-// Initialize watchlist tabs
 function initWatchlistTabs() {
     console.log('🎯 Initializing watchlist tabs...');
-
-    // CRITICAL: Migrate data to new format FIRST (only if needed)
-    const migrationVersion = localStorage.getItem('watchlistMigrationVersion');
-    if (migrationVersion !== '1') {
-        migrateWatchlistsToNewFormat();
-        localStorage.setItem('watchlistMigrationVersion', '1');
-    }
 
     const mercadoTabsNav = document.getElementById('mercado-tabs');
     if (!mercadoTabsNav) return;
 
-    // Load watchlists (now guaranteed to be in new format)
-    let watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
-    let watchlistNames = Object.keys(watchlists);
+    // Get watchlists from global variable (loaded from Supabase)
+    const wlData = getWatchlistsData();
+    let watchlistNames = Object.keys(wlData);
 
-    // If no watchlists, create default
+    // If no watchlists, create default in global variable
     if (watchlistNames.length === 0) {
-        watchlists['default'] = {
+        watchlists.default = {
             displayName: 'Mi Watchlist',
             icon: '📋',
             symbols: []
         };
-        localStorage.setItem('watchlists', JSON.stringify(watchlists));
         watchlistNames = ['default'];
-    }
-
-    // Load saved order if exists
-    const savedOrder = JSON.parse(localStorage.getItem('watchlistOrder') || '[]');
-    if (savedOrder.length > 0) {
-        // Filter out deleted lists and add new ones
-        const validOrder = savedOrder.filter(n => watchlistNames.includes(n));
-        const newLists = watchlistNames.filter(n => !validOrder.includes(n));
-        watchlistNames = [...validOrder, ...newLists];
+        // Save to Supabase
+        if (typeof saveData === 'function') {
+            saveData();
+        }
     }
 
     // Clear existing tabs
     mercadoTabsNav.innerHTML = '';
 
-    // Create container for sortable tabs to separate from controls
+    // Create container for sortable tabs
     const tabsContainer = document.createElement('div');
     tabsContainer.id = 'tabs-sortable-container';
     tabsContainer.style.display = 'flex';
-    tabsContainer.style.overflowX = 'auto'; // Allow scrolling if many tabs
-    tabsContainer.style.maxWidth = 'calc(100% - 100px)'; // Reserve space for controls
+    tabsContainer.style.overflowX = 'auto';
+    tabsContainer.style.maxWidth = 'calc(100% - 100px)';
     mercadoTabsNav.appendChild(tabsContainer);
 
     // Create tab for each watchlist
     watchlistNames.forEach((name) => {
         const tab = document.createElement('button');
         tab.className = 'tab';
+
         if (typeof currentWatchlistId !== 'undefined' && currentWatchlistId === name) {
             tab.classList.add('active');
         } else if (typeof currentWatchlistId === 'undefined' && name === 'default') {
-            // Fallback initial active
             tab.classList.add('active');
         }
 
         tab.dataset.tab = 'watchlist';
         tab.dataset.watchlistName = name;
 
-        // Use displayName from object, with fallback
-        const wl = watchlists[name];
+        const wl = wlData[name];
         const displayName = wl?.displayName || (name === 'default' ? 'Mi Watchlist' : name);
         tab.textContent = displayName;
 
-        // Click handler
         tab.addEventListener('click', () => {
-            // Update active tab
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-
-            // Load this watchlist
             loadWatchlist(name);
         });
 
         tabsContainer.appendChild(tab);
     });
 
-    // Add controls to tabs bar
+    // Add controls
     const controlsDiv = document.createElement('div');
     controlsDiv.className = 'tabs-right';
-    controlsDiv.style.marginLeft = 'auto'; // Push to right
+    controlsDiv.style.marginLeft = 'auto';
     controlsDiv.style.display = 'flex';
     controlsDiv.style.alignItems = 'center';
     controlsDiv.style.gap = '8px';
@@ -202,7 +158,7 @@ function initWatchlistTabs() {
     `;
     mercadoTabsNav.appendChild(controlsDiv);
 
-    // Add Listeners
+    // Event listeners
     const addSymBtn = document.getElementById('add-symbol-btn');
     const symInput = document.getElementById('watchlist-symbol-input');
 
@@ -224,33 +180,29 @@ function initWatchlistTabs() {
     const editListBtn = document.getElementById('edit-watchlists-btn');
     if (editListBtn) editListBtn.addEventListener('click', openWatchlistManager);
 
-    // Initialize Sortable for Tabs
+    // Sortable tabs
     if (typeof Sortable !== 'undefined') {
         new Sortable(tabsContainer, {
             animation: 150,
             ghostClass: 'tab-ghost',
             onEnd: function () {
-                const newOrder = Array.from(tabsContainer.querySelectorAll('.tab'))
-                    .map(tab => tab.dataset.watchlistName);
-                localStorage.setItem('watchlistOrder', JSON.stringify(newOrder));
+                // Tab order is visual only, not persisted
             }
         });
     }
 
-    // Load current or first watchlist logic
+    // Load current or first watchlist
     if (!window.currentWatchlistId) {
         const initial = watchlistNames.includes('default') ? 'default' : watchlistNames[0];
         loadWatchlist(initial);
-        // Set active class visually
         const activeTab = tabsContainer.querySelector(`[data-watchlist-name="${initial}"]`);
         if (activeTab) {
-            // Ensure only one is active
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             activeTab.classList.add('active');
         }
     }
 
-    // Initialize watchlist event listeners (app.js integration)
+    // Initialize watchlist from app.js
     if (typeof initializeWatchlist === 'function') {
         console.log('🔧 Calling initializeWatchlist from watchlist-tabs.js');
         try {
@@ -260,7 +212,6 @@ function initWatchlistTabs() {
         }
     }
 
-    // Setup delete selected symbols button
     setupDeleteSelectedButton();
 }
 
@@ -269,12 +220,16 @@ function loadWatchlist(name) {
     if (typeof currentWatchlistId !== 'undefined') {
         currentWatchlistId = name;
     }
+    // Save current watchlist selection to Supabase
+    if (typeof saveData === 'function') {
+        saveData();
+    }
     if (typeof renderWatchlist === 'function') {
         renderWatchlist();
     }
 }
 
-// Add Symbol Logic
+// Add Symbol Logic - uses global watchlists
 function addSymbolPrompt(inputValue) {
     let symbol = inputValue;
 
@@ -282,46 +237,44 @@ function addSymbolPrompt(inputValue) {
         return;
     }
 
-    if (symbol && symbol.trim()) {
-        const cleanSymbol = symbol.trim().toUpperCase();
+    const cleanSymbol = symbol.trim().toUpperCase();
 
-        if (typeof addToWatchlistWithSymbol === 'function') {
-            addToWatchlistWithSymbol(cleanSymbol);
-        } else {
-            // Fallback logic - use new object format
-            if (typeof currentWatchlistId === 'undefined') return;
+    // Use addToWatchlistWithSymbol from app.js (preferred)
+    if (typeof addToWatchlistWithSymbol === 'function') {
+        addToWatchlistWithSymbol(cleanSymbol);
+    } else {
+        // Fallback: modify global watchlists directly
+        if (typeof currentWatchlistId === 'undefined') return;
 
-            let watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
-            let wl = watchlists[currentWatchlistId];
+        let wl = watchlists[currentWatchlistId];
 
-            // Ensure it's in object format
-            if (!wl || !wl.symbols) {
-                wl = {
-                    displayName: currentWatchlistId === 'default' ? 'Mi Watchlist' : currentWatchlistId,
-                    icon: '📋',
-                    symbols: []
-                };
-            }
-
-            if (!wl.symbols.includes(cleanSymbol)) {
-                wl.symbols.push(cleanSymbol);
-                watchlists[currentWatchlistId] = wl;
-                localStorage.setItem('watchlists', JSON.stringify(watchlists));
-
-                if (typeof renderWatchlist === 'function') renderWatchlist();
-                if (typeof subscribeToPortfolioAndWatchlist === 'function') subscribeToPortfolioAndWatchlist();
-            } else {
-                alert('El símbolo ya está en la lista.');
-            }
+        // Ensure format
+        if (!wl || !wl.symbols) {
+            wl = ensureWatchlistFormat(wl, currentWatchlistId);
+            watchlists[currentWatchlistId] = wl;
         }
 
-        const inputEl = document.getElementById('watchlist-symbol-input');
-        if (inputEl) inputEl.value = '';
+        if (!wl.symbols.includes(cleanSymbol)) {
+            wl.symbols.push(cleanSymbol);
+
+            // Save to Supabase
+            if (typeof saveData === 'function') {
+                saveData();
+            }
+
+            if (typeof renderWatchlist === 'function') renderWatchlist();
+            if (typeof subscribeToPortfolioAndWatchlist === 'function') subscribeToPortfolioAndWatchlist();
+        } else {
+            alert('El símbolo ya está en la lista.');
+        }
     }
+
+    const inputEl = document.getElementById('watchlist-symbol-input');
+    if (inputEl) inputEl.value = '';
 }
 
 // ===================================
-// MANAGER MODAL LOGIC (New Pattern)
+// MANAGER MODAL LOGIC
 // ===================================
 
 let selectedWatchlistForEdit = null;
@@ -339,7 +292,7 @@ function openWatchlistManager() {
 
 function closeWatchlistManager() {
     document.getElementById('watchlist-manager-modal').style.display = 'none';
-    initWatchlistTabs(); // Refresh Tabs UI
+    initWatchlistTabs();
 }
 
 function renderManagerList() {
@@ -348,29 +301,22 @@ function renderManagerList() {
 
     listContainer.innerHTML = '';
 
-    // Load lists
-    const watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
-    const savedOrder = JSON.parse(localStorage.getItem('watchlistOrder') || '[]');
-    let watchlistNames = Object.keys(watchlists);
-
-    // Apply order
-    if (savedOrder.length > 0) {
-        const validOrder = savedOrder.filter(n => watchlistNames.includes(n));
-        const newLists = watchlistNames.filter(n => !validOrder.includes(n));
-        watchlistNames = [...validOrder, ...newLists];
-    }
+    // Use global watchlists
+    const wlData = getWatchlistsData();
+    const watchlistNames = Object.keys(wlData);
 
     watchlistNames.forEach(name => {
         const item = document.createElement('div');
         item.className = 'watchlist-select-item';
         if (selectedWatchlistForEdit === name) item.classList.add('selected');
 
-        const displayName = name === 'default' ? 'Mi Watchlist' : name;
+        const wl = wlData[name];
+        const displayName = wl?.displayName || (name === 'default' ? 'Mi Watchlist' : name);
         item.textContent = displayName;
 
         item.onclick = () => {
             selectedWatchlistForEdit = name;
-            renderManagerList(); // Re-render to update highlight
+            renderManagerList();
             updateEditSection();
         };
 
@@ -383,99 +329,61 @@ function updateEditSection() {
     const nameInput = document.getElementById('watchlist-edit-name');
     const deleteBtn = document.getElementById('watchlist-btn-delete-header');
 
-    console.log('🔍 updateEditSection called. Selected:', selectedWatchlistForEdit, 'Delete btn:', deleteBtn);
-
     if (!selectedWatchlistForEdit) {
         editSection.style.display = 'none';
-        if (deleteBtn) {
-            deleteBtn.style.display = 'none';
-            console.log('❌ Hiding delete button - no selection');
-        }
+        if (deleteBtn) deleteBtn.style.display = 'none';
         return;
     }
 
     editSection.style.display = 'block';
-    if (deleteBtn) {
-        deleteBtn.style.display = 'flex';
-        console.log('✅ Showing delete button for:', selectedWatchlistForEdit);
-    } else {
-        console.error('❌ Delete button not found in DOM!');
-    }
+    if (deleteBtn) deleteBtn.style.display = 'flex';
 
-    // Populate Name
-    const displayName = selectedWatchlistForEdit === 'default' ? 'Mi Watchlist' : selectedWatchlistForEdit;
+    const wl = watchlists[selectedWatchlistForEdit];
+    const displayName = wl?.displayName || (selectedWatchlistForEdit === 'default' ? 'Mi Watchlist' : selectedWatchlistForEdit);
     nameInput.value = displayName;
 }
 
-function saveCurrentWatchlist() {
+async function saveCurrentWatchlist() {
     if (!selectedWatchlistForEdit) return;
 
     const nameInput = document.getElementById('watchlist-edit-name');
-    const newName = nameInput.value.trim();
+    const newDisplayName = nameInput.value.trim();
 
-    if (!newName) {
+    if (!newDisplayName) {
         alert('El nombre no puede estar vacío');
         return;
     }
 
-    // Validation
-    if (newName.length > 20) {
+    if (newDisplayName.length > 20) {
         alert('El nombre debe tener máximo 20 caracteres');
         return;
     }
 
-    if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]+$/.test(newName)) {
+    if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]+$/.test(newDisplayName)) {
         alert('El nombre solo puede contener letras, números y espacios');
         return;
     }
 
-    const oldName = selectedWatchlistForEdit;
-    const watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
+    // Update displayName in global watchlists
+    const wl = watchlists[selectedWatchlistForEdit];
+    if (wl) {
+        wl.displayName = newDisplayName;
 
-    if (newName !== oldName) {
-        if (watchlists[newName]) {
-            alert('Ya existe una lista con este nombre.');
-            return;
-        }
-
-        // CRITICAL FIX: Deep copy AND update displayName
-        const renamed = JSON.parse(JSON.stringify(watchlists[oldName]));
-        renamed.displayName = newName; // Explicitly update displayName
-        watchlists[newName] = renamed;
-        delete watchlists[oldName];
-        localStorage.setItem('watchlists', JSON.stringify(watchlists));
-
-        // Update Order
-        let savedOrder = JSON.parse(localStorage.getItem('watchlistOrder') || '[]');
-        const idx = savedOrder.indexOf(oldName);
-        if (idx !== -1) savedOrder[idx] = newName;
-        else savedOrder.push(newName);
-        localStorage.setItem('watchlistOrder', JSON.stringify(savedOrder));
-
-        // Update selection
-        selectedWatchlistForEdit = newName;
-
-        // Update current if active - CRITICAL: update the global variable
-        if (typeof window.currentWatchlistId !== 'undefined' && window.currentWatchlistId === oldName) {
-            window.currentWatchlistId = newName;
-        }
-
-        // Also update watchlists in app.js global scope if it exists
-        if (typeof window.watchlists !== 'undefined') {
-            window.watchlists = watchlists;
-        }
+        // Save to Supabase
+        console.log('💾 Saving watchlist name to Supabase...');
+        await saveData();
+        console.log('✅ Watchlist name saved');
 
         renderManagerList();
         if (typeof showToast === 'function') {
-            showToast('✅ Lista renombrada correctamente');
+            showToast('✅ Lista guardada correctamente');
         }
     }
 }
 
-function deleteCurrentWatchlist() {
+async function deleteCurrentWatchlist() {
     if (!selectedWatchlistForEdit) return;
 
-    const watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
     if (Object.keys(watchlists).length <= 1) {
         alert('No se puede eliminar la única lista existente.');
         return;
@@ -483,14 +391,10 @@ function deleteCurrentWatchlist() {
 
     if (confirm(`¿Eliminar "${selectedWatchlistForEdit}" permanentemente?`)) {
         delete watchlists[selectedWatchlistForEdit];
-        localStorage.setItem('watchlists', JSON.stringify(watchlists));
 
-        // Update Order
-        let savedOrder = JSON.parse(localStorage.getItem('watchlistOrder') || '[]');
-        savedOrder = savedOrder.filter(n => n !== selectedWatchlistForEdit);
-        localStorage.setItem('watchlistOrder', JSON.stringify(savedOrder));
+        // Save to Supabase
+        await saveData();
 
-        // Reset selection
         selectedWatchlistForEdit = null;
         renderManagerList();
         updateEditSection();
@@ -503,12 +407,11 @@ function deleteCurrentWatchlist() {
     }
 }
 
-function createNewWatchlistPrompt() {
+async function createNewWatchlistPrompt() {
     const name = prompt('Nombre de la nueva lista:');
     if (name && name.trim()) {
         const cleanName = name.trim();
 
-        // Validation
         if (cleanName.length > 20) {
             alert('El nombre debe tener máximo 20 caracteres');
             return;
@@ -519,39 +422,34 @@ function createNewWatchlistPrompt() {
             return;
         }
 
-        const watchlists = JSON.parse(localStorage.getItem('watchlists') || '{}');
+        // Generate unique ID from name
+        const id = cleanName.toLowerCase().replace(/\s+/g, '-');
 
-        if (watchlists[cleanName]) {
+        if (watchlists[id]) {
             alert('Ya existe una lista con ese nombre.');
             return;
         }
 
-        // NEW FORMAT: Always create as object with displayName, icon, and symbols
-        watchlists[cleanName] = {
+        // Add to global watchlists
+        watchlists[id] = {
             displayName: cleanName,
-            icon: getDefaultWatchlistIcon(cleanName),
+            icon: getDefaultWatchlistIcon(id),
             symbols: []
         };
 
-        localStorage.setItem('watchlists', JSON.stringify(watchlists));
+        // Save to Supabase
+        await saveData();
 
-        let savedOrder = JSON.parse(localStorage.getItem('watchlistOrder') || '[]');
-        savedOrder.push(cleanName);
-        localStorage.setItem('watchlistOrder', JSON.stringify(savedOrder));
-
-        // Select it
-        selectedWatchlistForEdit = cleanName;
+        selectedWatchlistForEdit = id;
         renderManagerList();
         updateEditSection();
     }
 }
 
-// Toggle edit mode for watchlist name editing
 function toggleEditMode() {
     const editSection = document.getElementById('watchlist-edit-section');
     if (!editSection) return;
 
-    // If no watchlist is selected, we can't edit
     if (!selectedWatchlistForEdit) {
         if (typeof showToast === 'function') {
             showToast('Seleccioná una lista primero', 'warning');
@@ -559,10 +457,8 @@ function toggleEditMode() {
         return;
     }
 
-    // Toggle visibility
     if (editSection.style.display === 'none' || editSection.style.display === '') {
         editSection.style.display = 'block';
-        // Focus the input
         const nameInput = document.getElementById('watchlist-edit-name');
         if (nameInput) {
             nameInput.focus();
@@ -591,27 +487,20 @@ function setupDeleteSelectedButton() {
     const deleteBtn = document.getElementById('delete-selected-symbols-btn');
     if (!deleteBtn) return;
 
-    // Monitor checkbox changes
     function updateDeleteButtonVisibility() {
         const table = document.getElementById('watchlist-table');
         if (!table) return;
 
         const checkedBoxes = table.querySelectorAll('tbody input[type="checkbox"]:checked');
-        if (checkedBoxes.length > 0) {
-            deleteBtn.style.display = 'flex';
-        } else {
-            deleteBtn.style.display = 'none';
-        }
+        deleteBtn.style.display = checkedBoxes.length > 0 ? 'flex' : 'none';
     }
 
-    // Listen for checkbox changes using event delegation
     document.addEventListener('change', (e) => {
         if (e.target.type === 'checkbox' && e.target.closest('#watchlist-table')) {
             updateDeleteButtonVisibility();
         }
     });
 
-    // Delete button click handler
     deleteBtn.addEventListener('click', async () => {
         const table = document.getElementById('watchlist-table');
         if (!table) return;
@@ -619,7 +508,6 @@ function setupDeleteSelectedButton() {
         const checkedBoxes = table.querySelectorAll('tbody input[type="checkbox"]:checked');
         if (checkedBoxes.length === 0) return;
 
-        // Get symbols directly from checkbox data-symbol attribute
         const symbolsToDelete = Array.from(checkedBoxes)
             .map(cb => cb.dataset.symbol)
             .filter(Boolean);
@@ -631,52 +519,34 @@ function setupDeleteSelectedButton() {
 
         if (!confirm(`¿Eliminar ${symbolsToDelete.length} símbolo(s) de la watchlist?`)) return;
 
-        // CRITICAL: Use global watchlists variable (loaded from Supabase), NOT localStorage
+        // Use global watchlists
         const currentId = window.currentWatchlistId || currentWatchlistId || 'default';
-
-        console.log('🔍 Using currentId:', currentId);
-        console.log('🔍 Available watchlists:', Object.keys(watchlists));
-
         const wl = watchlists[currentId];
 
         if (!wl || !wl.symbols) {
-            console.error('❌ Watchlist not found or has no symbols array');
-            console.error('❌ currentId:', currentId);
-            console.error('❌ wl:', wl);
+            console.error('❌ Watchlist not found:', currentId);
             return;
         }
 
         console.log('🗑️ Deleting symbols:', symbolsToDelete);
-        console.log('📋 Current watchlist symbols BEFORE:', [...wl.symbols]);
+        console.log('📋 Before:', [...wl.symbols]);
 
-        // Remove symbols from global watchlists
         wl.symbols = wl.symbols.filter(s => !symbolsToDelete.includes(s));
 
-        console.log('📋 Current watchlist symbols AFTER:', wl.symbols);
+        console.log('📋 After:', wl.symbols);
 
-        // CRITICAL: Save to Supabase via saveData()
+        // Save to Supabase
         console.log('💾 Saving to Supabase...');
-        if (typeof saveData === 'function') {
-            await saveData();
-            console.log('✅ Saved to Supabase');
-        } else {
-            console.error('❌ saveData function not available!');
-        }
+        await saveData();
+        console.log('✅ Saved');
 
-        // Refresh display
-        console.log('🔄 Calling renderWatchlist...');
         if (typeof renderWatchlist === 'function') {
             renderWatchlist();
-            console.log('✅ renderWatchlist executed');
-        } else {
-            console.error('❌ renderWatchlist is not a function!');
         }
 
-        // Uncheck select-all if it exists
         const selectAll = document.getElementById('watchlist-select-all');
         if (selectAll) selectAll.checked = false;
 
-        // Hide button
         deleteBtn.style.display = 'none';
 
         console.log(`✅ Deleted ${symbolsToDelete.length} symbols from watchlist`);
@@ -689,3 +559,5 @@ if (document.readyState === 'loading') {
 } else {
     initWatchlistTabs();
 }
+
+console.log('Watchlist Tabs: Loaded (Supabase Only)');
