@@ -1,24 +1,25 @@
 ﻿/* ========================================
    Variables - Dark Theme (default)
+   Paleta: Grises oscuros + Azules/Cyan (estilo Webull)
    ======================================== */
 :root {
-    --primary: #3b82f6;
-    --primary-dark: #2563eb;
-    --primary-light: #60a5fa;
-    --accent: #8b5cf6;
-    --success: #22c55e;
-    --success-dim: #16a34a;
-    --danger: #ef4444;
-    --danger-dim: #dc2626;
-    --bg-dark: #0a0a1a;
-    --bg-card: #0f1629;
-    --bg-hover: #1a2744;
-    --bg-input: #111827;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --border: #1e293b;
-    --border-accent: #3b82f6;
+    --primary: #388bfd;
+    --primary-dark: #2f81f7;
+    --primary-light: #58a6ff;
+    --accent: #0891b2;
+    --success: #3fb950;
+    --success-dim: #238636;
+    --danger: #f85149;
+    --danger-dim: #da3633;
+    --bg-dark: #0d1117;
+    --bg-card: #161b22;
+    --bg-hover: #21262d;
+    --bg-input: #0d1117;
+    --text-primary: #f0f6fc;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --border: #30363d;
+    --border-accent: #58a6ff;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     --radius: 8px;
     --radius-sm: 4px;
@@ -178,12 +179,12 @@ td {
     gap: 10px;
     font-size: 24px;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 50%, #a855f7 100%);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 50%, var(--accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     letter-spacing: -0.8px;
-    text-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+    text-shadow: 0 0 30px rgba(88, 166, 255, 0.2);
 }
 
 .bull-logo {
@@ -614,7 +615,7 @@ td {
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--primary) 0%, #a855f7 100%);
+    background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
     border-radius: 2px 2px 0 0;
     animation: tabSlideIn 0.3s ease;
 }
