@@ -220,10 +220,7 @@ async function saveWatchlistsSupabase(watchlistsData, currentId) {
     if (!user) return { success: false, error: 'No autenticado' };
 
     try {
-        // Eliminar watchlists existentes
-        await _sb.from('watchlists').delete().eq('user_id', user.id);
-
-        // Insertar nuevas
+        // Formatear datos para upsert
         const formattedData = Object.entries(watchlistsData).map(([id, wl]) => ({
             user_id: user.id,
             watchlist_id: id,
@@ -233,8 +230,35 @@ async function saveWatchlistsSupabase(watchlistsData, currentId) {
         }));
 
         if (formattedData.length > 0) {
-            const { error } = await _sb.from('watchlists').insert(formattedData);
+            // Usar UPSERT en lugar de delete+insert para evitar race conditions
+            const { error } = await _sb
+                .from('watchlists')
+                .upsert(formattedData, {
+                    onConflict: 'user_id,watchlist_id',
+                    ignoreDuplicates: false
+                });
             if (error) throw error;
+        }
+
+        // Limpiar watchlists que ya no existen
+        const currentIds = Object.keys(watchlistsData);
+        const { data: existingLists } = await _sb
+            .from('watchlists')
+            .select('watchlist_id')
+            .eq('user_id', user.id);
+
+        if (existingLists) {
+            const toDelete = existingLists
+                .map(w => w.watchlist_id)
+                .filter(id => !currentIds.includes(id));
+
+            if (toDelete.length > 0) {
+                await _sb
+                    .from('watchlists')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .in('watchlist_id', toDelete);
+            }
         }
 
         // Guardar current watchlist en settings

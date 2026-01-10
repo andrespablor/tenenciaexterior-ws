@@ -2,6 +2,10 @@
 // STORAGE.JS - Persistencia (Solo Supabase)
 // ========================================
 
+// Lock para evitar llamadas concurrentes
+let _saveInProgress = false;
+let _pendingSave = false;
+
 // ========================================
 // Dispatcher Principal - Solo Supabase
 // ========================================
@@ -9,10 +13,31 @@ async function saveData() {
     // Verificar si hay usuario autenticado
     const user = typeof getCurrentUser === 'function' ? await getCurrentUser() : null;
 
-    if (user) {
-        await saveAllDataSupabase();
-    } else {
+    if (!user) {
         console.warn('⚠️ No hay usuario autenticado - datos no guardados');
+        return;
+    }
+
+    // Si ya hay un guardado en progreso, marcar como pendiente
+    if (_saveInProgress) {
+        console.log('⏳ Guardado en progreso, encolando...');
+        _pendingSave = true;
+        return;
+    }
+
+    _saveInProgress = true;
+
+    try {
+        await saveAllDataSupabase();
+    } finally {
+        _saveInProgress = false;
+
+        // Si hubo cambios mientras guardábamos, guardar de nuevo
+        if (_pendingSave) {
+            _pendingSave = false;
+            console.log('🔄 Procesando guardado pendiente...');
+            await saveData();
+        }
     }
 }
 
