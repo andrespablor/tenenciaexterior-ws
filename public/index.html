@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYMA Market Data - Precios en Tiempo Real</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>📈 BYMA Market Data</h1>
+                <div class="status-bar">
+                    <div class="status-item">
+                        <span class="status-label">Conexión:</span>
+                        <span id="connection-status" class="status-value disconnected">Desconectado</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Símbolos:</span>
+                        <span id="symbol-count" class="status-value">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Actualizaciones:</span>
+                        <span id="update-count" class="status-value">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input type="text" id="search-input" placeholder="Buscar símbolo... (ej: GGAL, AL30, AAPL)" />
+            <select id="type-filter">
+                <option value="">Todos los tipos</option>
+                <option value="0">BID (Compra)</option>
+                <option value="1">OFFER (Venta)</option>
+                <option value="2">TRADE (Operación)</option>
+                <option value="4">OPEN (Apertura)</option>
+            </select>
+            <select id="settl-filter">
+                <option value="">Todas las liquidaciones</option>
+                <option value="1">CI (Contado Inmediato)</option>
+                <option value="2">24hs</option>
+                <option value="3">48hs</option>
+            </select>
+            <button id="clear-btn" class="btn-clear">Limpiar</button>
+        </div>
+
+        <!-- Price Table -->
+        <div class="table-container">
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>Símbolo</th>
+                        <th>Tipo</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Posición</th>
+                        <th>Liquidación</th>
+                        <th>Última Act.</th>
+                    </tr>
+                </thead>
+                <tbody id="price-tbody">
+                    <tr class="loading-row">
+                        <td colspan="7">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                <p>Conectando a BYMA...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer Stats -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>Datos en tiempo real de BYMA (Bolsa y Mercados Argentinos)</p>
+                <p class="footer-note">Los precios se actualizan automáticamente</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

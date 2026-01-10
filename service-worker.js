@@ -1,13 +1,13 @@
 // Service Worker for Portfolio Tracker PWA
-// Version: 3.59 (auto-updates)
-const VERSION = '3.59';
+// Version: 3.61 (auto-updates)
+const VERSION = '3.61';
 const CACHE_NAME = `portfolio-tracker-${VERSION}`;
 
 // Archivos críticos para caché
 const STATIC_CACHE = [
     './manifest.json',
-    './icon-192.svg',
-    './icon-512.svg'
+    './assets/icon-192.svg',
+    './assets/icon-512.svg'
 ];
 
 // Install event - cache solo recursos estáticos (íconos)
