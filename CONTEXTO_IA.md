@@ -1,4 +1,4 @@
-# Contexto de Desarrollo - Portfolio Tracker v3.98
+# Contexto de Desarrollo - Portfolio Tracker v3.99
 
 Este documento sirve como memoria técnica para la transición de la persistencia de datos y el sistema de autenticación.
 
@@ -6,7 +6,13 @@ Este documento sirve como memoria técnica para la transición de la persistenci
 
 La aplicación ha migrado exitosamente de un modelo de persistencia híbrido (LocalStorage/Google Sheets) a un modelo de persistencia centralizado en **Supabase Cloud**. Se ha implementado un sistema de autenticación obligatorio para asegurar la privacidad de los datos por usuario.
 
-### 🛠️ Cambios Realizados (v3.86 - v3.98)
+### 🛠️ Cambios Realizados (v3.86 - v3.99)
+
+#### v3.99 - Auditoría y Optimización de Código
+*   **Limpieza de Duplicados:** Eliminadas funciones duplicadas `showToast`, `isValidSymbol` y `exportDailyStatsCSV` en `app.js`.
+*   **Remoción de Código Obsoleto:** Eliminado el botón y la lógica de migración a JSONBin (ahora solo usamos Supabase).
+*   **Auditoría de Seguridad:** Verificado el estado de RLS en Supabase (está activo y con políticas correctas).
+*   **Cache Busting:** Actualizada la versión global a v3.99 en todos los archivos.
 
 #### v3.98 - Correcciones de Persistencia en Supabase
 1.  **Fix: Race Condition en Settings**: Se corrigió un problema donde `saveWatchlistsSupabase()` llamaba a `saveAppSettingsSupabase()` internamente, causando que el nombre de la app (appName) se sobrescribiera con el valor por defecto "Portfolio Tracker".

@@ -222,40 +222,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Botón de migración
-    const migrateBtn = document.getElementById('migrate-data-btn');
-    if (migrateBtn) {
-        migrateBtn.addEventListener('click', async () => {
-            if (!confirm('¿Migrar todos los datos de LocalStorage a JSONBin Cloud?\n\nEsto sobrescribirá los datos existentes en la nube.')) {
-                return;
-            }
-
-            migrateBtn.textContent = '⏳ Migrando...';
-            migrateBtn.disabled = true;
-
-            try {
-                // Guardar backend actual
-                const oldBackend = appSettings.storageBackend;
-
-                // Forzar save a JSONBin
-                appSettings.storageBackend = 'jsonbin';
-                const success = await saveDataJSONBin();
-
-                if (success) {
-                    showToast('✅ Datos migrados exitosamente', 'success');
-                } else {
-                    appSettings.storageBackend = oldBackend; // Restaurar
-                    showToast('❌ Error en la migración', 'error');
-                }
-            } catch (error) {
-                console.error('Migration error:', error);
-                showToast('❌ Error en la migración', 'error');
-            } finally {
-                migrateBtn.textContent = '📤 Migrar Datos a la Nube';
-                migrateBtn.disabled = false;
-            }
-        });
-    }
+    // Botón de migración JSONBin eliminado - ahora usamos Supabase
 
     // Cerrar modal al hacer click fuera
     if (settingsModal) {
@@ -2042,61 +2009,9 @@ window.manualSaveYearEndSnapshot = manualSaveYearEndSnapshot;
 window.yearEndSnapshots = yearEndSnapshots;
 
 // ========================================
-// Sistema de Toast Notifications
+// NOTA: showToast y exportDailyStatsCSV fueron consolidadas más abajo
+// Ver "TOAST NOTIFICATIONS SYSTEM" y "exportDailyStatsToCSV"
 // ========================================
-function showToast(message, duration = 3000) {
-    // Crear contenedor si no existe
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        document.body.appendChild(container);
-    }
-
-    // Crear toast
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    container.appendChild(toast);
-
-    // Animar entrada
-    setTimeout(() => toast.classList.add('show'), 10);
-
-    // Remover despu�s de duration
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, duration);
-}
-
-// ========================================
-// Exportar Daily Stats a CSV
-// ========================================
-function exportDailyStatsCSV() {
-    if (!dailyStats.length) {
-        showToast('?? No hay datos para exportar');
-        return;
-    }
-
-    const headers = ['Fecha', 'Invertido', 'Resultado'];
-    const rows = dailyStats.map(s => [s.date, s.invested.toFixed(2), s.result.toFixed(2)]);
-
-    const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = historial_diario_.csv;
-    link.click();
-
-    URL.revokeObjectURL(url);
-    showToast('? CSV exportado correctamente');
-}
-
-// Exponer funciones
-window.showToast = showToast;
-window.exportDailyStatsCSV = exportDailyStatsCSV;
 
 // ========================================
 // NUEVA FUNCIONALIDAD: Exportar CSV
@@ -2180,17 +2095,7 @@ function showToast(message, type, duration) {
 window.showToast = showToast;
 
 
-// ========================================
-// SYMBOL VALIDATION
-// ========================================
-function isValidSymbol(symbol) {
-    if (!symbol) return false;
-    // Allow letters, dots (like BRK.B), 1-6 chars
-    var regex = /^[A-Z.]{1,8}$/;
-    return regex.test(symbol.toUpperCase());
-}
-
-// shouldRefreshPrices moved to utils.js
+// isValidSymbol está definida en utils.js
 
 // ========================================
 // OVERRIDE: Auto Refresh with Caching
