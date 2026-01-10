@@ -1025,7 +1025,7 @@ function handleEditDailyStat(e) {
         dailyStats[index] = { ...dailyStats[index], ...newData };
         dailyStats.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        // Guardar en localStorage
+        // Save to Supabase
         saveData();
 
         // Re-renderizar tabla y gráfico
@@ -1244,6 +1244,12 @@ function saveColumnOrder(columnIds) {
     console.log('💾 Column order saved (UI only):', columnIds);
 }
 
+// Obtener orden de columnas (siempre default - no persistido)
+function getColumnOrder() {
+    return null;
+}
+
+
 function updateWatchlistSelector() {
     const select = document.getElementById('watchlist-selector');
 
@@ -1379,40 +1385,25 @@ async function removeFromWatchlist(symbol) {
     }
 }
 
-// Helper: Obtener logo de empresa (desde caché local)
-// Logo cache - stored locally, populated manually
-const logoCache = JSON.parse(localStorage.getItem('logoCache') || '{}');
+// Helper: Logo de empresa - ahora solo usa archivos locales
+// Los logos se cargan desde assets/logos/SYMBOL.png
 
-async function getCompanyLogo(symbol) {
-    // Only use local cache (Finnhub API removed)
-    return logoCache[symbol] || null;
-}
-
-// Actualizar logo de un símbolo específico (llamado después de renderizar)
+// Deprecated: Ya no se usa cache externo
 function updateSymbolLogo(symbol) {
-    // Deprecated: Ahora usamos el sistema de eventos onerror en las etiquetas img
+    // No-op: Los logos se manejan directamente en el HTML
 }
 
-// Handler para error de carga de logo (Estrategia híbrida)
-// 1. Intenta cargar assets/logos/SYMBOL.png (definido en el HTML)
-// 2. Si falla, llama a esta función para buscar en Finnhub
+// Handler para error de carga de logo
+// Muestra el fallback (inicial del símbolo) si el logo no existe
 function handleLogoError(img, symbol) {
     // Evitar loop infinito
     img.onerror = null;
 
-    // Intentar buscar en Finnhub (cache o API)
-    getCompanyLogo(symbol).then(logoUrl => {
-        if (logoUrl) {
-            img.src = logoUrl;
-            // El onload se encargará de mostrarlo
-        } else {
-            // Si falla Finnhub, asegurar que se muestre el fallback (inicial)
-            img.style.display = 'none';
-            if (img.nextElementSibling) {
-                img.nextElementSibling.style.display = 'flex';
-            }
-        }
-    });
+    // Mostrar el fallback (inicial del símbolo)
+    img.style.display = 'none';
+    if (img.nextElementSibling) {
+        img.nextElementSibling.style.display = 'flex';
+    }
 }
 
 
@@ -1677,43 +1668,6 @@ window.removeFromWatchlist = removeFromWatchlist;
 window.updateWatchlistDeleteBtn = updateWatchlistDeleteBtn;
 window.handleLogoError = handleLogoError;
 
-// ========================================
-// Watchlist Drag & Drop - Storage Helpers
-// ========================================
-
-// Guardar orden de columnas (preparado para migración futura a Sheets/Firebase)
-function saveColumnOrder(columnIds) {
-    const key = `watchlist-column-order-${currentWatchlistId}`;
-    localStorage.setItem(key, JSON.stringify(columnIds));
-    console.log(`💾 Column order saved for ${currentWatchlistId}:`, columnIds);
-}
-
-// Cargar orden de columnas personalizado
-function getColumnOrder() {
-    const key = `watchlist-column-order-${currentWatchlistId}`;
-    const saved = localStorage.getItem(key);
-    if (saved) {
-        try {
-            return JSON.parse(saved);
-        } catch (e) {
-            console.warn('⚠️ Failed to parse column order, using default');
-            return null;
-        }
-    }
-    return null;
-}
-
-// Guardar orden de tickers en la watchlist
-function saveTickerOrder(symbols) {
-    const wl = watchlists[currentWatchlistId];
-    if (wl && wl.symbols) {
-        wl.symbols = symbols;
-    } else {
-        watchlists[currentWatchlistId] = symbols;
-    }
-    saveData();
-    console.log(`💾 Ticker order saved for ${currentWatchlistId}:`, symbols);
-}
 
 // Obtener nombre de empresa (desde stockProfiles o fallback a símbolo)
 function getCompanyName(symbol) {
@@ -3120,7 +3074,7 @@ function saveAlertTarget(index, newValue) {
     }
 
     editingAlertIndex = -1;
-    saveAlerts(); // Save to localStorage/Cloud
+    saveAlerts(); // Save to Supabase
     refreshAlertList();
     showToast(`Target updated to $${newPrice.toFixed(2)}`);
 }
@@ -3462,9 +3416,8 @@ if (wlMoveDownBtn) {
 }
 
 function saveWatchlistOrder() {
-    // Guardar el orden actual en localStorage
+    // Order is managed by watchlist-tabs.js and persisted to Supabase
     const selector = document.getElementById('wl-manager-selector');
-    // Order is now managed by watchlist-tabs.js, no localStorage needed
 
     // Actualizar el selector principal también
     updateWatchlistSelector();

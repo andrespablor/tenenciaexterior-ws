@@ -1,4 +1,4 @@
-# Contexto de Desarrollo - Portfolio Tracker v3.89
+# Contexto de Desarrollo - Portfolio Tracker v3.97
 
 Este documento sirve como memoria técnica para la transición de la persistencia de datos y el sistema de autenticación.
 
@@ -6,7 +6,17 @@ Este documento sirve como memoria técnica para la transición de la persistenci
 
 La aplicación ha migrado exitosamente de un modelo de persistencia híbrido (LocalStorage/Google Sheets) a un modelo de persistencia centralizado en **Supabase Cloud**. Se ha implementado un sistema de autenticación obligatorio para asegurar la privacidad de los datos por usuario.
 
-### 🛠️ Cambios Realizados (v3.86 - v3.89)
+### 🛠️ Cambios Realizados (v3.86 - v3.90)
+
+#### v3.90 - Limpieza de localStorage Residual
+1.  **Eliminación de localStorage**: Se eliminaron todos los usos residuales de `localStorage` que quedaron de la arquitectura anterior:
+    *   Comentarios obsoletos actualizados (`// Save to Supabase`).
+    *   Funciones `saveColumnOrder()` y `getColumnOrder()` simplificadas (orden de columnas es solo UI transiente).
+    *   Cache de logos (`logoCache`) eliminado - ya no se usa Finnhub, los logos son archivos locales.
+    *   Función `saveWatchlistOrder()` limpiada.
+2.  **Usos de localStorage MANTENIDOS** (son apropiados para UI local):
+    *   `lastYearCheck`: Flag para detectar cambio de año (disparar snapshot).
+    *   `pwa-installed`: Flag para notificación de instalación PWA.
 
 #### v3.89 - Correcciones de Estabilidad
 1.  **Fix: Función `loadData` faltante**: Se agregó la función en `storage.js` como wrapper de `loadAllDataSupabase()`, resolviendo el error "Módulos faltantes".
